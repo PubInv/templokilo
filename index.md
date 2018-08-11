@@ -37,10 +37,10 @@ map.on('load', function () {
                     "type": "Feature",
                     "geometry": {
                         "type": "Point",
-                        "coordinates": [-77.03238901390978, 38.913188059745586]
+                        "coordinates": [43.46667, -80.5204]
                     },
                     "properties": {
-                        "title": "Mapbox DC",
+                        "title": "Waterloo",
                         "icon": "monument"
                     }
                 }, {

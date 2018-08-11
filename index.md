@@ -5,13 +5,6 @@
 
 # This is the index file
 
- <div id="mapid"></div>
-
-<style>
-#mapid {height: 180px; }
-</style>
-
-
  <!-- Make sure you put this AFTER Leaflet's CSS -->
 <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
@@ -19,13 +12,6 @@
 
 <div id='map' style='width: 400px; height: 300px;'></div>
 <script>
-mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
-var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v9'
-});
-</script>
-
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 var map = new mapboxgl.Map({
     container: 'map',
@@ -75,6 +61,7 @@ map.on('load', function () {
         }
     });
 });
+</script>
 
 <!--
 // <script>

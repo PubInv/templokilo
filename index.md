@@ -26,7 +26,7 @@ var map = new mapboxgl.Map({
 });
 </script>
 
-
+<!--
 // <script>
 // var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 
@@ -55,3 +55,4 @@ var map = new mapboxgl.Map({
 
 // tileLayer.addTo(map);
 // </script>
+-->

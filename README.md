@@ -10,3 +10,6 @@ you take photos, which may contain text, and put the location of those photos on
 We may begin with a responsive website rather than a native app.
 
 This is a completely free project of Public Invention release under the GPL 3.0. Contact me if you would like to volunteer.
+
+This is implemented with GithubPages, go here:
+(here)[https://pubinv.github.io/geotagtext/]

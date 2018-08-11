@@ -37,7 +37,7 @@ map.on('load', function () {
                     "type": "Feature",
                     "geometry": {
                         "type": "Point",
-                        "coordinates": [43.46667, -80.5204]
+                        "coordinates": [-80.5204, 43.46667 ]
                     },
                     "properties": {
                         "title": "Waterloo",

@@ -1,17 +1,9 @@
- <!DOCTYPE html>
-<html>
-<head>
-    <meta charset='utf-8' />
-    <title>Draw GeoJSON points</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
-    </style>
-</head>
-    <body>
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
+<style>
+       body { margin:0; padding:0; }
+       #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
 
       <div id='inputarea'>
 	This is the input area.
@@ -70,5 +62,4 @@ map.on('load', function () {
 });
 </script>
 
-</body>
-</html>
+

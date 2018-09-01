@@ -23,15 +23,39 @@
     <div id='map'></div>
     
     <script type="text/javascript" src="exif.js"></script>    
-<script>
+    <script>
+
+// https://stackoverflow.com/questions/8678371/how-to-convert-gps-degree-to-decimal-and-vice-versa-in-jquery-or-javascript-and
+function getDMS2DD(days, minutes, seconds, direction) {
+    direction.toUpperCase();
+    var dd = days + minutes/60 + seconds/(60*60);
+    //alert(dd);
+    if (direction == "S" || direction == "W") {
+        dd = dd*-1;
+    } // Don't do anything for N or E
+    return dd;
+}
+
+
         document.getElementById("file-input").onchange = function(e) {
             var file = e.target.files[0]
             if (file && file.name) {
                 EXIF.getData(file, function() {
         var exifData = EXIF.pretty(this);
 		var lat = this.exifdata.GPSLatitude;
-	var lon = this.exifdata.GPSLongitude;
+		    var partsOfLat = lat.split(',');
+		    var latDeg = partsOfLat[0];
+		    var latMin = partsOfLat[1];
+		    // We probably need to get the direction from exif.
+		    var latDec = getDMS2DD(latDeg,latMin,0,"N");
+
+		    var lon = this.exifdata.GPSLongitude;
+		    var partsOfLon = lon.split(',');
+		    var lonDeg = partsOfLon[0];
+		    var lonMin = partsOfLon[1];
+		    var lonDec = getDMS2DD(lonDeg,lonMin,0,"W");		    
 		    alert("lat : " + lat + " " + lon);
+		    alert("lat : " + latDec + " " + lonDec);		    
 		    
 		    var marker = new mapboxgl.Marker()
 			.setLngLat([30.5, 50.5])

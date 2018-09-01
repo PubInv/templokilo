@@ -35,7 +35,13 @@
         var exifData = EXIF.pretty(this);
 		var lat = this.exifdata.GPSLatitude;
 	var lon = this.exifdata.GPSLongitude;
-	alert("lat : " + lat + " " + lon);
+		    alert("lat : " + lat + " " + lon);
+		    
+		    var marker = new mapboxgl.Marker()
+			.setLngLat([30.5, 50.5])
+			.addTo(map);
+
+		    
                     if (exifData) {
                         alert(exifData);
                     } else {

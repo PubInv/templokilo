@@ -15,8 +15,9 @@
     <body>
 
       <div id='inputarea'>
-	This is the input are
-	<input id="upload_button" type='button'>
+	Upload a geotagged photo:
+    <input id="upload_button" type='button'>
+    UPLOAD
 	</input>
 	</div>
 
@@ -82,7 +83,7 @@ Upload.prototype.progressHandling = function (event) {
     $(progress_bar_id + " .status").text(percent + "%");
   };
 
-  /Change id to your id
+  //Change id to your id
 $("#upload_button").on("click", function (e) {
     var file = $(this)[0].files[0];
     var upload = new Upload(file);

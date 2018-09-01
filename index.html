@@ -47,9 +47,7 @@ function getDMS2DD(days, minutes, seconds, direction) {
 		    var latDec = getDMS2DD(lat[0],lat[1],lat[2],"N");
 
 		    var lon = this.exifdata.GPSLongitude;
-		    var partsOfLon = lon.split(',');
-		    var lonDeg = partsOfLon[0];
-		    var lonMin = partsOfLon[1];
+
 		    var lonDec = getDMS2DD(lon[1],lon[1],lon[2],"W");		    
 		    alert("lat : " + lat + " " + lon);
 		    alert("lat : " + latDec + " " + lonDec);		    

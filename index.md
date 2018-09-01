@@ -13,6 +13,9 @@
 </head>
     <body>
 
+      <div id='inputarea'>
+	This is the input area.
+	</div>
 
 <div id='map'></div>
 <script>

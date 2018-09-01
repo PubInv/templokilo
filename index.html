@@ -43,17 +43,14 @@ function getDMS2DD(days, minutes, seconds, direction) {
                 EXIF.getData(file, function() {
         var exifData = EXIF.pretty(this);
 		var lat = this.exifdata.GPSLatitude;
-		    var partsOfLat = lat.split(',');
-		    var latDeg = partsOfLat[0];
-		    var latMin = partsOfLat[1];
 		    // We probably need to get the direction from exif.
-		    var latDec = getDMS2DD(latDeg,latMin,0,"N");
+		    var latDec = getDMS2DD(lat[0],lat[1],lat[2],"N");
 
 		    var lon = this.exifdata.GPSLongitude;
 		    var partsOfLon = lon.split(',');
 		    var lonDeg = partsOfLon[0];
 		    var lonMin = partsOfLon[1];
-		    var lonDec = getDMS2DD(lonDeg,lonMin,0,"W");		    
+		    var lonDec = getDMS2DD(lon[1],lon[1],lon[2],"W");		    
 		    alert("lat : " + lat + " " + lon);
 		    alert("lat : " + latDec + " " + lonDec);		    
 		    

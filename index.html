@@ -45,7 +45,7 @@ html, body
 }
 
 
-        
+
     </style>
 </head>
     <body>
@@ -58,8 +58,10 @@ html, body
     <input id="file-input" type="file" />
     </br>
 <!---Testing Input for Opening Camera and capturing the picture around the users environment-->
-<input type="file" name="video" accept="video/*" capture="environment">
-  <input type="submit" value="Upload">
+<label class="cameraButton">Take a picture
+    <input type="file" accept="image/*;capture=camera">
+  </label>
+  
 <!--code ends here-->
     <br/>
 	</div>
@@ -67,7 +69,7 @@ html, body
 
 <div id="map-holder">
   <div class="container fill">
-    <div id="map"></div>
+    <div id='map'></div>
   </div>
 </div>
 

@@ -8,7 +8,13 @@
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!---added Bootstrap-->
-     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- Experimentally trying tesseract -->
+    <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script> 
+
+<!-- <script src="https://cdn.rawgit.com/naptha/tesseract.js/0.2.0/dist/tesseract.js"> -->
+</script>
     <style>
         /*body { margin:0; padding:0; }
         #map { position:absolute; top:10%; bottom:0; width:100%; }*/
@@ -99,15 +105,21 @@ function getDMS2DD(days, minutes, seconds, direction) {
 document.getElementById("file-input").onchange = function(e) {
     var file = e.target.files[0]
     if (file && file.name) {
+	    Tesseract.recognize(file)
+		.then(function(result){
+		    console.log("Foud this result");
+		    console.log(result);
+		});
+	
         EXIF.getData(file, function() {
 	    
 	    var exifData = EXIF.pretty(this);
-            if (exifData) {
-            } else {
-                alert("No EXIF data found in image '" + file.name + "'.");
+	    if (exifData) {
+	    } else {
+		alert("No EXIF data found in image '" + file.name + "'.");
 		return;
-            }
-	    
+	    }
+
 	    var lat = this.exifdata.GPSLatitude;
 	    if (lat) {
 
@@ -117,9 +129,9 @@ document.getElementById("file-input").onchange = function(e) {
 		var lon = this.exifdata.GPSLongitude;
 
 		var lonDec = getDMS2DD(lon[0],lon[1],lon[2],this.exifdata.GPSLongitudeRef);		    
-		
+
 		var ll = new mapboxgl.LngLat(lonDec, latDec);
-		
+
 		var marker = new mapboxgl.Marker()
 		    .setLngLat(ll)
 		    .addTo(map);
@@ -127,6 +139,7 @@ document.getElementById("file-input").onchange = function(e) {
 		alert("Unable to extract location data!");
 	    }
 
+	
 	    
         });
     }

@@ -108,18 +108,23 @@ document.getElementById("file-input").onchange = function(e) {
             }
 	    
 	    var lat = this.exifdata.GPSLatitude;
-	    // We probably need to get the direction from exif.
-	    var latDec = getDMS2DD(lat[0],lat[1],lat[2],this.exifdata.GPSLongitudeRef);
+	    if (lat) {
 
-	    var lon = this.exifdata.GPSLongitude;
+		// We probably need to get the direction from exif.
+		var latDec = getDMS2DD(lat[0],lat[1],lat[2],this.exifdata.GPSLongitudeRef);
 
-	    var lonDec = getDMS2DD(lon[0],lon[1],lon[2],this.exifdata.GPSLongitudeRef);		    
-	    
-	    var ll = new mapboxgl.LngLat(lonDec, latDec);
-	    
-	    var marker = new mapboxgl.Marker()
-		.setLngLat(ll)
-		.addTo(map);
+		var lon = this.exifdata.GPSLongitude;
+
+		var lonDec = getDMS2DD(lon[0],lon[1],lon[2],this.exifdata.GPSLongitudeRef);		    
+		
+		var ll = new mapboxgl.LngLat(lonDec, latDec);
+		
+		var marker = new mapboxgl.Marker()
+		    .setLngLat(ll)
+		    .addTo(map);
+	    } else {
+		alert("Unable to extract location data!");
+	    }
 
 	    
         });

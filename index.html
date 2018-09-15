@@ -111,7 +111,7 @@ document.getElementById("file-input").onchange = function(e) {
 	    if (lat) {
 
 		// We probably need to get the direction from exif.
-		var latDec = getDMS2DD(lat[0],lat[1],lat[2],this.exifdata.GPSLongitudeRef);
+		var latDec = getDMS2DD(lat[0],lat[1],lat[2],this.exifdata.GPSLattitudeRef);
 
 		var lon = this.exifdata.GPSLongitude;
 

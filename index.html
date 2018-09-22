@@ -104,7 +104,14 @@ function getLocation() {
 }
 function showPosition(position) {
     x.innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude; 
+	"<br>Longitude: " + position.coords.longitude;
+    var lonDec = position.coords.longitude;
+    var latDec = position.coords.latitude;
+    var ll = new mapboxgl.LngLat(lonDec, latDec);
+
+    var marker = new mapboxgl.Marker()
+	.setLngLat(ll)
+	.addTo(map);
 }
 
 // https://stackoverflow.com/questions/8678371/how-to-convert-gps-degree-to-decimal-and-vice-versa-in-jquery-or-javascript-and

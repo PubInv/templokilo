@@ -70,6 +70,9 @@ html, body
     <input id="file-input" type="file" accept="image/*;capture=camera">
   </label>
 
+    <button onclick="getLocation()">Try It</button>
+    
+<div id="demo"> </div>
 
 <!--code ends here-->
     <br/>
@@ -89,6 +92,20 @@ html, body
     
     <script type="text/javascript" src="exif.js"></script>    
     <script>
+
+      var x = document.getElementById("demo");
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+      //        x.innerHTML = "Geolocation is not supported by this browser.";
+      alert("Geolocation is not supported by this browser.");
+    }
+}
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude; 
+}
 
 // https://stackoverflow.com/questions/8678371/how-to-convert-gps-degree-to-decimal-and-vice-versa-in-jquery-or-javascript-and
 function getDMS2DD(days, minutes, seconds, direction) {

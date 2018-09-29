@@ -50,25 +50,6 @@ html, body
     padding: 0.2em;
 }
 
-/* Button Group CSS*/
-.btn-group button {
-    background-color: #4CAF50; /* Green background */
-    border: 1px solid green; /* Green border */
-    color: white; /* White text */
-    padding: 10px 24px; /* Some padding */
-    cursor: pointer; /* Pointer/hand icon */
-    width: 70%; /* Set a width if needed */
-    display: block; /* Make the buttons appear below each other */
-}
-
-.btn-group button:not(:last-child) {
-    border-bottom: none; /* Prevent double borders */
-}
-
-/* Add a background color on hover */
-.btn-group button:hover {
-    background-color: #3e8e41;
-}
 
  
 
@@ -100,10 +81,10 @@ html, body
 	</div>
  
 
-<div class="btn-group">
-  <button>Red</button>
-  <button>Blue</button>
-  <button>Green</button>
+<div class="btn-group-vertical">
+  <button type="button" class="btn btn-primary">Red</button>
+  <button type="button" class="btn btn-primary">Blue</button>
+  <button type="button" class="btn btn-primary">Green</button>
 </div>
 
 

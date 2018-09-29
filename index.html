@@ -50,7 +50,25 @@ html, body
     padding: 0.2em;
 }
 
+/* Button Group CSS*/
+.btn-group button {
+    background-color: #4CAF50; /* Green background */
+    border: 1px solid green; /* Green border */
+    color: white; /* White text */
+    padding: 10px 24px; /* Some padding */
+    cursor: pointer; /* Pointer/hand icon */
+    width: 50%; /* Set a width if needed */
+    display: block; /* Make the buttons appear below each other */
+}
 
+.btn-group button:not(:last-child) {
+    border-bottom: none; /* Prevent double borders */
+}
+
+/* Add a background color on hover */
+.btn-group button:hover {
+    background-color: #3e8e41;
+}
 
  
 
@@ -82,10 +100,10 @@ html, body
 	</div>
  
 
-<div class="btn-group" style="width:100%">
-  <button style="width:33.3%">Apple</button>
-  <button style="width:33.3%">Samsung</button>
-  <button style="width:33.3%">Sony</button>
+<div class="btn-group">
+  <button>Red</button>
+  <button>Blue</button>
+  <button>Green</button>
 </div>
 
 

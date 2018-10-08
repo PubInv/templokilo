@@ -135,22 +135,16 @@ function showPosition(position) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
     var marker = new mapboxgl.Marker()
+    this.setIcon(
+        L.mapbox.marker.icon({
+            'marker-color': 'red'
+        })
+    );
 	.setLngLat(ll)
 	.addTo(map);
-
-
-
-    var greenIcon = new L.Icon({
-  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
-
-L.marker({icon: greenIcon}).addTo(map);
 }
+
+ 
 
 // https://stackoverflow.com/questions/8678371/how-to-convert-gps-degree-to-decimal-and-vice-versa-in-jquery-or-javascript-and
 function getDMS2DD(days, minutes, seconds, direction) {

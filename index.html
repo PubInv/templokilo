@@ -134,28 +134,22 @@ function showPosition(position) {
     var latDec = position.coords.latitude;
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
-    var marker = new mapboxgl.Marker()
+    var marker = new mapboxgl.Marker();
+      marker.on('click', function() {
+    this.setIcon(
+        L.mapbox.marker.icon({
+            'marker-color': 'red'
+        })
+    );
+});
 	.setLngLat(ll)
 	.addTo(map);
 
-    marker.on('click', function() {
-    this.setIcon(
-        L.mapbox.marker.icon({
-            'marker-color': 'red'
-        })
-    );
-});
     
+
 }
 
-//Testing Marker color change
-marker.on('click', function() {
-    this.setIcon(
-        L.mapbox.marker.icon({
-            'marker-color': 'red'
-        })
-    );
-});
+ 
 
 
 

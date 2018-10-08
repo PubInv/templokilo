@@ -135,12 +135,12 @@ function showPosition(position) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
     var marker = new mapboxgl.Marker()
-    this.setIcon(
+    
         L.mapbox.marker.icon({
             'marker-color': 'red'
-        })
-    );
-	.setLngLat(ll);
+        });
+    
+	.setLngLat(ll)
 	.addTo(map);
 }
 

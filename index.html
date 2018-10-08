@@ -135,16 +135,9 @@ function showPosition(position) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
     var marker = new mapboxgl.Marker()
-    
-        L.mapbox.marker.icon({
-            'marker-color': 'red'
-        });
-    
 	.setLngLat(ll)
 	.addTo(map);
 }
-
- 
 
 // https://stackoverflow.com/questions/8678371/how-to-convert-gps-degree-to-decimal-and-vice-versa-in-jquery-or-javascript-and
 function getDMS2DD(days, minutes, seconds, direction) {

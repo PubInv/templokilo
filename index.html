@@ -134,15 +134,9 @@ function showPosition(position) {
     var latDec = position.coords.latitude;
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
-    var marker = new mapboxgl.Marker();
-      marker.on('click', function() {
-    this.setIcon(
-        L.mapbox.marker.icon({
-            'marker-color': 'red'
-        })
-    );
-});
-	.setLngLat(ll);
+    var marker = new mapboxgl.Marker()
+      
+	.setLngLat(ll)
     
 	.addTo(map);
 

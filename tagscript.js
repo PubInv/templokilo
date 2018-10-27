@@ -124,53 +124,43 @@ map.on('load', function () {
     //     "type": "geojson",
     //     "data": pointOnCircle(0)
     // });
-    map.addSource('point', {
-        "type": "geojson",
-        "data": {
-                "type": "FeatureCollection",
-                "features": [{
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [-80.5204, 43.46667 ]
-                    },
-                    "properties": {
-                        "color": "blue",                        
-                        "title": "Waterloo",
-                        "icon": "monument"
-                    }
-                }, {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [-122.414, 37.776]
-                    },
-                    "properties": {
-                        "color": "green",
-                        "title": "Mapbox SF",
-                        "icon": "gradient"
-                    }
-                }]
-            }
-    });
+    // map.addSource('point', {
+    //     "type": "geojson",
+    //     "data": {
+    //             "type": "FeatureCollection",
+    //             "features": [{
+    //                 "type": "Feature",
+    //                 "geometry": {
+    //                     "type": "Point",
+    //                     "coordinates": [-80.5204, 43.46667 ]
+    //                 },
+    //                 "properties": {
+    //                     "color": "blue",                        
+    //                     "title": "Waterloo",
+    //                     "icon": "monument"
+    //                 }
+    //             }, {
+    //                 "type": "Feature",
+    //                 "geometry": {
+    //                     "type": "Point",
+    //                     "coordinates": [-122.414, 37.776]
+    //                 },
+    //                 "properties": {
+    //                     "color": "green",
+    //                     "title": "Mapbox SF",
+    //                     "icon": "gradient"
+    //                 }
+    //             }]
+    //         }
+    // });
 
-    map.addLayer({
-        "id": "point",
-        "source": "point",
-        "type": "circle",
-        // "paint": {
-        //     "circle-radius": 10,
-        //     'circle-color': [
-        //         'match',
-        //         ['get', 'color'],
-        //         'red', 'red',
-        //         'blue', 'blue',
-        //         /* other */ '#ccc'
-        //     ]
-        // }
-        "paint": {
-            "circle-radius": 10,
-            'circle-color': ['get', 'color']
-        }
-    });
+    // map.addLayer({
+    //     "id": "point",
+    //     "source": "point",
+    //     "type": "circle",
+    //     "paint": {
+    //         "circle-radius": 10,
+    //         'circle-color': ['get', 'color']
+    //     }
+    // });
 });

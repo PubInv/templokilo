@@ -1,15 +1,30 @@
 # geotagtext
-Experimental repo to build maps based on geotagged photos indicating text
 
+A system for tagging geolocations with browser-based goelocation.
 
+Prototype is: 
+(here)[https://pubinv.github.io/geotagtext/]
 ## Basic Idea
 
-Eventually, we want an app that lets you locate books in a Little Library. However, the repo is a simple precursor that just lets 
-you take photos, which may contain text, and put the location of those photos on a map.
+The goal of this project is to allow a group of people, perhaps in an emegency situation, to geotag locations
+to be on a map.
 
-We may begin with a responsive website rather than a native app.
+Imagine using your phone to place a red tag on a flooded area, or where a person needs help, and
+green tag on a road which is passable.
 
-This is a completely free project of Public Invention release under the GPL 3.0. Contact me if you would like to volunteer.
+## Basic Technology
 
-This is implemented with GithubPages, go here:
-(here)[https://pubinv.github.io/geotagtext/]
+Browser based, free software, using cheap cloud database.
+
+## Goals
+
+## Agile Development
+
+## History
+
+Begun by Neil Martis and Rob Read.
+
+
+
+
+

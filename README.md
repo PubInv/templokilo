@@ -18,6 +18,9 @@ Browser based, free software, using cheap cloud database.
 
 ## Goals
 
+ The goal is to further enhance and build on the existing application thereby developing an application user interface or a   public API which can used and incorporated into existing applications or a brand new project for example during natural disaster or in applications like Free Little Libraries or Free Little Food Pantries 
+
+
 ## Agile Development
 
 ## History

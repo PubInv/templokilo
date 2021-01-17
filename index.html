@@ -8,7 +8,10 @@
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!---added Bootstrap-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+	 <!--
+	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	 -->
 
     <!-- Experimentally trying tesseract -->
     <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script> 
@@ -17,11 +20,11 @@
 
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
     <!-- Firebase App is always required and must be first -->
-<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
 
-<!-- Add additional services that you want to use -->
-<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
+    <!-- Add additional services that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
 
 
 
@@ -60,14 +63,18 @@ html, body
     padding: 0.2em;
 }
 
-
- 
+.center{
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 30px
+}
 
 
     </style>
 </head>
-    <body>
-    <h1>GeotagText</h1>
+
+<body>
+    <h1 class="center">GeotagText</h1>
     </br>
     <!---
       <div id='inputarea'>    
@@ -80,7 +87,7 @@ html, body
 <!---Testing Input for Opening Camera and capturing the picture around the users environment-->
 <label class="cameraButton">Take a picture
     <input id="file-input" type="file" accept="image/*;capture=camera">
-  </label>
+</label>
 
     <button onclick="getLocation()">Try It</button>
     
@@ -88,18 +95,23 @@ html, body
 
 <!--code ends here-->
     <br/>
-	</div>
- 
 
-<div class="btn-group-vertical">
+
+<div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Enter Message:</span>
+      </div>
+      <textarea id="message" class="form-control" aria-label="With textarea"></textarea>
+</div>
+<br>
+<p class="center">Then select a color to go with your message</p>
+    
+
+<div class="btn-group-vertical, center">
   <button type="button" onclick="getLocation('red')" class="btn btn-primary">Red</button>
   <button type="button"  onclick="getLocation('blue')" class="btn btn-primary">Blue</button>
   <button type="button"  onclick="getLocation('green')" class="btn btn-primary">Green</button>
 </div>
-
-
-
-
 
 
 

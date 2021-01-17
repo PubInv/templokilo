@@ -33,16 +33,21 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
 
 function writeTag(tagId, lat, lon, color) {
     var tagmessage = document.querySelector('#message').value;
-    console.log("Message: ",tagmessage);
-    if (tagmessage) {console.log("Yes message");}
-    else {console.log("No message");}
-    //if (str) {
+    if (tagmessage) {
+	console.log("Message: ",tagmessage);
+    }
+    else {
+	console.log("No message");
+	tagmessage = null;
+    }
 	
     var obj = {
         latitude: lat,
         longitude: lon,
-        color: color
+        color: color,
+	message: tagmessage
     };
+    //just putting message into this obj to see if it works
     console.log(obj);
     
     firebase.database().ref('tags/' + tagId).set(obj,

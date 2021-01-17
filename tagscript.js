@@ -53,7 +53,7 @@ function writeTag(tagId, lat, lon, color) {
                                                          console.log("ERROR:",error);
                                                      } else {
                                                          // Data saved successfully!
-                                                         console.log("SUCCESS");  
+                                                         console.log("SUCCESS1");  
                                                      }
                                                  });
 }

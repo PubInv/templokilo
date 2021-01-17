@@ -35,8 +35,8 @@ function writeTag(tagId, lat, lon, color) {
     var tagmessage = "fred";
     //var tagmessage = document.querySelector('#message').value;
     console.log("Message: ",tagmessage);
-    if (tagmessage) {console.log("Yes message")};
-    else {console.log("No message")};
+    if (tagmessage) {console.log("Yes message");}
+    else {console.log("No message");}
     //if (str) {
 	
     var obj = {

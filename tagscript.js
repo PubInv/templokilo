@@ -38,7 +38,8 @@ function writeTag(tagId, lat, lon, color) {
     }
     else {
 	console.log("No message");
-	tagmessage = null;
+	//tagmessage = null;
+	tagmessage = '';
 	//isn't showing up in obj if null
     }
 	
@@ -49,7 +50,7 @@ function writeTag(tagId, lat, lon, color) {
 	message: tagmessage
     };
     //just putting message into this obj to see if it works
-    //CLEAR MESSAGE BUBBLE AFTER COLOR BEING PUSHED
+    //the latest geotag is written into geotag44, regardless of yes/no message.
     console.log(obj);
     
     firebase.database().ref('tags/' + tagId).set(obj,
@@ -130,6 +131,8 @@ function showLngLatOnMap(lonDec,latDec,color) {
         }
     });
 
+    console.log("LCNT: ",lcnt);
+    //checking to see if this is updating
     lcnt++;    
 }
 

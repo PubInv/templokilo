@@ -32,9 +32,10 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
 }); 
 
 function writeTag(tagId, lat, lon, color) {
-    let str = document.querySelector('#message').value;
-    console.log("Message: ",str);
-    if (str) {console.log("Yes message")};
+    var tagmessage = "fred";
+    //var tagmessage = document.querySelector('#message').value;
+    console.log("Message: ",tagmessage);
+    if (tagmessage) {console.log("Yes message")};
     else {console.log("No message")};
     //if (str) {
 	

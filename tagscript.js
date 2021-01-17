@@ -38,8 +38,8 @@ function writeTag(tagId, lat, lon, color) {
     }
     else {
 	console.log("No message");
-	//tagmessage = null;
-	tagmessage = '';
+	tagmessage = null;
+	//tagmessage = '';
 	//isn't showing up in obj if null
     }
 	
@@ -131,7 +131,7 @@ function showLngLatOnMap(lonDec,latDec,color) {
         }
     });
 
-    console.log("LCNT: ",lcnt);
+    //console.log("LCNT: ",lcnt);
     //checking to see if this is updating
     lcnt++;    
 }
@@ -155,7 +155,7 @@ document.getElementById("file-input").onchange = function(e) {
 	    lang: 'eng',
 	})
 	    .then(function(result){
-		console.log("Foud this result");
+		console.log("Found this result");
 		console.log(result);
 	    });
 	

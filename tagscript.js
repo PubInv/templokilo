@@ -32,6 +32,12 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
 }); 
 
 function writeTag(tagId, lat, lon, color) {
+    let str = document.querySelector('#message').value;
+    console.log("Message: ",str);
+    if (str) {console.log("Yes message")};
+    else {console.log("No message")};
+    //if (str) {
+	
     var obj = {
         latitude: lat,
         longitude: lon,

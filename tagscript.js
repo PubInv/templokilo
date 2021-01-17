@@ -32,8 +32,7 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
 }); 
 
 function writeTag(tagId, lat, lon, color) {
-    var tagmessage = "fred";
-    //var tagmessage = document.querySelector('#message').value;
+    var tagmessage = document.querySelector('#message').value;
     console.log("Message: ",tagmessage);
     if (tagmessage) {console.log("Yes message");}
     else {console.log("No message");}
@@ -53,7 +52,7 @@ function writeTag(tagId, lat, lon, color) {
                                                          console.log("ERROR:",error);
                                                      } else {
                                                          // Data saved successfully!
-                                                         console.log("SUCCESS1");  
+                                                         console.log("SUCCESS");  
                                                      }
                                                  });
 }

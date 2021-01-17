@@ -39,6 +39,7 @@ function writeTag(tagId, lat, lon, color) {
     else {
 	console.log("No message");
 	tagmessage = null;
+	//isn't showing up in obj if null
     }
 	
     var obj = {
@@ -48,6 +49,7 @@ function writeTag(tagId, lat, lon, color) {
 	message: tagmessage
     };
     //just putting message into this obj to see if it works
+    //CLEAR MESSAGE BUBBLE AFTER COLOR BEING PUSHED
     console.log(obj);
     
     firebase.database().ref('tags/' + tagId).set(obj,
@@ -60,6 +62,7 @@ function writeTag(tagId, lat, lon, color) {
                                                          console.log("SUCCESS");  
                                                      }
                                                  });
+    document.getElementById("message").value='';
 }
 
 

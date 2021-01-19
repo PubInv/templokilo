@@ -50,6 +50,7 @@ function writeTag(tagId, lat, lon, color, message) {
     };
     //just putting message into this obj to see if it works
     //the latest geotag is written into geotag44, regardless of yes/no message.
+    //I tested this on the master branch and same problem happened.
     console.log(obj);
     
     firebase.database().ref('tags/' + tagId).set(obj,
@@ -62,7 +63,8 @@ function writeTag(tagId, lat, lon, color, message) {
                                                          console.log("SUCCESS");  
                                                      }
                                                  });
-    //document.getElementById("message").value='';
+    document.getElementById("message").value='';
+    //erase input message
 }
 
 
@@ -89,7 +91,8 @@ function writePosition(position,color) {
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     var tagmessage = document.getElementById('message').value;
-    writeTag("geotag" + lcnt,latDec,lonDec,color,tagmessage);    
+    writeTag("geotag47",latDec,lonDec,color,tagmessage);
+    //writeTag("geotag" + lcnt,latDec,lonDec,color,tagmessage);    
 }
 function showPositionOnPage(position,color) {
     x.innerHTML = "Latitude: " + position.coords.latitude + 

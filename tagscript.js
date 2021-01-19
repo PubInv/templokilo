@@ -40,9 +40,9 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
 	snapshotarray[i] = parseInt(snapshotarray[i]);
     }
     snapshotarray.sort(function(a,b){return b-a});
-    lasttag = snapshotarray[0];
-    console.log("snapshotarray", snapshotarray);
-    console.log("last tag: ", lasttag);
+    lasttag = snapshotarray[0] + 1;
+    //console.log("snapshotarray", snapshotarray);
+    //console.log("last tag: ", lasttag);
 }); 
 
 function writeTag(tagId, lat, lon, color, message) {
@@ -104,7 +104,7 @@ function writePosition(position,color) {
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     var tagmessage = document.getElementById('message').value;
-    writeTag("geotag47",latDec,lonDec,color,tagmessage);
+    writeTag("geotag" + lasttag,latDec,lonDec,color,tagmessage);
     //writeTag("geotag" + lcnt,latDec,lonDec,color,tagmessage);    
 }
 function showPositionOnPage(position,color) {

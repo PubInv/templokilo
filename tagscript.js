@@ -26,9 +26,16 @@ firebase.database().ref('/').once('value').then(function(snapshot) {
     console.log("snapshot",snapshot);
 }); 
 
+//trying to find last tag posted
+var lasttag;
+
 firebase.database().ref('/tags').once('value').then(function(snapshot) {
     console.log("tags snapshot",snapshot);
-    console.log("tags val snapshot",snapshot.val());     
+    console.log("tags val snapshot",snapshot.val());
+    
+    snapshotarray = Object.keys(snapshot.val());
+    lasttag = snapshotarray[snapshotarray.length - 1];
+    console.log("last tag: ", lasttag);
 }); 
 
 function writeTag(tagId, lat, lon, color, message) {
@@ -38,7 +45,6 @@ function writeTag(tagId, lat, lon, color, message) {
     else {
 	console.log("No message");
 	message = null;
-	//message = '';
 	//isn't showing up in obj if null
     }
 	
@@ -49,7 +55,7 @@ function writeTag(tagId, lat, lon, color, message) {
 	message: message
     };
     //just putting message into this obj to see if it works
-    //the latest geotag is written into geotag44, regardless of yes/no message.
+    //the latest geotag is written into geotag45, regardless of yes/no message.
     //I tested this on the master branch and same problem happened.
     console.log(obj);
     
@@ -201,6 +207,7 @@ var map = new mapboxgl.Map({
 var radius = 20;
 
 
+//The tag number bug is somewhere in here. showLngLatOnMap... isn't getting called enough, so lcnt isn't updating enough to create a new tag. Instead it's rewriting an old one.
 map.on('load', function () {
     firebase.database().ref('/tags').once('value').then(function(snapshot) {
         Object.values(snapshot.val()).map(

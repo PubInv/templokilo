@@ -31,15 +31,14 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
     console.log("tags val snapshot",snapshot.val());     
 }); 
 
-function writeTag(tagId, lat, lon, color) {
-    var tagmessage = document.querySelector('#message').value;
-    if (tagmessage) {
-	console.log("Message: ",tagmessage);
+function writeTag(tagId, lat, lon, color, message) {
+    if (message) {
+	console.log("Message: ",message);
     }
     else {
 	console.log("No message");
-	tagmessage = null;
-	//tagmessage = '';
+	message = null;
+	//message = '';
 	//isn't showing up in obj if null
     }
 	
@@ -47,7 +46,7 @@ function writeTag(tagId, lat, lon, color) {
         latitude: lat,
         longitude: lon,
         color: color,
-	message: tagmessage
+	message: message
     };
     //just putting message into this obj to see if it works
     //the latest geotag is written into geotag44, regardless of yes/no message.
@@ -63,7 +62,7 @@ function writeTag(tagId, lat, lon, color) {
                                                          console.log("SUCCESS");  
                                                      }
                                                  });
-    document.getElementById("message").value='';
+    //document.getElementById("message").value='';
 }
 
 
@@ -89,7 +88,8 @@ function createTag(position,color) {
 function writePosition(position,color) {
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
-    writeTag("geotag" + lcnt,latDec,lonDec,color);    
+    var tagmessage = document.getElementById('message').value;
+    writeTag("geotag" + lcnt,latDec,lonDec,color,tagmessage);    
 }
 function showPositionOnPage(position,color) {
     x.innerHTML = "Latitude: " + position.coords.latitude + 

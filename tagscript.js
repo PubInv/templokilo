@@ -24,12 +24,12 @@ var ref = firebase.database().ref();
 
 firebase.database().ref('/').once('value').then(function(snapshot) {
     console.log("snapshot",snapshot);
-}); 
+});
 
 firebase.database().ref('/tags').once('value').then(function(snapshot) {
     console.log("tags snapshot",snapshot);
-    console.log("tags val snapshot",snapshot.val());     
-}); 
+    console.log("tags val snapshot",snapshot.val());
+});
 
 function writeTag(tagId, lat, lon, color, message) {
     if (message) {
@@ -41,7 +41,7 @@ function writeTag(tagId, lat, lon, color, message) {
 	//message = '';
 	//isn't showing up in obj if null
     }
-	
+
     var obj = {
         latitude: lat,
         longitude: lon,
@@ -52,7 +52,7 @@ function writeTag(tagId, lat, lon, color, message) {
     //the latest geotag is written into geotag44, regardless of yes/no message.
     //I tested this on the master branch and same problem happened.
     console.log(obj);
-    
+
     firebase.database().ref('tags/' + tagId).set(obj,
                                                  function(error) {
                                                      if (error) {
@@ -60,7 +60,7 @@ function writeTag(tagId, lat, lon, color, message) {
                                                          console.log("ERROR:",error);
                                                      } else {
                                                          // Data saved successfully!
-                                                         console.log("SUCCESS");  
+                                                         console.log("SUCCESS");
                                                      }
                                                  });
     document.getElementById("message").value='';
@@ -91,21 +91,21 @@ function writePosition(position,color) {
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     var tagmessage = document.getElementById('message').value;
-    writeTag("geotag47",latDec,lonDec,color,tagmessage);
-    //writeTag("geotag" + lcnt,latDec,lonDec,color,tagmessage);    
+//    writeTag("geotag47",latDec,lonDec,color,tagmessage);
+    writeTag("geotag" + lcnt,latDec,lonDec,color,tagmessage);
 }
 function showPositionOnPage(position,color) {
-    x.innerHTML = "Latitude: " + position.coords.latitude + 
+    x.innerHTML = "Latitude: " + position.coords.latitude +
 	"<br>Longitude: " + position.coords.longitude;
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     showLngLatOnMap(lonDec,latDec,color);
 }
 
-function showLngLatOnMap(lonDec,latDec,color) {
+function showLngLatOnMap(lonDec,latDec,color,n) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
-    map.addSource('point'+lcnt, {
+    map.addSource('point'+n, {
         "type": "geojson",
         "data": {
             "type": "FeatureCollection",
@@ -116,7 +116,7 @@ function showLngLatOnMap(lonDec,latDec,color) {
                     "coordinates": [lonDec, latDec ]
                 },
                 "properties": {
-                    "color": color,                        
+                    "color": color,
                     "title": "Waterloo",
                     "icon": "monument"
                 }
@@ -125,8 +125,8 @@ function showLngLatOnMap(lonDec,latDec,color) {
     });
 
     map.addLayer({
-        "id": "point"+lcnt,
-        "source": "point"+lcnt,
+        "id": "point"+n,
+        "source": "point"+n,
         "type": "circle",
         "paint": {
             "circle-radius": 10,
@@ -134,9 +134,11 @@ function showLngLatOnMap(lonDec,latDec,color) {
         }
     });
 
-    //console.log("LCNT: ",lcnt);
-    //checking to see if this is updating
-    lcnt++;    
+
+//  lcnt++;
+//  console.log("LCNT: ",lcnt);
+    // checking to see if this is updating
+
 }
 
 // https://stackoverflow.com/questions/8678371/how-to-convert-gps-degree-to-decimal-and-vice-versa-in-jquery-or-javascript-and
@@ -161,9 +163,9 @@ document.getElementById("file-input").onchange = function(e) {
 		console.log("Found this result");
 		console.log(result);
 	    });
-	
+
         EXIF.getData(file, function() {
-	    
+
 	    var exifData = EXIF.pretty(this);
 	    if (exifData) {
 	    } else {
@@ -177,7 +179,7 @@ document.getElementById("file-input").onchange = function(e) {
 		// We probably need to get the direction from exif.
 		var latDec = getDMS2DD(lat[0],lat[1],lat[2],this.exifdata.GPSLatitudeRef);
 		var lon = this.exifdata.GPSLongitude;
-		var lonDec = getDMS2DD(lon[0],lon[1],lon[2],this.exifdata.GPSLongitudeRef);		    
+		var lonDec = getDMS2DD(lon[0],lon[1],lon[2],this.exifdata.GPSLongitudeRef);
 		var ll = new mapboxgl.LngLat(lonDec, latDec);
 
 		var marker = new mapboxgl.Marker()
@@ -202,10 +204,16 @@ var radius = 20;
 
 
 map.on('load', function () {
-    firebase.database().ref('/tags').once('value').then(function(snapshot) {
-        Object.values(snapshot.val()).map(
-            (gt) => {
-                showLngLatOnMap(gt.longitude,gt.latitude,gt.color);
-            });
-    }); 
+  firebase.database().ref('/tags').once('value').then(function(snapshot) {
+    var v = snapshot.val();
+    console.log("spud:"+ v);
+    for(const prop in v) {
+      console.log("prop =",prop);
+      const n = parseInt(prop.substring("geotag".length));
+        gt = v[prop];
+      console.log("gt = gt");
+      showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n);
+      lcnt = n+1;
+    }
+    });
 });

@@ -73,11 +73,18 @@ function writeTag(tagId, lat, lon, color, message) {
 
 var x = document.getElementById("demo");
 
-
+function error(err) {
+  console.warn(`ERROR(${err.code}): ${err.message}`);
+}
 function getLocation(color) {
   // LASTTAGNUM is global to this function
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => createTag(position,color,LASTTAGNUM+1));
+  if (navigator.geolocation) {
+    var options = { enableHighAccuracy: false,
+                    timeout:10000};
+      navigator.geolocation.getCurrentPosition(
+        (position) => createTag(position,color,LASTTAGNUM+1),
+        error,
+      options);
       LASTTAGNUM++;
     } else {
         //        x.innerHTML = "Geolocation is not supported by this browser.";
@@ -219,3 +226,26 @@ map.on('load', function () {
     }
     });
 });
+
+
+var options = {
+  enableHighAccuracy: true,
+  timeout: 5000
+//  ,
+//  maximumAge: 0
+};
+
+function success(pos) {
+  var crd = pos.coords;
+
+  console.log('Your current position is:');
+  console.log(`Latitude : ${crd.latitude}`);
+  console.log(`Longitude: ${crd.longitude}`);
+  console.log(`More or less ${crd.accuracy} meters.`);
+}
+
+function error(err) {
+  console.warn(`ERROR(${err.code}): ${err.message}`);
+}
+
+navigator.geolocation.getCurrentPosition(success, error, options);

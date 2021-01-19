@@ -36,7 +36,7 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
     snapshotarray = Object.keys(snapshot.val());
     var arrayLength = snapshotarray.length;
     for (var i = 0; i < arrayLength; i++) {
-	snapshotarray[i] = snapshotarray[i].splice(6);
+	snapshotarray[i] = snapshotarray[i].substr(6);
 	snapshotarray[i] = parseInt(snapshotarray[i]);
     }
     snapshotarray.sort(function(a,b){return b-a});

@@ -34,7 +34,13 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
     console.log("tags val snapshot",snapshot.val());
     
     snapshotarray = Object.keys(snapshot.val());
-    lasttag = snapshotarray[snapshotarray.length - 1];
+    var arrayLength = snapshotarray.length;
+    for (var i = 0; i < arrayLength; i++) {
+	snapshotarray[i] = snapshotarray[i].splice(6);
+	snapshotarray[i] = parseInt(snapshotarray[i]);
+    }
+    snapshotarry.sort(function(a,b){return b-a});
+    lasttag = snapshotarry[0];
     console.log("snapshotarray", snapshotarray);
     console.log("last tag: ", lasttag);
 }); 

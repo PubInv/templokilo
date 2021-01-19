@@ -1,3 +1,5 @@
+//trying to find last tag posted
+var LASTTAGNUM = 0;
 
 // Initialize Firebase
 var config = {
@@ -26,6 +28,7 @@ firebase.database().ref('/').once('value').then(function(snapshot) {
     console.log("snapshot",snapshot);
 });
 
+
 firebase.database().ref('/tags').once('value').then(function(snapshot) {
     console.log("tags snapshot",snapshot);
     console.log("tags val snapshot",snapshot.val());
@@ -38,7 +41,6 @@ function writeTag(tagId, lat, lon, color, message) {
     else {
 	console.log("No message");
 	message = null;
-	//message = '';
 	//isn't showing up in obj if null
     }
 
@@ -49,7 +51,7 @@ function writeTag(tagId, lat, lon, color, message) {
 	message: message
     };
     //just putting message into this obj to see if it works
-    //the latest geotag is written into geotag44, regardless of yes/no message.
+    //the latest geotag is written into geotag45, regardless of yes/no message.
     //I tested this on the master branch and same problem happened.
     console.log(obj);
 
@@ -72,10 +74,11 @@ function writeTag(tagId, lat, lon, color, message) {
 var x = document.getElementById("demo");
 
 
-
 function getLocation(color) {
+  // LASTTAGNUM is global to this function
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => createTag(position,color));
+      navigator.geolocation.getCurrentPosition((position) => createTag(position,color,LASTTAGNUM+1));
+      LASTTAGNUM++;
     } else {
         //        x.innerHTML = "Geolocation is not supported by this browser.";
         alert("Geolocation is not supported by this browser.");
@@ -83,16 +86,15 @@ function getLocation(color) {
 }
 var lcnt = 0;
 
-function createTag(position,color) {
+function createTag(position,color,tagnum) {
     showPositionOnPage(position,color);
-    writePosition(position,color);
+  writePosition(position,color,tagnum);
 }
-function writePosition(position,color) {
+function writePosition(position,color,tagnum) {
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     var tagmessage = document.getElementById('message').value;
-//    writeTag("geotag47",latDec,lonDec,color,tagmessage);
-    writeTag("geotag" + lcnt,latDec,lonDec,color,tagmessage);
+    writeTag("geotag" + tagnum,latDec,lonDec,color,tagmessage);
 }
 function showPositionOnPage(position,color) {
     x.innerHTML = "Latitude: " + position.coords.latitude +
@@ -203,17 +205,17 @@ var map = new mapboxgl.Map({
 var radius = 20;
 
 
+//The tag number bug is somewhere in here. showLngLatOnMap... isn't getting called enough, so lcnt isn't updating enough to create a new tag. Instead it's rewriting an old one.
 map.on('load', function () {
   firebase.database().ref('/tags').once('value').then(function(snapshot) {
     var v = snapshot.val();
-    console.log("spud:"+ v);
     for(const prop in v) {
       console.log("prop =",prop);
       const n = parseInt(prop.substring("geotag".length));
         gt = v[prop];
       console.log("gt = gt");
       showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n);
-      lcnt = n+1;
+      LASTTAGNUM = Math.max(LASTTAGNUM,n);
     }
     });
 });

@@ -73,6 +73,17 @@ function writeTag(tagId, lat, lon, color, message) {
 
 var x = document.getElementById("demo");
 
+function getLastTagNumInDB() {
+  var highestnum = 0;
+  firebase.database().ref('/tags').once('value').then(function(snapshot) {
+    var v = snapshot.val();
+    for(const prop in v) {
+      const n = parseInt(prop.substring("geotag".length));
+      higestnum = Math.max(highestnum,n);
+    }
+  });
+  return highestnum;
+}
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
 }
@@ -81,6 +92,7 @@ function getLocation(color) {
   if (navigator.geolocation) {
     var options = { enableHighAccuracy: false,
                     timeout:10000};
+    LASTAGNUM = getLastTagNumInDB();
       navigator.geolocation.getCurrentPosition(
         (position) => createTag(position,color,LASTTAGNUM+1),
         error,
@@ -226,26 +238,3 @@ map.on('load', function () {
     }
     });
 });
-
-
-var options = {
-  enableHighAccuracy: true,
-  timeout: 5000
-//  ,
-//  maximumAge: 0
-};
-
-function success(pos) {
-  var crd = pos.coords;
-
-  console.log('Your current position is:');
-  console.log(`Latitude : ${crd.latitude}`);
-  console.log(`Longitude: ${crd.longitude}`);
-  console.log(`More or less ${crd.accuracy} meters.`);
-}
-
-function error(err) {
-  console.warn(`ERROR(${err.code}): ${err.message}`);
-}
-
-navigator.geolocation.getCurrentPosition(success, error, options);

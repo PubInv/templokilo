@@ -69,7 +69,7 @@ function writeTag(tagId, lat, lon, color, message) {
 
 var x = document.getElementById("demo");
 
-function getLastTagNumInDB() {
+async function getLastTagNumInDBandWrite(postion,color) {
   var highestnum = 0;
   firebase.database().ref('/tags').once('value').then(function(snapshot) {
     var v = snapshot.val();
@@ -77,8 +77,15 @@ function getLastTagNumInDB() {
       const n = parseInt(prop.substring("geotag".length));
       highestnum = Math.max(highestnum,n);
     }
+    // highestnum is now the max key
+    // TODO: Take this out and use a Promise to make clearer
+    var options = { enableHighAccuracy: false,
+                    timeout:10000};
+    navigator.geolocation.getCurrentPosition(
+        (position) => createTag(position,color,highestnum+1),
+        error,
+      options);
   });
-  return highestnum;
 }
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
@@ -86,14 +93,8 @@ function error(err) {
 function getLocation(color) {
   // LASTTAGNUM is global to this function
   if (navigator.geolocation) {
-    var options = { enableHighAccuracy: false,
-                    timeout:10000};
-    var LASTAGNUM = getLastTagNumInDB();
-      navigator.geolocation.getCurrentPosition(
-        (position) => createTag(position,color,LASTTAGNUM+1),
-        error,
-      options);
-    } else {
+    getLastTagNumInDBandWrite(color);
+  } else {
         //        x.innerHTML = "Geolocation is not supported by this browser.";
         alert("Geolocation is not supported by this browser.");
     }

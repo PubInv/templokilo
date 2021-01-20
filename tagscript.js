@@ -79,7 +79,7 @@ function getLastTagNumInDB() {
     var v = snapshot.val();
     for(const prop in v) {
       const n = parseInt(prop.substring("geotag".length));
-      higestnum = Math.max(highestnum,n);
+      highestnum = Math.max(highestnum,n);
     }
   });
   return highestnum;

@@ -1,5 +1,3 @@
-//trying to find last tag posted
-var LASTTAGNUM = 0;
 
 // Initialize Firebase
 var config = {
@@ -69,8 +67,6 @@ function writeTag(tagId, lat, lon, color, message) {
     //erase input message
 }
 
-
-
 var x = document.getElementById("demo");
 
 function getLastTagNumInDB() {
@@ -92,12 +88,11 @@ function getLocation(color) {
   if (navigator.geolocation) {
     var options = { enableHighAccuracy: false,
                     timeout:10000};
-    LASTAGNUM = getLastTagNumInDB();
+    var LASTAGNUM = getLastTagNumInDB();
       navigator.geolocation.getCurrentPosition(
         (position) => createTag(position,color,LASTTAGNUM+1),
         error,
       options);
-      LASTTAGNUM++;
     } else {
         //        x.innerHTML = "Geolocation is not supported by this browser.";
         alert("Geolocation is not supported by this browser.");
@@ -234,7 +229,7 @@ map.on('load', function () {
         gt = v[prop];
       console.log("gt = gt");
       showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n);
-      LASTTAGNUM = Math.max(LASTTAGNUM,n);
+//      LASTTAGNUM = Math.max(LASTTAGNUM,n);
     }
     });
 });

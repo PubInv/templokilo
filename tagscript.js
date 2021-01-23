@@ -48,9 +48,7 @@ function writeTag(tagId, lat, lon, color, message) {
         color: color,
 	message: message
     };
-    //just putting message into this obj to see if it works
-    //the latest geotag is written into geotag45, regardless of yes/no message.
-    //I tested this on the master branch and same problem happened.
+
     console.log(obj);
 
     firebase.database().ref('tags/' + tagId).set(obj,
@@ -63,11 +61,12 @@ function writeTag(tagId, lat, lon, color, message) {
                                                          console.log("SUCCESS");
                                                      }
                                                  });
-    document.getElementById("message").value='';
+    document.getElementById("message").value = '';
     //erase input message
 }
 
 var x = document.getElementById("demo");
+// Q: This is a global variable, right? It's only used once, so it could be replaced.
 
 async function getLastTagNumInDBandWrite(postion,color) {
   var highestnum = 0;
@@ -77,6 +76,7 @@ async function getLastTagNumInDBandWrite(postion,color) {
       const n = parseInt(prop.substring("geotag".length));
       highestnum = Math.max(highestnum,n);
     }
+      console.log("Highest num: ", highestnum);
     // highestnum is now the max key
     // TODO: Take this out and use a Promise to make clearer
     var options = { enableHighAccuracy: false,
@@ -93,13 +93,14 @@ function error(err) {
 function getLocation(color) {
   // LASTTAGNUM is global to this function
   if (navigator.geolocation) {
-    getLastTagNumInDBandWrite(color);
+      getLastTagNumInDBandWrite(color);
+      // Q: position?
   } else {
-        //        x.innerHTML = "Geolocation is not supported by this browser.";
         alert("Geolocation is not supported by this browser.");
     }
 }
 var lcnt = 0;
+// Q: Could we delete this? Not used anywhere else.
 
 function createTag(position,color,tagnum) {
     showPositionOnPage(position,color);
@@ -153,8 +154,6 @@ function showLngLatOnMap(lonDec,latDec,color,n) {
 
 
 //  lcnt++;
-//  console.log("LCNT: ",lcnt);
-    // checking to see if this is updating
 
 }
 
@@ -218,9 +217,9 @@ var map = new mapboxgl.Map({
 });
 
 var radius = 20;
+// Q: ??
 
 
-//The tag number bug is somewhere in here. showLngLatOnMap... isn't getting called enough, so lcnt isn't updating enough to create a new tag. Instead it's rewriting an old one.
 map.on('load', function () {
   firebase.database().ref('/tags').once('value').then(function(snapshot) {
     var v = snapshot.val();

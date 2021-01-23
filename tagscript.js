@@ -68,7 +68,8 @@ function writeTag(tagId, lat, lon, color, message) {
 var x = document.getElementById("demo");
 // Q: This is a global variable, right? It's only used once, so it could be replaced.
 
-async function getLastTagNumInDBandWrite(postion,color) {
+//async function getLastTagNumInDBandWrite(postion,color) {
+async function getLastTagNumInDBandWrite(color) {
   var highestnum = 0;
   firebase.database().ref('/tags').once('value').then(function(snapshot) {
     var v = snapshot.val();
@@ -94,7 +95,6 @@ function getLocation(color) {
   // LASTTAGNUM is global to this function
   if (navigator.geolocation) {
       getLastTagNumInDBandWrite(color);
-      // Q: position?
   } else {
         alert("Geolocation is not supported by this browser.");
     }

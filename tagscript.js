@@ -180,8 +180,6 @@ function showLngLatOnMap(lonDec,latDec,color,n) {
     map.on('mouseleave', "point"+n , function () {
 	map.getCanvas().style.cursor = '';
     });
-});
-
 
 //  lcnt++;
 

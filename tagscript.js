@@ -134,6 +134,8 @@ function showLngLatOnMap(lonDec,latDec,color,n) {
                     "coordinates": [lonDec, latDec ]
                 },
                 "properties": {
+		    'description':
+		    '<strong>Truckeroo</strong><p><a href="http://www.truckeroodc.com/www/" target="_blank">Truckeroo</a> brings dozens of food trucks, live music, and games to half and M Street SE (across from Navy Yard Metro Station) today from 11:00 a.m. to 11:00 p.m.</p>',
                     "color": color,
                     "title": "Waterloo",
                     "icon": "monument"
@@ -151,6 +153,34 @@ function showLngLatOnMap(lonDec,latDec,color,n) {
             'circle-color': ['get', 'color']
         }
     });
+
+    map.on('click',"point"+n, function (e) {
+	var coordinates = e.features[0].geometry.coordinates.slice();
+	var description = e.features[0].properties.description;
+	
+	// Ensure that if the map is zoomed out such that multiple
+	// copies of the feature are visible, the popup appears
+	// over the copy being pointed to.
+	while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+	    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+	}
+	
+	new mapboxgl.Popup()
+	    .setLngLat(coordinates)
+	    .setHTML(description)
+	    .addTo(map);
+    });
+    
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', "point"+n , function () {
+	map.getCanvas().style.cursor = 'pointer';
+    });
+    
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', "point"+n , function () {
+	map.getCanvas().style.cursor = '';
+    });
+});
 
 
 //  lcnt++;
@@ -224,10 +254,10 @@ map.on('load', function () {
   firebase.database().ref('/tags').once('value').then(function(snapshot) {
     var v = snapshot.val();
     for(const prop in v) {
-      console.log("prop =",prop);
+      //console.log("prop =",prop);
       const n = parseInt(prop.substring("geotag".length));
         gt = v[prop];
-      console.log("gt = gt");
+      //console.log("gt = gt");
       showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n);
 //      LASTTAGNUM = Math.max(LASTTAGNUM,n);
     }

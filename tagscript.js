@@ -117,14 +117,18 @@ function showPositionOnPage(position,color) {
 	"<br>Longitude: " + position.coords.longitude;
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
-    var message = 'hey';
-    showLngLatOnMap(lonDec,latDec,color,0,message);
-    //ADD MESSAGE!
-    //Q: Originally no n. This will make weird tag title because newest. Can change to null?
+    var message = 'Reload to see your latest message';
+    showLngLatOnMap(lonDec,latDec,color,null,message);
+    //putting null in for n, because it would be take too much effort right now to put the most recent number in
+    //The same goes for a generic message for var message. I could definitely fix this if we think it's a good idea.
 }
 
 function showLngLatOnMap(lonDec,latDec,color,n,message) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
+
+    if (message == undefined) {
+	message = ''
+    }
 
     map.addSource('point'+n, {
         "type": "geojson",

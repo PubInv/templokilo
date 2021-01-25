@@ -104,7 +104,7 @@ var lcnt = 0;
 
 function createTag(position,color,tagnum) {
     showPositionOnPage(position,color);
-  writePosition(position,color,tagnum);
+    writePosition(position,color,tagnum);
 }
 function writePosition(position,color,tagnum) {
     var lonDec = position.coords.longitude;
@@ -117,10 +117,13 @@ function showPositionOnPage(position,color) {
 	"<br>Longitude: " + position.coords.longitude;
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
-    showLngLatOnMap(lonDec,latDec,color);
+    var message = 'hey';
+    showLngLatOnMap(lonDec,latDec,color,0,message);
+    //ADD MESSAGE!
+    //Q: Originally no n. This will make weird tag title because newest. Can change to null?
 }
 
-function showLngLatOnMap(lonDec,latDec,color,n) {
+function showLngLatOnMap(lonDec,latDec,color,n,message) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
     map.addSource('point'+n, {
@@ -135,7 +138,7 @@ function showLngLatOnMap(lonDec,latDec,color,n) {
                 },
                 "properties": {
 		    'description':
-		    '<strong>Truckeroo</strong><p><a href="http://www.truckeroodc.com/www/" target="_blank">Truckeroo</a> brings dozens of food trucks, live music, and games to half and M Street SE (across from Navy Yard Metro Station) today from 11:00 a.m. to 11:00 p.m.</p>',
+		    '<strong>geotag' + n + '</strong><p>' + message + '</p>',
                     "color": color,
                     "title": "Waterloo",
                     "icon": "monument"
@@ -154,6 +157,7 @@ function showLngLatOnMap(lonDec,latDec,color,n) {
         }
     });
 
+    //https://docs.mapbox.com/mapbox-gl-js/example/popup-on-click/
     map.on('click',"point"+n, function (e) {
 	var coordinates = e.features[0].geometry.coordinates.slice();
 	var description = e.features[0].properties.description;
@@ -255,8 +259,8 @@ map.on('load', function () {
       //console.log("prop =",prop);
       const n = parseInt(prop.substring("geotag".length));
         gt = v[prop];
-      //console.log("gt = gt");
-      showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n);
+	//console.log("gt = gt");
+	showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
 //      LASTTAGNUM = Math.max(LASTTAGNUM,n);
     }
     });

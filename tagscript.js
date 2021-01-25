@@ -129,6 +129,9 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
     if (message == undefined) {
 	message = ''
     }
+    if (n == undefined) {
+	n = ' submitted now'
+    }
 
     map.addSource('point'+n, {
         "type": "geojson",

@@ -42,11 +42,15 @@ function writeTag(tagId, lat, lon, color, message) {
 	//isn't showing up in obj if null
     }
 
+    //UTC date 
+    var d = new Date();
+
     var obj = {
         latitude: lat,
         longitude: lon,
         color: color,
-	message: message
+	message: message,
+	date: d.toUTCString()
     };
 
     console.log(obj);

@@ -5,6 +5,8 @@
     <title>Add to your geotag map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <link href="styles.css" rel="stylesheet">
+    <script type="text/javascript" src="exif.js"></script>
+    <script type="text/javascript" src="tagscript.js"></script>        
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
     <!---v.2.0.1 is available for mapbox-->
@@ -70,7 +72,7 @@
     </div>
     <br>
 
-    <button type="button" onclick="search()" class="btn btn-primary center">Submit</button>
+    <button type="button" onclick="searchformap()" class="btn btn-primary center">Submit</button>
     
 <!---
 <br>
@@ -109,10 +111,7 @@
   <div class="container fill">
     <div id="map"></div>
   </div>
-</div>
-    
-    <script type="text/javascript" src="exif.js"></script>
-    <script type="text/javascript" src="tagscript.js"></script>        
+</div>    
 
 -->
 </body>

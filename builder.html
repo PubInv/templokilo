@@ -38,37 +38,40 @@
     <form id="createmap">
       <!--- action? -->
       <div class="mb-3">
-	<label class="form-label" for="map-name">Name of map</label>
+	<label class="form-label center" for="map-name">Name of map</label>
 	<input type="text" class="form-control" id="map-name">
       </div>
+      <br>
 
-      <div class="form-check">
-	<input class="form-check-input" type="radio" name="flexRadioDefault" id="yes-name">
+      <div class="form-check marginleft">
+	<input class="form-check-input" type="radio" name="name" id="yes-name">
 	<label class="form-check-label" for="yes-name">
 	  Ask for  name of geotagger
 	</label>
       </div>
-      <div class="form-check">
-	<input class="form-check-input" type="radio" name="flexRadioDefault" id="no-name" checked>
+      <div class="form-check marginleft">
+	<input class="form-check-input" type="radio" name="name" id="no-name" checked>
 	<label class="form-check-label" for="no-name">
 	  Don't ask for name
 	</label>
       </div>
+      <br>
 
-      <div class="form-check">
-	<input class="form-check-input" type="radio" name="flexRadioDefault" id="yes-message">
+      <div class="form-check marginleft">
+	<input class="form-check-input" type="radio" name="text" id="yes-message">
 	<label class="form-check-label" for="yes-message">
 	  Ask for a text message
 	</label>
       </div>
-      <div class="form-check">
-	<input class="form-check-input" type="radio" name="flexRadioDefault" id="no-message" checked>
+      <div class="form-check marginleft">
+	<input class="form-check-input" type="radio" name="text" id="no-message" checked>
 	<label class="form-check-label" for="no-message">
 	  Don't ask for a message
 	</label>
       </div>
+      <br>
 
-      <select class="form-select form-select-sm" aria-label=".form-select-sm example" id="icon">
+      <select class="form-select form-select-sm marginleft" aria-label=".form-select-sm example" id="icon">
 	<option selected>choose marker icon</option>
 	<option value="american-football-15.svg">Football</option>
 	<option value="attraction-15.svg">Camera</option>
@@ -78,27 +81,30 @@
 	<option value="hardware-15.svg">Tool</option>
 	<option value="music-15.svg">Note</option>
       </select>
+      <br>
 
-      <p>Select any colors you want for your icon</p>
-      <div class="form-check form-switch">
-	<input class="form-check-input" type="checkbox" id="red">
+      <p class="center">Select any colors you want for your icon</p>
+      <div class="form-check form-switch marginleft">
+	<input class="form-check-input" type="checkbox" id="red" checked>
 	<label class="form-check-label" for="red">Red</label>
       </div>
-      <div class="form-check form-switch">
+      <div class="form-check form-switch marginleft">
 	<input class="form-check-input" type="checkbox" id="blue" checked>
 	<label class="form-check-label" for="blue">Blue</label>
       </div>
-      <div class="form-check form-switch">
+      <div class="form-check form-switch marginleft">
 	<input class="form-check-input" type="checkbox" id="green" checked>
 	<label class="form-check-label" for="green">Green</label>
       </div>
+      <br>
 
-      <div class="form-check">
+      <div class="form-check marginleft">
 	<input class="form-check-input" type="checkbox" value="" id="yes-photo">
 	<label class="form-check-label" for="yes-photo">
 	  Ask for photo
 	</label>
       </div>
+      <br>
       
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>

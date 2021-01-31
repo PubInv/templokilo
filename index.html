@@ -53,14 +53,7 @@
   </style>
   
     <h1 class="center">GeotagText</h1>
-    </br>
-    <!---
-      <div id='inputarea'>    
-    Upload a local file to read Exif data.
-<input id="file-input-old" type="file" />
-    </br>
-    <br/>
---->
+    <br>
 
     <script>
       var queryString = window.location.search.substr(1);
@@ -74,12 +67,14 @@
         <span class="input-group-text">Search for map:</span>
       </div>
       <textarea id="searchname" class="form-control" aria-label="Search for map:"></textarea>
-          <!-- SET MAX LENGTH??  -->
     </div>
 
-<br>
+    <button type="button" onclick="search();" class="btn btn-primary">Submit</button>
     
-<!---Testing Input for Opening Camera and capturing the picture around the users environment-->
+<!---
+<br>
+
+
 <label class="cameraButton">Take a picture
     <input id="file-input" type="file" accept="image/*;capture=camera">
 </label>
@@ -88,7 +83,6 @@
     
 <div id="demo"> </div>
 
-<!--code ends here-->
     <br/>
 
 
@@ -97,7 +91,6 @@
         <span class="input-group-text">Enter Message:</span>
       </div>
       <textarea id="message" class="form-control" aria-label="Enter Message:"></textarea>
-          <!-- SET MAX LENGTH??  -->
 </div>
 <br>
 <p class="center">Then select a color to go with your message</p>
@@ -116,17 +109,10 @@
     <div id="map"></div>
   </div>
 </div>
-
- 
-    <!--<-div id='map'>
-    </div>-->
-    
     
     <script type="text/javascript" src="exif.js"></script>
     <script type="text/javascript" src="tagscript.js"></script>        
-    <script>
-  
-</script>
 
+-->
 </body>
 </html>

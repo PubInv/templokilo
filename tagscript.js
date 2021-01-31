@@ -32,6 +32,11 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
     console.log("tags val snapshot",snapshot.val());
 });
 
+function search() {
+    geotagmapname = document.getElementById("searchname");
+    console.log("Search text: ", geotagmapname);
+}
+
 function writeTag(tagId, lat, lon, color, message) {
     if (message) {
 	console.log("Message: ",message);

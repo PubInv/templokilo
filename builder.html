@@ -7,7 +7,10 @@
     <link href="styles.css" rel="stylesheet">
     <!---added Bootstrap-->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    
+
+        <!---v.2.0.1 is available for mapbox-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
     <!-- Firebase App is always required and must be first -->
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
@@ -32,13 +35,13 @@
         </ul>
       </div>
     </nav>
-  
-    <h1 class="center">Map builder</h1>
+
+    <h1 class="center">Map Application Builder</h1>
 
     <form id="createmap">
       <!--- action? -->
       <div class="mb-3">
-	<p style="text-align: center;">Name of map</p>
+	<p style="text-align: center;">Name of Application</p>
 	<input type="text" class="form-control" id="map-name">
       </div>
       <br>
@@ -105,11 +108,43 @@
 	</label>
       </div>
       <br>
-      
-      <button type="submit" class="btn btn-primary center">Submit</button>
+
+      <button type="submit" onclick="createApplication()" class="btn btn-primary center">Create Application</button>
     </form>
 
 
 </body>
-</html>
+<script type="text/javascript" src="firebase.js"></script>
+<script>
+  function createApplication() {
 
+    var red = $("#red").is(":checked");
+    var blue = $("#blue").is(":checked");
+    var green = $("#green").is(":checked");
+
+    // TODO: Change map-name id to appName
+    var appName = $("#map-name").val();
+
+    alert("red blue green" + red +" "+ blue +" "+ green);
+    var config = { red: red,
+                   blue: blue,
+                   green: green };
+
+    // TOOD: /apps tag is create by hand, make initializable
+    firebase.database().ref('apps/' + appName).set(config,
+                                                 function(error) {
+                                                     if (error) {
+                                                         // The write failed...
+                                                         console.log("ERROR:",error);
+                                                     } else {
+                                                         // Data saved successfully!
+                                                         console.log("SUCCESS");
+                                                     }
+                                                 });
+
+  }
+
+</script>
+
+
+</html>

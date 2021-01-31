@@ -6,7 +6,6 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <link href="styles.css" rel="stylesheet">
     <script type="text/javascript" src="exif.js"></script>
-    <script type="text/javascript" src="tagscript.js"></script>        
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
     <!---v.2.0.1 is available for mapbox-->
@@ -18,7 +17,7 @@
 	 -->
 
     <!-- Experimentally trying tesseract -->
-    <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script> 
+    <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
 
 <!-- <script src="https://cdn.rawgit.com/naptha/tesseract.js/0.2.0/dist/tesseract.js"> -->
 
@@ -46,14 +45,14 @@
         </ul>
       </div>
     </nav>
-  
+
   <style>
     .mapboxgl-popup {
 	max-width: 400px;
 	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     }
   </style>
-  
+
     <h1 class="center">GeotagText</h1>
     <br>
 
@@ -63,7 +62,7 @@
       //https://gist.github.com/pirate/9298155edda679510723
       // this would be useful if we were doing more than one query parameter
     </script>
-    
+
     <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text">Search for map:</span>
@@ -73,7 +72,7 @@
     <br>
 
     <button type="button" onclick="searchformap()" class="btn btn-primary center">Submit</button>
-    
+
 <!---
 <br>
 
@@ -83,7 +82,7 @@
 </label>
 
     <button onclick="getLocation()">Try It</button>
-    
+
 <div id="demo"> </div>
 
     <br/>
@@ -97,7 +96,7 @@
 </div>
 <br>
 <p class="center">Then select a color to go with your message</p>
-    
+
 
 <div class="btn-group-vertical, center">
   <button type="button" onclick="getLocation('red')" class="btn btn-primary">Red</button>
@@ -105,14 +104,45 @@
   <button type="button"  onclick="getLocation('green')" class="btn btn-primary">Green</button>
 </div>
 
+-->
 
 
 <div id="map-holder">
   <div class="container fill">
     <div id="map"></div>
   </div>
-</div>    
+</div>
 
--->
 </body>
+
+<script type="text/javascript" src="firebase.js"></script>
+<script type="text/javascript" src="tagscript.js"></script>
+<script>
+
+
+  var appName = "abby";
+
+
+  function reconfigureFromConfig(config) {
+    console.log("config:",config);
+  }
+
+  function reconfigureFromApp(appName) {
+    firebase.database().ref('/apps').once('value').then(function(snapshot) {
+      var v = snapshot.val();
+      for(const prop in v) {
+        console.log("prop",prop);
+        if (prop == "abby") {
+          var config = v[prop]
+          reconfigureFromConfig(config);
+        }
+      }
+    });
+  }
+  $(
+    reconfigureFromApp(appName)
+  );
+
+  </script>
+
 </html>

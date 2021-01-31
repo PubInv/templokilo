@@ -1,36 +1,36 @@
 
-// Initialize Firebase
-var config = {
-    apiKey: "AIzaSyDT6vGeYFgQJbuQvvtVQQHpuoKxcs5TDRE",
-    authDomain: "geotagtext.firebaseapp.com",
-    databaseURL: "https://geotagtext.firebaseio.com",
-    projectId: "geotagtext",
-    storageBucket: "geotagtext.appspot.com",
-    messagingSenderId: "1071662476331"
-};
-firebase.initializeApp(config);
+// // Initialize Firebase
+// var config = {
+//     apiKey: "AIzaSyDT6vGeYFgQJbuQvvtVQQHpuoKxcs5TDRE",
+//     authDomain: "geotagtext.firebaseapp.com",
+//     databaseURL: "https://geotagtext.firebaseio.com",
+//     projectId: "geotagtext",
+//     storageBucket: "geotagtext.appspot.com",
+//     messagingSenderId: "1071662476331"
+// };
+// firebase.initializeApp(config);
 
 
-firebase.auth().signInAnonymously().catch(function(error) {
-    // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    // ...
-    console.log(errorCode);
-    console.log(errorMessage);
-});
+// firebase.auth().signInAnonymously().catch(function(error) {
+//     // Handle Errors here.
+//     var errorCode = error.code;
+//     var errorMessage = error.message;
+//     // ...
+//     console.log(errorCode);
+//     console.log(errorMessage);
+// });
 
-var ref = firebase.database().ref();
+// var ref = firebase.database().ref();
 
-firebase.database().ref('/').once('value').then(function(snapshot) {
-    console.log("snapshot",snapshot);
-});
+// firebase.database().ref('/').once('value').then(function(snapshot) {
+//     console.log("snapshot",snapshot);
+// });
 
 
-firebase.database().ref('/tags').once('value').then(function(snapshot) {
-    console.log("tags snapshot",snapshot);
-    console.log("tags val snapshot",snapshot.val());
-});
+// firebase.database().ref('/tags').once('value').then(function(snapshot) {
+//     console.log("tags snapshot",snapshot);
+//     console.log("tags val snapshot",snapshot.val());
+// });
 
 function searchformap() {
     geotagmapname = document.getElementById("searchname").value;
@@ -47,7 +47,7 @@ function writeTag(tagId, lat, lon, color, message) {
 	//isn't showing up in obj if null
     }
 
-    //UTC date 
+    //UTC date
     var d = new Date();
 
     var obj = {
@@ -177,25 +177,25 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
     map.on('click',"point"+n, function (e) {
 	var coordinates = e.features[0].geometry.coordinates.slice();
 	var description = e.features[0].properties.description;
-	
+
 	// Ensure that if the map is zoomed out such that multiple
 	// copies of the feature are visible, the popup appears
 	// over the copy being pointed to.
 	while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
 	    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
 	}
-	
+
 	new mapboxgl.Popup()
 	    .setLngLat(coordinates)
 	    .setHTML(description)
 	    .addTo(map);
     });
-    
+
     // Change the cursor to a pointer when the mouse is over the places layer.
     map.on('mouseenter', "point"+n , function () {
 	map.getCanvas().style.cursor = 'pointer';
     });
-    
+
     // Change it back to a pointer when it leaves.
     map.on('mouseleave', "point"+n , function () {
 	map.getCanvas().style.cursor = '';
@@ -217,67 +217,77 @@ function getDMS2DD(days, minutes, seconds, direction) {
 }
 
 
-document.getElementById("file-input").onchange = function(e) {
-    var file = e.target.files[0]
-    if (file && file.name) {
-	Tesseract.recognize(file,{
-	    lang: 'eng',
-	})
-	    .then(function(result){
-		console.log("Found this result");
-		console.log(result);
-	    });
+// document.getElementById("file-input").onchange = function(e) {
+//     var file = e.target.files[0]
+//     if (file && file.name) {
+// 	Tesseract.recognize(file,{
+// 	    lang: 'eng',
+// 	})
+// 	    .then(function(result){
+// 		console.log("Found this result");
+// 		console.log(result);
+// 	    });
 
-        EXIF.getData(file, function() {
+//         EXIF.getData(file, function() {
 
-	    var exifData = EXIF.pretty(this);
-	    if (exifData) {
-	    } else {
-		alert("No EXIF data found in image '" + file.name + "'.");
-		return;
-	    }
+// 	    var exifData = EXIF.pretty(this);
+// 	    if (exifData) {
+// 	    } else {
+// 		alert("No EXIF data found in image '" + file.name + "'.");
+// 		return;
+// 	    }
 
-	    var lat = this.exifdata.GPSLatitude;
-	    if (lat) {
+// 	    var lat = this.exifdata.GPSLatitude;
+// 	    if (lat) {
 
-		// We probably need to get the direction from exif.
-		var latDec = getDMS2DD(lat[0],lat[1],lat[2],this.exifdata.GPSLatitudeRef);
-		var lon = this.exifdata.GPSLongitude;
-		var lonDec = getDMS2DD(lon[0],lon[1],lon[2],this.exifdata.GPSLongitudeRef);
-		var ll = new mapboxgl.LngLat(lonDec, latDec);
+// 		// We probably need to get the direction from exif.
+// 		var latDec = getDMS2DD(lat[0],lat[1],lat[2],this.exifdata.GPSLatitudeRef);
+// 		var lon = this.exifdata.GPSLongitude;
+// 		var lonDec = getDMS2DD(lon[0],lon[1],lon[2],this.exifdata.GPSLongitudeRef);
+// 		var ll = new mapboxgl.LngLat(lonDec, latDec);
 
-		var marker = new mapboxgl.Marker()
-		    .setLngLat(ll)
-		    .addTo(map);
-	    } else {
-		alert("Unable to extract location data!");
-	    }
-        });
-    }
-}
+// 		var marker = new mapboxgl.Marker()
+// 		    .setLngLat(ll)
+// 		    .addTo(map);
+// 	    } else {
+// 		alert("Unable to extract location data!");
+// 	    }
+//         });
+//     }
+// }
 
-mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
-var map = new mapboxgl.Map({
+
+// THIS MAY HAVE TO BE GLOBAL
+var map;
+function initMap() {
+  mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
+
+
+  map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/light-v9',
     center: [-96, 37.8],
     zoom: 3
-});
+  });
 
-var radius = 20;
-// Q: ??
+  var radius = 20;
+  // Q: ??
 
 
-map.on('load', function () {
-  firebase.database().ref('/tags').once('value').then(function(snapshot) {
-    var v = snapshot.val();
-    for(const prop in v) {
-      //console.log("prop =",prop);
-      const n = parseInt(prop.substring("geotag".length));
+
+  map.on('load', function () {
+    firebase.database().ref('/tags').once('value').then(function(snapshot) {
+      var v = snapshot.val();
+      for(const prop in v) {
+        //console.log("prop =",prop);
+        const n = parseInt(prop.substring("geotag".length));
         gt = v[prop];
 	//console.log("gt = gt");
 	showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
-//      LASTTAGNUM = Math.max(LASTTAGNUM,n);
-    }
+        //      LASTTAGNUM = Math.max(LASTTAGNUM,n);
+      }
     });
-});
+  });
+
+}
+$(initMap());

@@ -33,7 +33,7 @@ firebase.database().ref('/tags').once('value').then(function(snapshot) {
 });
 
 function searchformap() {
-    geotagmapname = document.getElementById("searchname");
+    geotagmapname = document.getElementById("searchname").value;
     console.log("Search text: ", geotagmapname);
 }
 

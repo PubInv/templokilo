@@ -32,10 +32,6 @@
 //     console.log("tags val snapshot",snapshot.val());
 // });
 
-function searchforapp() {
-    geotagmapname = document.getElementById("searchname").value;
-    console.log("Search text: ", geotagmapname);
-}
 
 function writeTag(tagId, lat, lon, color, message) {
     if (message) {

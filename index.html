@@ -60,7 +60,7 @@
 	<label for="searchname" class="marginleft">Search for app</label>
 	<input type="text" id="searchname" class="marginleft">
       </div>
-    
+
     <button type="button" onclick="searchforapp()" class="btn btn-primary center">Search</button>
 
 
@@ -74,12 +74,12 @@
     <label class="cameraButton marginleft" id="hideAddImage">Add an image:
       <input id="file-input" type="file" accept="image/*;capture=camera">
     </label>
-    
+
     <!---
 	This doesn't take a color, so it doesn't work
     <button onclick="getLocation()">Try It</button>
     -->
-    
+
     <div id="demo"> </div>
 
     <br/>
@@ -114,7 +114,7 @@
   <script type="text/javascript" src="tagscript.js"></script>
   <script>
 
-    var config = { yesname: false,
+    var GLOBAL_CONFIG = { yesname: false,
 		   yestextmessage: false,
 		   icon: "music-15.svg",
 		   red: false,
@@ -125,17 +125,27 @@
     //Just an example. Get this from database
     //TODO: Icon and upload photo
 
-    $(document).ready(function(){
-	//this doesn't happen immediately
-	if (config.yesname == false){
-	    $("#hideusername").hide();
-	}
+    var appName = "abby";
+
+
+    function reconfigureFromConfig(config) {
+      //this doesn't happen immediately
+      $("#hideusername").toggle(config.yesname);
+
+	// if (config.yesname == false){
+	//   $("#hideusername").toggle(config.yesname);
+	// } else {
+        //   $("#hideusername").toggle(config.yesname);
+        // }
 	if (config.yestextmessage == false){
 	    $("#hidemessage").hide();
 	}
 	if (config.red == false){
 	    $("#red").hide();
 	}
+      $("#blue").toggle(config.blue);
+      $("#green").toggle(config.green);
+      $("#red").toggle(config.red);
 	if (config.blue == false){
 	    $("#blue").hide();
 	}
@@ -145,28 +155,48 @@
 	if (config.yesphoto == false){
 	    $("#hideAddImage").hide();
 	}
-    });
-
-
-    var appName = "abby";
-
-
-    function reconfigureFromConfig(config) {
 	console.log("config:",config);
     }
 
     function reconfigureFromApp(appName) {
 	firebase.database().ref('/apps').once('value').then(function(snapshot) {
-	    var v = snapshot.val();
-	    for(const prop in v) {
-		console.log("prop",prop);
-		if (prop == "abby") {
-		    var config = v[prop]
-		    reconfigureFromConfig(config);
-		}
+	  var v = snapshot.val();
+	  for(const prop in v) {
+	    console.log("prop",prop);
+	    if (prop == appName) {
+	      var config = v[prop]
+              GLOBAL_CONFIG = config;
+	      reconfigureFromConfig(config);
 	    }
+	  }
 	});
     }
+    async function checkForAppInDatabase(name) {
+	var v = await firebase.database().ref('/apps/'+name).once('value').then(function(snapshot) {
+	  var v = snapshot.val();
+          console.log("v =",v);
+          return v;
+        });
+      console.log("checkForAppInDatabase: ",v);
+      return v;
+    }
+
+    function searchforapp() {
+      appName = document.getElementById("searchname").value;
+      console.log("Search text: ", appName);
+
+      if (checkForAppInDatabase(appName)) {
+      // check for the app...
+        reconfigureFromApp(appName);
+      } else {
+        alert("app: "+appName + " not found!");
+      }
+    }
+
+    $(document).ready(function(){
+      reconfigureFromConfig(GLOBAL_CONFIG);
+    });
+
     $(
 	reconfigureFromApp(appName)
     );

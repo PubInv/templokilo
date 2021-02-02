@@ -1,6 +1,6 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset='utf-8' />
     <title>Add to your geotag map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
@@ -9,29 +9,29 @@
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
     <!---v.2.0.1 is available for mapbox-->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!---added Bootstrap-->
-	 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-	 <!--
-	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	 -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <!--
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	-->
 
-    <!-- Experimentally trying tesseract -->
-    <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
+	<!-- Experimentally trying tesseract -->
+	<script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
 
-<!-- <script src="https://cdn.rawgit.com/naptha/tesseract.js/0.2.0/dist/tesseract.js"> -->
+	<!-- <script src="https://cdn.rawgit.com/naptha/tesseract.js/0.2.0/dist/tesseract.js"> -->
 
-    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
-    <!-- Firebase App is always required and must be first -->
-    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
+	  <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+	  <!-- Firebase App is always required and must be first -->
+	  <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
 
-    <!-- Add additional services that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
-</head>
+	  <!-- Add additional services that you want to use -->
+	  <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
+	  <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
+  </head>
 
 
-<body>
+  <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -39,107 +39,137 @@
           <li class="nav-item active">
             <a class="nav-link" href="index.html">User Page<span class="sr-only">(current)</span></a>
           </li>
-	   <li class="nav-item">
+	  <li class="nav-item">
             <a class="nav-link" href="builder.html">App Builder</a>
           </li>
         </ul>
       </div>
     </nav>
 
-  <style>
-    .mapboxgl-popup {
-	max-width: 400px;
-	font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-    }
-  </style>
+    <style>
+      .mapboxgl-popup {
+	  max-width: 400px;
+	  font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      }
+    </style>
 
     <h1 class="center">GeotagText</h1>
     <br>
 
-    <script>
-      var queryString = window.location.search.substr(1);
-      console.log(queryString);
-      //https://gist.github.com/pirate/9298155edda679510723
-      // this would be useful if we were doing more than one query parameter
-    </script>
-
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <span class="input-group-text">Search for app:</span>
+     <div class="mb-3">
+	<label for="searchname" class="marginleft">Search for app</label>
+	<input type="text" id="searchname" class="marginleft">
       </div>
-      <textarea id="searchname" class="form-control" aria-label="Search for app:"></textarea>
-    </div>
-    <br>
-
-    <button type="button" onclick="searchformap()" class="btn btn-primary center">Submit</button>
+    
+    <button type="button" onclick="searchforapp()" class="btn btn-primary center">Search</button>
 
 
-<br>
+    <br><br>
 
+     <div class="mb-3" id="hideusername">
+	<label for="user-name" class="marginleft">Name of user</label>
+	<input type="text" id="user-name" class="marginleft">
+      </div>
 
-<label class="cameraButton">Take a picture
-    <input id="file-input" type="file" accept="image/*;capture=camera">
-</label>
-
+    <label class="cameraButton marginleft" id="hideAddImage">Add an image:
+      <input id="file-input" type="file" accept="image/*;capture=camera">
+    </label>
+    
+    <!---
+	This doesn't take a color, so it doesn't work
     <button onclick="getLocation()">Try It</button>
-
-<div id="demo"> </div>
+    -->
+    
+    <div id="demo"> </div>
 
     <br/>
 
 
-<div class="input-group">
+    <div class="input-group" id="hidemessage">
       <div class="input-group-prepend">
         <span class="input-group-text">Enter Message:</span>
       </div>
       <textarea id="message" class="form-control" aria-label="Enter Message:"></textarea>
-</div>
-<br>
-<p class="center">Then select a color to go with your message</p>
+    </div>
+    <br>
+    <p class="center">Then select a color to go with your message</p>
 
 
-<div class="btn-group-vertical, center">
-  <button type="button" onclick="getLocation('red')" class="btn btn-primary">Red</button>
-  <button type="button"  onclick="getLocation('blue')" class="btn btn-primary">Blue</button>
-  <button type="button"  onclick="getLocation('green')" class="btn btn-primary">Green</button>
-</div>
+    <div class="btn-group-vertical, center">
+      <button type="button" onclick="getLocation('red')" class="btn btn-primary" id="red">Red</button>
+      <button type="button"  onclick="getLocation('blue')" class="btn btn-primary" id="blue">Blue</button>
+      <button type="button"  onclick="getLocation('green')" class="btn btn-primary" id="green">Green</button>
+    </div>
 
 
-<div id="map-holder">
-  <div class="container fill">
-    <div id="map"></div>
-  </div>
-</div>
+    <div id="map-holder">
+      <div class="container fill">
+	<div id="map"></div>
+      </div>
+    </div>
 
-</body>
+  </body>
 
-<script type="text/javascript" src="firebase.js"></script>
-<script type="text/javascript" src="tagscript.js"></script>
-<script>
+  <script type="text/javascript" src="firebase.js"></script>
+  <script type="text/javascript" src="tagscript.js"></script>
+  <script>
 
+    var config = { yesname: false,
+		   yestextmessage: false,
+		   icon: "music-15.svg",
+		   red: false,
+		   blue: true,
+		   green: false,
+		   yesphoto: true
+		 };
+    //Just an example. Get this from database
+    //TODO: Icon and upload photo
 
-  var appName = "abby";
-
-
-  function reconfigureFromConfig(config) {
-    console.log("config:",config);
-  }
-
-  function reconfigureFromApp(appName) {
-    firebase.database().ref('/apps').once('value').then(function(snapshot) {
-      var v = snapshot.val();
-      for(const prop in v) {
-        console.log("prop",prop);
-        if (prop == "abby") {
-          var config = v[prop]
-          reconfigureFromConfig(config);
-        }
-      }
+    $(document).ready(function(){
+	//this doesn't happen immediately
+	if (config.yesname == false){
+	    $("#hideusername").hide();
+	}
+	if (config.yestextmessage == false){
+	    $("#hidemessage").hide();
+	}
+	if (config.red == false){
+	    $("#red").hide();
+	}
+	if (config.blue == false){
+	    $("#blue").hide();
+	}
+	if (config.green == false){
+	    $("#green").hide();
+	}
+	if (config.yesphoto == false){
+	    $("#hideAddImage").hide();
+	}
     });
-  }
-  $(
-    reconfigureFromApp(appName)
-  );
+
+
+    var appName = "abby";
+
+
+    function reconfigureFromConfig(config) {
+	console.log("config:",config);
+    }
+
+    function reconfigureFromApp(appName) {
+	firebase.database().ref('/apps').once('value').then(function(snapshot) {
+	    var v = snapshot.val();
+	    for(const prop in v) {
+		console.log("prop",prop);
+		if (prop == "abby") {
+		    var config = v[prop]
+		    reconfigureFromConfig(config);
+		}
+	    }
+	});
+    }
+    $(
+	reconfigureFromApp(appName)
+    );
 
   </script>
 

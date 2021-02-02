@@ -41,8 +41,8 @@
     <form id="createapp">
       <!--- action? -->
       <div class="mb-3">
-	<p style="text-align: center;">Name of Application</p>
-	<input type="text" class="form-control" id="app-name">
+	<label for="app-name" class="marginleft">Name of Application</label>
+	<input type="text" id="app-name" class="marginleft">
       </div>
       <br>
 
@@ -84,9 +84,9 @@
 	<option value="hardware-15.svg">Tool</option>
 	<option value="music-15.svg">Note</option>
       </select>
-      <br>
+      <br><br><br>
 
-      <p style="text-align: center;">Select any colors you want for your icon</p>
+      <p class="marginleft">Select any colors you want for your icon</p>
       <div class="form-check form-switch marginleft">
 	<input class="form-check-input" type="checkbox" id="red" checked>
 	<label class="form-check-label" for="red">Red</label>
@@ -109,7 +109,7 @@
       </div>
       <br>
 
-      <button type="submit" onclick="createApplication()" class="btn btn-primary center">Create Application</button>
+      <button type="submit" onclick="createApplication()" class="btn btn-primary">Create Application</button>
     </form>
 
 
@@ -136,8 +136,7 @@
 
       alert("name text icon rbg photo" + name +" "+ textmessage +" "+ icon + red +" "+ blue +" "+ green + " " + photo);
 
-      //check appName too. IDK if it's null or ""
-      if (stop == true || icon == "choose marker icon") {
+      if (stop == true || icon == "choose marker icon" || appName == "") {
 	  alert("Please fill out all fields");
       }
       else {

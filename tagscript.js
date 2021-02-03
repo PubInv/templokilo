@@ -33,6 +33,7 @@
 // });
 
 
+// Pass Appname here...
 function writeTag(tagId, lat, lon, color, message) {
     if (message) {
 	console.log("Message: ",message);
@@ -56,6 +57,7 @@ function writeTag(tagId, lat, lon, color, message) {
 
     console.log(obj);
 
+  // Construct path to the appname: "apps/APPNAME=rob/tags/"
     firebase.database().ref('tags/' + tagId).set(obj,
                                                  function(error) {
                                                      if (error) {
@@ -76,6 +78,7 @@ var x = document.getElementById("demo");
 //async function getLastTagNumInDBandWrite(postion,color) {
 async function getLastTagNumInDBandWrite(color) {
   var highestnum = 0;
+  // Construct path to the appname: "apps/APPNAME=rob/tags/"
   firebase.database().ref('/tags').once('value').then(function(snapshot) {
     var v = snapshot.val();
     for(const prop in v) {
@@ -159,6 +162,7 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
         }
     });
 
+  // Possibly this is inefficient; possibly there should be a layer for all tags.
     map.addLayer({
         "id": "point"+n,
         "source": "point"+n,
@@ -255,6 +259,8 @@ function getDMS2DD(days, minutes, seconds, direction) {
 
 // THIS MAY HAVE TO BE GLOBAL
 var map;
+
+// add parameter for appName here...
 function initMap() {
   mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
@@ -272,6 +278,7 @@ function initMap() {
 
 
   map.on('load', function () {
+  // Construct path to the appname: "apps/APPNAME=rob/tags/"
     firebase.database().ref('/tags').once('value').then(function(snapshot) {
       var v = snapshot.val();
       for(const prop in v) {
@@ -286,4 +293,3 @@ function initMap() {
   });
 
 }
-$(initMap());

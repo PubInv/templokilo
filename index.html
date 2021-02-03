@@ -131,44 +131,18 @@
     function reconfigureFromConfig(config) {
       //this doesn't happen immediately
       $("#hideusername").toggle(config.yesname);
-
-	// if (config.yesname == false){
-	//   $("#hideusername").toggle(config.yesname);
-	// } else {
-        //   $("#hideusername").toggle(config.yesname);
-        // }
-	if (config.yestextmessage == false){
-	    $("#hidemessage").hide();
-	}
-	if (config.red == false){
-	    $("#red").hide();
-	}
+      $("#hidemessage").toggle(config.yestextmessage);
       $("#blue").toggle(config.blue);
       $("#green").toggle(config.green);
       $("#red").toggle(config.red);
-	if (config.blue == false){
-	    $("#blue").hide();
-	}
-	if (config.green == false){
-	    $("#green").hide();
-	}
-	if (config.yesphoto == false){
-	    $("#hideAddImage").hide();
-	}
-	console.log("config:",config);
+      $("#hideAddImage").toggle(config.yesphoto);
     }
 
     function reconfigureFromApp(appName) {
-	firebase.database().ref('/apps').once('value').then(function(snapshot) {
-	  var v = snapshot.val();
-	  for(const prop in v) {
-	    console.log("prop",prop);
-	    if (prop == appName) {
-	      var config = v[prop]
-              GLOBAL_CONFIG = config;
-	      reconfigureFromConfig(config);
-	    }
-	  }
+      firebase.database().ref('/apps/'+appName).once('value')
+        .then(function(snapshot) {
+              GLOBAL_CONFIG = snapshot.val();
+	      reconfigureFromConfig(GLOBAL_CONFIG);
 	});
     }
     async function checkForAppInDatabase(name) {
@@ -197,9 +171,6 @@
       reconfigureFromConfig(GLOBAL_CONFIG);
     });
 
-    $(
-	reconfigureFromApp(appName)
-    );
 
   </script>
 

@@ -129,7 +129,8 @@
 
 
     function reconfigureFromConfig(config) {
-      //this doesn't happen immediately
+	//this doesn't happen immediately
+	//if no config file is found, this is still being triggered
       $("#hideusername").toggle(config.yesname);
       $("#hidemessage").toggle(config.yestextmessage);
       $("#blue").toggle(config.blue);
@@ -148,7 +149,6 @@
     async function checkForAppInDatabase(name) {
 	var v = await firebase.database().ref('/apps/'+name).once('value').then(function(snapshot) {
 	  var v = snapshot.val();
-          console.log("v =",v);
           return v;
         });
       console.log("checkForAppInDatabase: ",v);
@@ -161,7 +161,8 @@
 
       if (checkForAppInDatabase(appName)) {
       // check for the app...
-        reconfigureFromApp(appName);
+          reconfigureFromApp(appName);
+	  initMap();
       } else {
         alert("app: "+appName + " not found!");
       }

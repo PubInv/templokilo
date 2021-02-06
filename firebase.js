@@ -23,17 +23,17 @@ firebase.auth().signInAnonymously().catch(function(error) {
 var ref = firebase.database().ref();
 
 firebase.database().ref('/').once('value').then(function(snapshot) {
-    console.log("snapshot",snapshot);
+   // console.log("snapshot",snapshot);
 });
 
 
 firebase.database().ref('/tags').once('value').then(function(snapshot) {
-    console.log("tags snapshot",snapshot);
-    console.log("tags val snapshot",snapshot.val());
+    //console.log("tags snapshot",snapshot);
+    //console.log("tags val snapshot",snapshot.val());
 });
 
 
 firebase.database().ref('/appsrob').once('value').then(function(snapshot) {
-    console.log("appsrob snapshot",snapshot);
-    console.log("tags appsrob snapshot",snapshot.val());
+    //console.log("appsrob snapshot",snapshot);
+    //console.log("tags appsrob snapshot",snapshot.val());
 });

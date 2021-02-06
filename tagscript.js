@@ -33,7 +33,7 @@
 // });
 
 
-// Pass Appname here...
+// Pass Appname here...  Q: It's global, so is it simpler to not pass it here?
 function writeTag(tagId, lat, lon, color, message) {
     if (message) {
 	console.log("Message: ",message);
@@ -47,6 +47,7 @@ function writeTag(tagId, lat, lon, color, message) {
     //UTC date
     var d = new Date();
 
+    //ADD NAME AND PHOTO
     var obj = {
         latitude: lat,
         longitude: lon,
@@ -58,7 +59,7 @@ function writeTag(tagId, lat, lon, color, message) {
     console.log(obj);
 
   // Construct path to the appname: "apps/APPNAME=rob/tags/"
-    firebase.database().ref('tags/' + tagId).set(obj,
+    firebase.database().ref('/apps/' + appName + "/tags/" + tagId).set(obj,
                                                  function(error) {
                                                      if (error) {
                                                          // The write failed...
@@ -69,32 +70,34 @@ function writeTag(tagId, lat, lon, color, message) {
                                                      }
                                                  });
     document.getElementById("message").value = '';
-    //erase input message
 }
 
 var x = document.getElementById("demo");
 // Q: This is a global variable, right? It's only used once, so it could be replaced.
 
-//async function getLastTagNumInDBandWrite(postion,color) {
 async function getLastTagNumInDBandWrite(color) {
-  var highestnum = 0;
-  // Construct path to the appname: "apps/APPNAME=rob/tags/"
-  firebase.database().ref('/tags').once('value').then(function(snapshot) {
-    var v = snapshot.val();
-    for(const prop in v) {
-      const n = parseInt(prop.substring("geotag".length));
-      highestnum = Math.max(highestnum,n);
-    }
-      console.log("Highest num: ", highestnum);
-    // highestnum is now the max key
-    // TODO: Take this out and use a Promise to make clearer
-    var options = { enableHighAccuracy: false,
-                    timeout:10000};
-    navigator.geolocation.getCurrentPosition(
-        (position) => createTag(position,color,highestnum+1),
-        error,
-      options);
-  });
+    var highestnum = 0;
+    console.log("appName = ", appName);
+    //could still appear if appname doesn't exist in firebase??
+    firebase.database().ref('/apps/' + appName + "/tags/").once('value').then(function(snapshot) {
+	var v = snapshot.val();
+	for(const prop in v) {
+	    const n = parseInt(prop.substring("geotag".length));
+	    highestnum = Math.max(highestnum,n);
+	    if (highestnum == NaN) {
+		highestnum = 0;
+	    } //was getting geotagNaN, so this is the bad solution. I don't think it's happening anymore though
+	}
+	console.log("Highest num: ", highestnum);
+	// highestnum is now the max key
+	// TODO: Take this out and use a Promise to make clearer
+	var options = { enableHighAccuracy: true,
+			timeout:10000};
+	navigator.geolocation.getCurrentPosition(
+            (position) => createTag(position,color,highestnum+1),
+            error,
+	    options);
+    });
 }
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
@@ -201,7 +204,6 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 	map.getCanvas().style.cursor = '';
     });
 
-//  lcnt++;
 
 }
 
@@ -262,34 +264,34 @@ var map;
 
 // add parameter for appName here...
 function initMap() {
-  mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
+    mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
 
-  map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/light-v9',
-    center: [-96, 37.8],
-    zoom: 3
-  });
-
-  var radius = 20;
-  // Q: ??
-
-
-
-  map.on('load', function () {
-  // Construct path to the appname: "apps/APPNAME=rob/tags/"
-    firebase.database().ref('/tags').once('value').then(function(snapshot) {
-      var v = snapshot.val();
-      for(const prop in v) {
-        //console.log("prop =",prop);
-        const n = parseInt(prop.substring("geotag".length));
-        gt = v[prop];
-	//console.log("gt = gt");
-	showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
-        //      LASTTAGNUM = Math.max(LASTTAGNUM,n);
-      }
+    map = new mapboxgl.Map({
+	container: 'map',
+	style: 'mapbox://styles/mapbox/light-v9',
+	center: [-96, 37.8],
+	zoom: 3
     });
-  });
 
+    var radius = 20;
+    // Q: ??
+
+
+    if (appName != "abby"){
+	map.on('load', function () {
+	    // Construct path to the appname: "apps/APPNAME=rob/tags/"
+	    firebase.database().ref('/apps/' + appName + "/tags/").once('value').then(function(snapshot) {
+		var v = snapshot.val();
+		for(const prop in v) {
+		    //console.log("prop =",prop);
+		    const n = parseInt(prop.substring("geotag".length));
+		    gt = v[prop];
+		    //console.log("gt = gt");
+		    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
+		    //LASTTAGNUM = Math.max(LASTTAGNUM,n);
+		}
+	    });
+	});
+    }
 }

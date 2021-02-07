@@ -117,20 +117,22 @@
     var GLOBAL_CONFIG = { yesname: false,
 		   yestextmessage: false,
 		   icon: "music-15.svg",
-		   red: false,
+		   red: true,
 		   blue: true,
-		   green: false,
+		   green: true,
 		   yesphoto: true
 		 };
     //Just an example. Get this from database
     //TODO: Icon and upload photo
 
-    var appName = "abby";
+    var GLOBAL_APPNAME = "abby";
 
 
     function reconfigureFromConfig(config) {
 	//this doesn't happen immediately
 	//if no config file is found, this is still being triggered
+
+	//PROBLEM HERE. Toggles hideusername and hidemessage every time search is clicked. Might be because of "false"
       $("#hideusername").toggle(config.yesname);
       $("#hidemessage").toggle(config.yestextmessage);
       $("#blue").toggle(config.blue);
@@ -156,15 +158,15 @@
     }
 
     function searchforapp() {
-      appName = document.getElementById("searchname").value;
-      console.log("Search text: ", appName);
+      GLOBAL_APPNAME = document.getElementById("searchname").value;
+      console.log("Search text: ", GLOBAL_APPNAME);
 
-      if (checkForAppInDatabase(appName)) {
+      if (checkForAppInDatabase(GLOBAL_APPNAME)) {
       // check for the app...
-          reconfigureFromApp(appName);
-	  initMap();
+          reconfigureFromApp(GLOBAL_APPNAME);
+	  initMap(GLOBAL_APPNAME);
       } else {
-        alert("app: "+appName + " not found!");
+        alert("app: "+GLOBAL_APPNAME + " not found!");
       }
     }
 
@@ -172,7 +174,7 @@
       reconfigureFromConfig(GLOBAL_CONFIG);
     });
 
-    $(initMap());
+    $(initMap(null));
 
   </script>
 

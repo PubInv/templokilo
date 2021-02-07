@@ -33,8 +33,8 @@
 // });
 
 
-// Pass Appname here...  Q: It's global, so is it simpler to not pass it here?
-function writeTag(tagId, lat, lon, color, message) {
+//appName is global, appname is 
+function writeTag(tagId, lat, lon, color, message, appname, username) {
     if (message) {
 	console.log("Message: ",message);
     }
@@ -49,6 +49,7 @@ function writeTag(tagId, lat, lon, color, message) {
 
     //ADD NAME AND PHOTO
     var obj = {
+	username: username,
         latitude: lat,
         longitude: lon,
         color: color,
@@ -58,8 +59,7 @@ function writeTag(tagId, lat, lon, color, message) {
 
     console.log(obj);
 
-  // Construct path to the appname: "apps/APPNAME=rob/tags/"
-    firebase.database().ref('/apps/' + appName + "/tags/" + tagId).set(obj,
+    firebase.database().ref('/apps/' + appname + "/tags/" + tagId).set(obj,
                                                  function(error) {
                                                      if (error) {
                                                          // The write failed...
@@ -77,9 +77,9 @@ var x = document.getElementById("demo");
 
 async function getLastTagNumInDBandWrite(color) {
     var highestnum = 0;
-    console.log("appName = ", appName);
+    console.log("appName = ", GLOBAL_APPNAME);
     //could still appear if appname doesn't exist in firebase??
-    firebase.database().ref('/apps/' + appName + "/tags/").once('value').then(function(snapshot) {
+    firebase.database().ref('/apps/' + GLOBAL_APPNAME + "/tags/").once('value').then(function(snapshot) {
 	var v = snapshot.val();
 	for(const prop in v) {
 	    const n = parseInt(prop.substring("geotag".length));
@@ -94,7 +94,7 @@ async function getLastTagNumInDBandWrite(color) {
 	var options = { enableHighAccuracy: true,
 			timeout:10000};
 	navigator.geolocation.getCurrentPosition(
-            (position) => createTag(position,color,highestnum+1),
+            (position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME),
             error,
 	    options);
     });
@@ -110,18 +110,19 @@ function getLocation(color) {
         alert("Geolocation is not supported by this browser.");
     }
 }
-var lcnt = 0;
+//var lcnt = 0;
 // Q: Could we delete this? Not used anywhere else.
 
-function createTag(position,color,tagnum) {
+function createTag(position,color,tagnum,appname) {
     showPositionOnPage(position,color);
-    writePosition(position,color,tagnum);
+    writePosition(position,color,tagnum,appname);
 }
-function writePosition(position,color,tagnum) {
+function writePosition(position,color,tagnum,appname) {
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     var tagmessage = document.getElementById('message').value;
-    writeTag("geotag" + tagnum,latDec,lonDec,color,tagmessage);
+    var tagusername = document.getElementById('user-name').value;
+    writeTag("geotag" + tagnum,latDec,lonDec,color,tagmessage,appname,tagusername);
 }
 function showPositionOnPage(position,color) {
     x.innerHTML = "Latitude: " + position.coords.latitude +
@@ -263,7 +264,7 @@ function getDMS2DD(days, minutes, seconds, direction) {
 var map;
 
 // add parameter for appName here...
-function initMap() {
+function initMap(appname) {
     mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
 
@@ -274,14 +275,13 @@ function initMap() {
 	zoom: 3
     });
 
-    var radius = 20;
+    //var radius = 20;
     // Q: ??
 
 
-    if (appName != "abby"){
+    if (appname){
 	map.on('load', function () {
-	    // Construct path to the appname: "apps/APPNAME=rob/tags/"
-	    firebase.database().ref('/apps/' + appName + "/tags/").once('value').then(function(snapshot) {
+	    firebase.database().ref('/apps/' + appname + "/tags/").once('value').then(function(snapshot) {
 		var v = snapshot.val();
 		for(const prop in v) {
 		    //console.log("prop =",prop);

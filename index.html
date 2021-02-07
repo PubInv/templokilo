@@ -6,8 +6,11 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <link href="styles.css" rel="stylesheet">
     <script type="text/javascript" src="exif.js"></script>
+    <!---
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' /> --->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.css" rel="stylesheet" />
     <!---v.2.0.1 is available for mapbox-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!---added Bootstrap-->
@@ -125,8 +128,10 @@
     //Just an example. Get this from database
     //TODO: Icon and upload photo
 
-    var GLOBAL_APPNAME = "abby";
+    //github https://github.com/mapbox/maki
+    //icon list https://labs.mapbox.com/maki-icons/
 
+    var GLOBAL_APPNAME = "abby";
 
     function reconfigureFromConfig(config) {
 	//this doesn't happen immediately
@@ -164,7 +169,7 @@
       if (checkForAppInDatabase(GLOBAL_APPNAME)) {
       // check for the app...
           reconfigureFromApp(GLOBAL_APPNAME);
-	  initMap(GLOBAL_APPNAME);
+	  initMap(GLOBAL_APPNAME,GLOBAL_CONFIG.icon);
       } else {
         alert("app: "+GLOBAL_APPNAME + " not found!");
       }
@@ -174,7 +179,7 @@
       reconfigureFromConfig(GLOBAL_CONFIG);
     });
 
-    $(initMap(null));
+    $(initMap(null,null));
 
   </script>
 

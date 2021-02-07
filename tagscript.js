@@ -130,12 +130,14 @@ function showPositionOnPage(position,color) {
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     var message = 'Reload to see your latest message';
-    showLngLatOnMap(lonDec,latDec,color,null,message);
+    var icon = "music-15.svg"
+    //FOR NOW 
+    showLngLatOnMap(lonDec,latDec,color,null,message,icon);
     //putting null in for n, because it would be take too much effort right now to put the most recent number in
     //The same goes for a generic message for var message. I could definitely fix this if we think it's a good idea.
 }
 
-function showLngLatOnMap(lonDec,latDec,color,n,message) {
+function showLngLatOnMap(lonDec,latDec,color,n,message,icon) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
     if (message == undefined) {
@@ -146,35 +148,46 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
     }
 
     map.addSource('point'+n, {
-        "type": "geojson",
-        "data": {
-            "type": "FeatureCollection",
-            "features": [{
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [lonDec, latDec ]
-                },
-                "properties": {
+	"type": "geojson",
+	"data": {
+	    "type": "FeatureCollection",
+	    "features": [{
+		"type": "Feature",
+		"geometry": {
+		    "type": "Point",
+		    "coordinates": [lonDec, latDec ]
+		},
+		"properties": {
 		    'description':
 		    '<strong>geotag' + n + '</strong><p>' + message + '</p>',
-                    "color": color,
-                    "title": "Waterloo",
-                    "icon": "monument"
-                }
-            }]
-        }
+		    "color": color,
+		    "title": "Waterloo",
+		    //"icon": "monument"
+		    "icon": icon
+		}
+	    }]
+	}
     });
 
-  // Possibly this is inefficient; possibly there should be a layer for all tags.
+    // Possibly this is inefficient; possibly there should be a layer for all tags.
     map.addLayer({
-        "id": "point"+n,
-        "source": "point"+n,
-        "type": "circle",
-        "paint": {
-            "circle-radius": 10,
-            'circle-color': ['get', 'color']
-        }
+	"id": "point"+n,
+	"source": "point"+n,
+	'type': 'symbol',
+	
+	'layout': {
+	  //'icon-image': '{icon}',
+	  'icon-image': "music-15.svg",
+	  'icon-allow-overlap': true
+	  }
+	
+	/*
+	  "type": "circle",
+	  "paint": {
+	  "circle-radius": 10,
+	  'circle-color': ['get', 'color']
+	  }
+	*/
     });
 
     //https://docs.mapbox.com/mapbox-gl-js/example/popup-on-click/
@@ -264,7 +277,7 @@ function getDMS2DD(days, minutes, seconds, direction) {
 var map;
 
 // add parameter for appName here...
-function initMap(appname) {
+function initMap(appname,icon) {
     mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
 
@@ -288,7 +301,7 @@ function initMap(appname) {
 		    const n = parseInt(prop.substring("geotag".length));
 		    gt = v[prop];
 		    //console.log("gt = gt");
-		    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
+		    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message,icon);
 		    //LASTTAGNUM = Math.max(LASTTAGNUM,n);
 		}
 	    });

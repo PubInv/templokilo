@@ -32,15 +32,76 @@
 //     console.log("tags val snapshot",snapshot.val());
 // });
 
+/*
+function updateCurrentPosition() {
+    mapboxgl.accessToken ='pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
-//appName is global, appname is 
+    map.on('load', function () {
+	map.addSource('currentLocation', {
+	    "type": "geojson",
+	    "data": {
+		"type": "FeatureCollection",
+		"features": [{
+		    "type": "Feature",
+		    "geometry": {
+			"type": "Point",
+			"coordinates": [37.794733, 101.559148]
+		    },
+		    "properties": {
+			"color": 'black',
+			"title": "Waterloo",
+			"icon": "monument"
+		    }
+		}]
+	    }
+	});
+
+	map.addLayer({
+	    "id": 'currentLocation',
+	    "source": 'currentLocation',
+	    "type": "circle",
+	    "paint": {
+		"circle-radius": 10,
+		'circle-color': ['get', 'color']
+	    }
+	});
+	
+	window.setInterval(function () {
+	    var crd;
+	    function success(pos) {
+		var crd = pos.coords;
+	    }
+	    navigator.geolocation.getCurrentPosition(success);
+	    
+	    map.getSource('currentLocation').setData({
+		"type": "geojson",
+		"data": {
+		    "type": "FeatureCollection",
+		    "features": [{
+			"type": "Feature",
+			"geometry": {
+			    "type": "Point",
+			    "coordinates": [crd.latitude, crd.longitude]
+			},
+			"properties": {
+			    "color": 'black',
+			    "title": "Waterloo",
+			    "icon": "monument"
+			}
+		    }]
+		}
+	    }); }, 5000);
+    });
+
+}
+*/
 function writeTag(tagId, lat, lon, color, message, appname, username) {
     if (message) {
 	console.log("Message: ",message);
     }
     else {
 	console.log("No message");
-	message = null;
+	//message = null;
 	//isn't showing up in obj if null
     }
 
@@ -105,10 +166,21 @@ function error(err) {
 function getLocation(color) {
   // LASTTAGNUM is global to this function
   if (navigator.geolocation) {
-      getLastTagNumInDBandWrite(color);
+      if (color == 'black') {
+	  console.log("BLACK");
+	  var options = { enableHighAccuracy: true,
+			  timeout:10000};
+	  navigator.geolocation.getCurrentPosition(
+              (position) => showPositionOnPage(position,color),
+              error,
+	      options);
+      }
+      else {
+	  getLastTagNumInDBandWrite(color);
+      }
   } else {
-        alert("Geolocation is not supported by this browser.");
-    }
+      alert("Geolocation is not supported by this browser.");
+  }
 }
 //var lcnt = 0;
 // Q: Could we delete this? Not used anywhere else.
@@ -125,8 +197,10 @@ function writePosition(position,color,tagnum,appname) {
     writeTag("geotag" + tagnum,latDec,lonDec,color,tagmessage,appname,tagusername);
 }
 function showPositionOnPage(position,color) {
-    x.innerHTML = "Latitude: " + position.coords.latitude +
-	"<br>Longitude: " + position.coords.longitude;
+    if (color != 'black') {
+	x.innerHTML = "Latitude: " + position.coords.latitude +
+	    "<br>Longitude: " + position.coords.longitude;
+    }
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     var message = 'Reload to see your latest message';
@@ -147,77 +221,110 @@ function showLngLatOnMap(lonDec,latDec,color,n,message,icon) {
 	n = ' submitted now'
     }
 
-    map.addSource('point'+n, {
-	"type": "geojson",
-	"data": {
-	    "type": "FeatureCollection",
-	    "features": [{
-		"type": "Feature",
-		"geometry": {
-		    "type": "Point",
-		    "coordinates": [lonDec, latDec ]
-		},
-		"properties": {
-		    'description':
-		    '<strong>geotag' + n + '</strong><p>' + message + '</p>',
-		    "color": color,
-		    "title": "Waterloo",
-		    //"icon": "monument"
-		    "icon": icon
-		}
-	    }]
-	}
-    });
-
-    // Possibly this is inefficient; possibly there should be a layer for all tags.
-    map.addLayer({
-	"id": "point"+n,
-	"source": "point"+n,
-	'type': 'symbol',
+    console.log(map.getStyle().sources);
+    //console.log(map.style.sourceCaches);
+    var pointexists = true;
+    
+    if (color == 'black' && map.getStyle().sources["point submitted now"]) {
+	//code
 	
-	'layout': {
-	  //'icon-image': '{icon}',
-	  'icon-image': "music-15.svg",
-	  'icon-allow-overlap': true
-	  }
-	
-	/*
-	  "type": "circle",
-	  "paint": {
-	  "circle-radius": 10,
-	  'circle-color': ['get', 'color']
-	  }
-	*/
-    });
+	map.getSource('point submitted now').setData({
+	    "type": "geojson",
+	    "data": {
+		"type": "FeatureCollection",
+		"features": [{
+		    "type": "Feature",
+		    "geometry": {
+			"type": "Point",
+			//	"coordinates": [lonDec, latDec ]
+			"coordinates": [30.0, -101.0 ]
+		    },
+		    "properties": {
+			"description": "<p>hello</p>",
+			"color": "black",
+			//"color": color,
+			"title": "Waterloo",
+			"icon": "monument"
+		    }
+		}]
+	    }
+	});
+    }
+    else {
+	//console.log("Black point name: ", 'point'+n);
+	map.addSource('point'+n, {
+	    "type": "geojson",
+	    "data": {
+		"type": "FeatureCollection",
+		"features": [{
+		    "type": "Feature",
+		    "geometry": {
+			"type": "Point",
+			"coordinates": [lonDec, latDec ]
+		    },
+		    "properties": {
+			'description':
+			'<strong>geotag' + n + '</strong><p>' + message + '</p>',
+			"color": color,
+			"title": "Waterloo",
+			"icon": "monument"
+			//"icon": icon
+		    }
+		}]
+	    }
+	});
 
-    //https://docs.mapbox.com/mapbox-gl-js/example/popup-on-click/
-    map.on('click',"point"+n, function (e) {
-	var coordinates = e.features[0].geometry.coordinates.slice();
-	var description = e.features[0].properties.description;
+	// Possibly this is inefficient; possibly there should be a layer for all tags.
+	map.addLayer({
+	    "id": "point"+n,
+	    "source": "point"+n,
 
-	// Ensure that if the map is zoomed out such that multiple
-	// copies of the feature are visible, the popup appears
-	// over the copy being pointed to.
-	while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-	    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-	}
+	    /*
+	      if we figured this out, icon is already passed into this function
+	      'type': 'symbol',
+	      'layout': {
+	      //'icon-image': '{icon}',
+	      'icon-image': "music-15.svg",
+	      'icon-allow-overlap': true
+	      }
+	    */
+	    
+	    "type": "circle",
+	    "paint": {
+		"circle-radius": 10,
+		'circle-color': ['get', 'color']
+	    }
+	    
+	});
 
-	new mapboxgl.Popup()
-	    .setLngLat(coordinates)
-	    .setHTML(description)
-	    .addTo(map);
-    });
+	//https://docs.mapbox.com/mapbox-gl-js/example/popup-on-click/
+	map.on('click',"point"+n, function (e) {
+	    var coordinates = e.features[0].geometry.coordinates.slice();
+	    var description = e.features[0].properties.description;
 
-    // Change the cursor to a pointer when the mouse is over the places layer.
-    map.on('mouseenter', "point"+n , function () {
-	map.getCanvas().style.cursor = 'pointer';
-    });
+	    // Ensure that if the map is zoomed out such that multiple
+	    // copies of the feature are visible, the popup appears
+	    // over the copy being pointed to.
+	    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+		coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+	    }
 
-    // Change it back to a pointer when it leaves.
-    map.on('mouseleave', "point"+n , function () {
-	map.getCanvas().style.cursor = '';
-    });
+	    new mapboxgl.Popup()
+		.setLngLat(coordinates)
+		.setHTML(description)
+		.addTo(map);
+	});
 
+	// Change the cursor to a pointer when the mouse is over the places layer.
+	map.on('mouseenter', "point"+n , function () {
+	    map.getCanvas().style.cursor = 'pointer';
+	});
+
+	// Change it back to a pointer when it leaves.
+	map.on('mouseleave', "point"+n , function () {
+	    map.getCanvas().style.cursor = '';
+	});
+    }
 
 }
 

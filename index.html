@@ -37,7 +37,8 @@
   <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="collapse navbar-collapse" id="navbarNav">
+      <!--- deleted "collapse" class here -->
+      <div class="navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item active">
             <a class="nav-link" href="index.html">User Page<span class="sr-only">(current)</span></a>
@@ -64,7 +65,7 @@
 	<input type="text" id="searchname" class="marginleft">
       </div>
 
-    <button type="button" onclick="searchforapp()" class="btn btn-primary center">Search</button>
+    <button type="button" onclick="searchforapp()" class="btn btn-primary marginleft">Search</button>
 
 
     <br><br>
@@ -134,16 +135,16 @@
     var GLOBAL_APPNAME = "abby";
 
     function reconfigureFromConfig(config) {
-	//this doesn't happen immediately
 	//if no config file is found, this is still being triggered
 
 	//PROBLEM HERE. Toggles hideusername and hidemessage every time search is clicked. Might be because of "false"
-      $("#hideusername").toggle(config.yesname);
-      $("#hidemessage").toggle(config.yestextmessage);
-      $("#blue").toggle(config.blue);
-      $("#green").toggle(config.green);
-      $("#red").toggle(config.red);
-      $("#hideAddImage").toggle(config.yesphoto);
+	$("#hideusername").toggle(config.yesname);
+	$("#hidemessage").toggle(config.yestextmessage);
+	$("#blue").toggle(config.blue);
+	$("#green").toggle(config.green);
+	$("#red").toggle(config.red);
+	$("#hideAddImage").hide();
+	//$("#hideAddImage").toggle(config.yesphoto);
     }
 
     function reconfigureFromApp(appName) {
@@ -180,6 +181,10 @@
     });
 
     $(initMap(null,null));
+
+    //$(updateCurrentPosition());
+
+    updatePosition = setInterval(function() { getLocation('black'); }, 5000);
 
   </script>
 

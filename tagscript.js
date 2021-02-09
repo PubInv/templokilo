@@ -228,26 +228,28 @@ function showLngLatOnMap(lonDec,latDec,color,n,message,icon) {
     if (color == 'black' && map.getStyle().sources["point submitted now"]) {
 	//code
 	
-	map.getSource('point submitted now').setData({
-	    "type": "geojson",
-	    "data": {
+	var x = map.getSource('point submitted now');
+	console.dir(x);
+	x.setData({
+	    //"type": "geojson",
+	    //"data": {
 		"type": "FeatureCollection",
 		"features": [{
 		    "type": "Feature",
 		    "geometry": {
 			"type": "Point",
-			//	"coordinates": [lonDec, latDec ]
-			"coordinates": [30.0, -101.0 ]
+			"coordinates": [lonDec, latDec ]
+			//"coordinates": [30.0, -101.0 ]
 		    },
 		    "properties": {
 			"description": "<p>hello</p>",
-			"color": "black",
-			//"color": color,
+			//"color": "black",
+			"color": color,
 			"title": "Waterloo",
 			"icon": "monument"
 		    }
 		}]
-	    }
+	    //}
 	});
     }
     else {

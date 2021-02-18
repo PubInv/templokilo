@@ -6,38 +6,29 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <link href="styles.css" rel="stylesheet">
     <script type="text/javascript" src="exif.js"></script>
-    <!---
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' /> --->
+    <!---added mapbox-->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.css" rel="stylesheet" />
-    <!---v.2.0.1 is available for mapbox-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!---added Bootstrap-->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <!--
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	-->
 
-	<!-- Experimentally trying tesseract -->
-	<script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
+    <!-- Experimentally trying tesseract -->
+    <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
 
-	<!-- <script src="https://cdn.rawgit.com/naptha/tesseract.js/0.2.0/dist/tesseract.js"> -->
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
+    <!-- Firebase App is always required and must be first -->
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
 
-	  <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
-	  <!-- Firebase App is always required and must be first -->
-	  <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
-
-	  <!-- Add additional services that you want to use -->
-	  <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
-	  <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
+    <!-- Add additional services that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
   </head>
 
 
   <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <!--- deleted "collapse" class here -->
       <div class="navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item active">
@@ -60,29 +51,24 @@
     <h1 class="center">GeotagText</h1>
     <br>
 
-     <div class="mb-3">
-	<label for="searchname" class="marginleft">Search for app</label>
-	<input type="text" id="searchname" class="marginleft">
-      </div>
+    <div class="mb-3">
+      <label for="searchname" class="marginleft">Search for app</label>
+      <input type="text" id="searchname" class="marginleft">
+    </div>
 
     <button type="button" onclick="searchforapp()" class="btn btn-primary marginleft">Search</button>
 
 
     <br><br>
 
-     <div class="mb-3" id="hideusername">
-	<label for="user-name" class="marginleft">Name of user</label>
-	<input type="text" id="user-name" class="marginleft">
-      </div>
+    <div class="mb-3" id="hideusername">
+      <label for="user-name" class="marginleft">Name of user</label>
+      <input type="text" id="user-name" class="marginleft">
+    </div>
 
     <label class="cameraButton marginleft" id="hideAddImage">Add an image:
       <input id="file-input" type="file" accept="image/*;capture=camera">
     </label>
-
-    <!---
-	This doesn't take a color, so it doesn't work
-    <button onclick="getLocation()">Try It</button>
-    -->
 
     <div id="demo"> </div>
 
@@ -125,18 +111,13 @@
 		   green: true,
 		   yesphoto: true
 		 };
-    //Just an example. Get this from database
+    //Placeholder
     //TODO: Icon and upload photo
-
-    //github https://github.com/mapbox/maki
-    //icon list https://labs.mapbox.com/maki-icons/
 
     var GLOBAL_APPNAME = "abby";
 
     function reconfigureFromConfig(config) {
 	//if no config file is found, this is still being triggered
-
-	//PROBLEM HERE. Toggles hideusername and hidemessage every time search is clicked. Might be because of "false"
 	$("#hideusername").toggle(config.yesname);
 	$("#hidemessage").toggle(config.yestextmessage);
 	$("#blue").toggle(config.blue);
@@ -156,7 +137,8 @@
     async function checkForAppInDatabase(name) {
 	var v = await firebase.database().ref('/apps/'+name).once('value').then(function(snapshot) {
 	  var v = snapshot.val();
-          return v;
+            return v;
+	    //BOTH RETURNS NEEDED??
         });
       console.log("checkForAppInDatabase: ",v);
       return v;
@@ -181,8 +163,7 @@
 
     $(initMap(null,null));
 
-    //$(updateCurrentPosition());
-
+    //"var = " NOT NEEDED HERE?
     updatePosition = setInterval(function() { getLocation('black'); }, 5000);
 
   </script>

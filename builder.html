@@ -1,14 +1,12 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset='utf-8' />
     <title>Build your own geotag map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <link href="styles.css" rel="stylesheet">
     <!---added Bootstrap-->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-
-        <!---v.2.0.1 is available for mapbox-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
@@ -18,10 +16,10 @@
     <!-- Add additional services that you want to use -->
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
-</head>
+  </head>
 
 
-<body>
+  <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="navbar-collapse" id="navbarNav">
@@ -116,55 +114,109 @@
 </body>
 <script type="text/javascript" src="firebase.js"></script>
 <script>
-  function createApplication() {
+  function checkForApp(appName) {
+      return new Promise(function (resolve, reject) {
+	  firebase.database().ref('/apps/' + appName).once('value')
+	      .then(function(snapshot) {
+		  if (snapshot.exists()) {
+		      return resolve();
+		  }
+		  else {
+		      return reject();
+		  }
+	      });
+      });
+  }
+			
+      /*
+  async function checkForApp(appName) {
+      var appExists;
+      firebase.database().ref('/apps/' + appName).once('value').then(function(snapshot) {
 
+      //var checkApp = await firebase.database().ref('/apps/'+appName).once('value').then(function(snapshot) {
+      //var checkApp = await firebase.database().ref(`apps/`+appName).once("value", snapshot => {
+
+	  appExists = snapshot.exists();
+	  console.log("apps: ",appExists);
+      });
+      console.log("apps: ",appExists);
+      return appExists;
+      }*/
+  
+  function createApplication() {
+      //THIS COULD BE MADE SHORTER. SOLVING THE PROBLEM ITSELF IS A GOOD IDEA, BUT I DON'T UNDERSTAND HOW TO CHANGE IT.
       var name = $('input[name=name]:checked', '#createapp').val();
+      if (name == "false") {
+	  name = false;
+      }
+      else {
+	  name = true;
+      }
       var textmessage = $('input[name=text]:checked', '#createapp').val();
-      //var name = $('input[name=name]:checked', '#createapp');
-      //var textmessage = $('input[name=text]:checked', '#createapp');
+       if (textmessage == "false") {
+	  textmessage = false;
+      }
+      else {
+	  textmessage = true;
+      }
+      
       var icon = $("#icon").val();
       var red = $("#red").is(":checked");
       var blue = $("#blue").is(":checked");
       var green = $("#green").is(":checked");
       var photo = $("#yes-photo").is(":checked");
+      var appName = $("#app-name").val();
+
 
       var stop;
       if (blue==false && green==false && red ==false) {
 	  stop = true;
-      }
+      } //maybe this can go directly into if statement on line193
 
-      //check in firebase that appName isn't already used
-      var appName = $("#app-name").val();
+      //CHECK IN FIREBASE THAT NAME ISN'T ALREADY USED
+      //Promises
+      //https://stackoverflow.com/questions/41272734/returning-promise-after-firebase-query
+      //https://firebase.google.com/docs/functions/terminate-functions
 
-      alert("name text icon rbg photo" + name +" "+ textmessage +" "+ icon + red +" "+ blue +" "+ green + " " + photo);
-
-      if (stop == true || icon == "choose marker icon" || appName == "") {
-	  alert("Please fill out all fields");
+      checkForApp(appName)
+	  .then(function() { alert('yes'); })
+	  .catch(function() { alert('no'); });
+      /*
+      if (checkForApp(appName)) {
+	  alert("This app name already exists. Please find another one.");
       }
       else {
-	  var config = { yesname: name,
-			 yestextmessage: textmessage,
-			 icon: icon,
-			 red: red,
-			 blue: blue,
-			 green: green,
-			 yesphoto: photo,
-                         tags: {},
-		       };
+	  //alert("name text icon rbg photo" + name +" "+ textmessage +" "+ icon + red +" "+ blue +" "+ green + " " + photo);
+	  alert("this doesn't exist");
+	  /*
 
-	  // TOOD: /apps tag is create by hand, make initializable
-	  firebase.database().ref('apps/' + appName).set(config,
-							 function(error) {
-							     if (error) {
-								 // The write failed...
-								 console.log("ERROR:",error);
-							     } else {
-								 // Data saved successfully!
-								 console.log("SUCCESS");
-							     }
-							 });
-      }
+	  if (stop == true || icon == "choose marker icon" || appName == "") {
+	      alert("Please fill out all fields");
+	  }
+	  else {
+	      var config = { yesname: name,
+			     yestextmessage: textmessage,
+			     icon: icon,
+			     red: red,
+			     blue: blue,
+			     green: green,
+			     yesphoto: photo,
+                             tags: {},
+			   };
 
+	      firebase.database().ref('apps/' + appName).set(config,
+							     function(error) {
+								 if (error) {
+								     // The write failed...
+								     console.log("ERROR:",error);
+								 } else {
+								     // Data saved successfully!
+								     console.log("SUCCESS");
+								 }
+							     });
+	  }
+
+      }*/
   }
 
 </script>

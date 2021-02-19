@@ -39,7 +39,7 @@ async function getLastTagNumInDBandWrite(color) {
 	}
 	console.log("Highest num: ", highestnum);
 	//GET RID OF OPTIONS
-	var options = { enableHighAccuracy: true,
+	var options = { enableHighAccuracy: false,
 			timeout:10000};
 	navigator.geolocation.getCurrentPosition(
             (position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME),
@@ -55,7 +55,7 @@ function getLocation(color) {
   if (navigator.geolocation) {
       if (color == 'black') {
 	  console.log("BLACK");
-	  var options = { enableHighAccuracy: true,
+	  var options = { enableHighAccuracy: false,
 			  timeout:10000};
 	  navigator.geolocation.getCurrentPosition(
               (position) => showPositionOnPage(position,color),
@@ -90,9 +90,9 @@ function showPositionOnPage(position,color) {
     var message = 'Reload to see your latest message';
     var icon = "music-15.svg"
     //PUT DIRECTLY INTO SHOWLNGLATONMAP
-    
+
     showLngLatOnMap(lonDec,latDec,color," submitted now",message,icon);
-    //too much effort to put latest number and message in 
+    //too much effort to put latest number and message in
 }
 
 function showLngLatOnMap(lonDec,latDec,color,n,message,icon) {
@@ -104,7 +104,7 @@ function showLngLatOnMap(lonDec,latDec,color,n,message,icon) {
     //THIS COULD BE DELETED
 
     //console.log(map.getStyle().sources); //POINT SOURCES
-    
+
     if (color == 'black' && map.getStyle().sources["point submitted now"]) {
 	//var x = map.getSource('point submitted now');
 	//console.dir(x);
@@ -164,13 +164,13 @@ function showLngLatOnMap(lonDec,latDec,color,n,message,icon) {
 	      'icon-allow-overlap': true
 	      }
 	    */
-	    
+
 	    "type": "circle",
 	    "paint": {
 		"circle-radius": 10,
 		'circle-color': ['get', 'color']
 	    }
-	    
+
 	});
 
 	map.on('click',"point"+n, function (e) {

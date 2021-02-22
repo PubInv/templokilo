@@ -114,6 +114,10 @@
 </body>
 <script type="text/javascript" src="firebase.js"></script>
 <script>
+  //Rob claims: you can make async because it returns Promise
+  //return with Await (await checkForApp)
+  //make it act like a boolean
+  /*
   function checkForApp(appName) {
       return new Promise(function (resolve, reject) {
 	  firebase.database().ref('/apps/' + appName).once('value')
@@ -126,24 +130,21 @@
 		  }
 	      });
       });
-  }
+  }*/
 
-      /*
-  async function checkForApp(appName) {
-      var appExists;
-      firebase.database().ref('/apps/' + appName).once('value').then(function(snapshot) {
 
-      //var checkApp = await firebase.database().ref('/apps/'+appName).once('value').then(function(snapshot) {
-      //var checkApp = await firebase.database().ref(`apps/`+appName).once("value", snapshot => {
-
-	  appExists = snapshot.exists();
-	  console.log("apps: ",appExists);
+  const checkForApp = (appName) => {
+      return new Promise((resolve) => {
+	  firebase.database().ref('/apps/' + appName).once('value')
+	      .then(function(snapshot) {
+		  return resolve(snapshot.exists());
+	      });
       });
-      console.log("apps: ",appExists);
-      return appExists;
-      }*/
+  }
+  
 
   function createApplication() {
+  //const createApplication = async () => {
       //THIS COULD BE MADE SHORTER. SOLVING THE PROBLEM ITSELF IS A GOOD IDEA, BUT I DON'T UNDERSTAND HOW TO CHANGE IT.
       var name = $('input[name=name]:checked', '#createapp').val();
       if (name == "false") {
@@ -173,58 +174,7 @@
 	  stop = true;
       } //maybe this can go directly into if statement on line193
 
-      //CHECK IN FIREBASE THAT NAME ISN'T ALREADY USED
-      //Promises
-      //https://stackoverflow.com/questions/41272734/returning-promise-after-firebase-query
-    //https://firebase.google.com/docs/functions/terminate-functions
-    function actuallyCreate(appName) {
-	                 if (stop == true || icon == "choose marker icon" || appName == "") {
-	                   alert("Please fill out all fields");
-	                 }
-	                 else {
-	                   var config = { yesname: name,
-			                  yestextmessage: textmessage,
-			                  icon: icon,
-			                  red: red,
-			                  blue: blue,
-			                  green: green,
-			                  yesphoto: photo,
-                                          tags: {},
-			                };
-
-	                   firebase.database().ref('apps/' + appName).set(config,
-							                  function(error) {
-								            if (error) {
-								              // The write failed...
-								              console.log("ERROR:",error);
-								            } else {
-								              // Data saved successfully!
-								              console.log("SUCCESS");
-								            }
-							                  });
-	                 }
-    }
-
-      checkForApp(appName)
-      .then(function() { console.log("XXX");
-                          alert("This app name already exists. Please find another one.");
-                       })
-      .catch(function() { console.log("YYY");
-                         alert('yes');
-                       	 //alert("name text icon rbg photo" + name +" "+ textmessage +" "+ icon + red +" "+ blue +" "+ green + " " + photo);
-	                 alert("this application doesn't exist");
-                         actuallyCreate(appName);
-                          alert('no'); });
-
-      /*
-      if (checkForApp(appName)) {
-	  alert("This app name already exists. Please find another one.");
-      }
-      else {
-	  //alert("name text icon rbg photo" + name +" "+ textmessage +" "+ icon + red +" "+ blue +" "+ green + " " + photo);
-	  alert("this doesn't exist");
-	  /*
-
+      function actuallyCreate(appName) {
 	  if (stop == true || icon == "choose marker icon" || appName == "") {
 	      alert("Please fill out all fields");
 	  }
@@ -250,9 +200,24 @@
 								 }
 							     });
 	  }
-
-      }*/
-  }
+      }
+/*
+      checkForApp(appName)
+	  .then(function() { console.log("XXX");
+                             alert("This app name already exists. Please find another one.");
+			   })
+	  .catch(function() { console.log("YYY");
+                       	      //alert("name text icon rbg photo" + name +" "+ textmessage +" "+ icon + red +" "+ blue +" "+ green + " " + photo);
+	                      //alert("this application doesn't exist");
+                              actuallyCreate(appName);});
+*/
+      const appThere = await checkForApp(appName);
+      if (appThere) {
+	  alert("This app name already exists. Please find another one.");
+      }
+      else {
+	  actuallyCreate(appName);
+      }
 
 </script>
 

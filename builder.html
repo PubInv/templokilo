@@ -114,9 +114,6 @@
 </body>
 <script type="text/javascript" src="firebase.js"></script>
 <script>
-  //Rob claims: you can make async because it returns Promise
-  //return with Await (await checkForApp)
-  //make it act like a boolean
   /*
   function checkForApp(appName) {
       return new Promise(function (resolve, reject) {
@@ -143,17 +140,16 @@
   }
   
 
-  function createApplication() {
-  //const createApplication = async () => {
+  async function createApplication() {
       //THIS COULD BE MADE SHORTER. SOLVING THE PROBLEM ITSELF IS A GOOD IDEA, BUT I DON'T UNDERSTAND HOW TO CHANGE IT.
-      var name = $('input[name=name]:checked', '#createapp').val();
+      var name = $('input[name=name]:checked').val();
       if (name == "false") {
 	  name = false;
       }
       else {
 	  name = true;
       }
-      var textmessage = $('input[name=text]:checked', '#createapp').val();
+      var textmessage = $('input[name=text]:checked').val();
        if (textmessage == "false") {
 	  textmessage = false;
       }
@@ -218,6 +214,7 @@
       else {
 	  actuallyCreate(appName);
       }
+  }
 
 </script>
 

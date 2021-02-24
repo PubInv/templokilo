@@ -1,5 +1,4 @@
-function writeTag(tagId, lat, lon, color, message, appname, username) {
-
+function writeTag(tagId, lat, lon, color, message, username, appname) {
     var d = new Date();
 
     var obj = {
@@ -26,9 +25,7 @@ function writeTag(tagId, lat, lon, color, message, appname, username) {
 
 async function getLastTagNumInDBandWrite(color) {
     var highestnum = 0;
-    console.log("appName = ", GLOBAL_APPNAME);
     firebase.database().ref('/apps/' + GLOBAL_APPNAME + "/tags/").once('value').then(function(snapshot) {
-	//GET RID OF V
 	var v = snapshot.val();
 	for(const prop in v) {
 	    const n = parseInt(prop.substring("geotag".length));
@@ -37,8 +34,6 @@ async function getLastTagNumInDBandWrite(color) {
 		highestnum = 0;
 	    }
 	}
-	console.log("Highest num: ", highestnum);
-	//GET RID OF OPTIONS
 	var options = { enableHighAccuracy: false,
 			timeout:10000};
 	navigator.geolocation.getCurrentPosition(
@@ -54,18 +49,15 @@ function error(err) {
   }
 }
 function getLocation(color) {
-    //MAKE INTO IF, ELSE IF, ELSE??
   if (navigator.geolocation) {
       if (color == 'black') {
-	  console.log("BLACK");
 	  var options = { enableHighAccuracy: false,
 			  timeout:10000};
 	  navigator.geolocation.getCurrentPosition(
               (position) => showPositionOnPage(position,color),
               error,
 	      options);
-      }
-      else {
+      } else {
 	  getLastTagNumInDBandWrite(color);
       }
   } else {
@@ -74,15 +66,15 @@ function getLocation(color) {
 }
 
 function createTag(position,color,tagnum,appname) {
-    showPositionOnPage(position,color);
-    writePosition(position,color,tagnum,appname);
-}
-function writePosition(position,color,tagnum,appname) {
-    var lonDec = position.coords.longitude;
-    var latDec = position.coords.latitude;
-    var tagmessage = document.getElementById('message').value;
-    var tagusername = document.getElementById('user-name').value;
-    writeTag("geotag" + tagnum,latDec,lonDec,color,tagmessage,appname,tagusername);
+  showPositionOnPage(position,color);
+  writeTag("geotag" + tagnum,
+           position.coords.latitude,
+           position.coords.longitude,
+           color,
+           // Better done with JQUERY
+           document.getElementById('message').value,
+           document.getElementById('user-name').value,
+           appname);
 }
 function showPositionOnPage(position,color) {
     if (color != 'black') {
@@ -91,28 +83,16 @@ function showPositionOnPage(position,color) {
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     var message = 'Reload to see your latest message';
-    var icon = "music-15.svg"
-    //PUT DIRECTLY INTO SHOWLNGLATONMAP
-
-    showLngLatOnMap(lonDec,latDec,color," submitted now",message,icon);
+  showLngLatOnMap(lonDec,latDec,color," submitted now",message);
+  // TODO: We need to update the geotag with the with the number and message
+  // so that you don't have to reload
     //too much effort to put latest number and message in
 }
 
 function showLngLatOnMap(lonDec,latDec,color,n,message) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
-    if (message == undefined) {
-	message = ''
-    }
-    //THIS COULD BE DELETED
-
-    //console.log(map.getStyle().sources); //POINT SOURCES
-
     if (color == 'black' && map.getStyle().sources["point submitted now"]) {
-	//var x = map.getSource('point submitted now');
-	//console.dir(x);
-	//x.setData({
-	//DELETE ABOVE AND MAYBE TITLE, DESCRIPTION AND ICON BELOW
 	map.getSource('point submitted now').setData({
 	    "type": "FeatureCollection",
 	    "features": [{
@@ -122,10 +102,7 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 		    "coordinates": [lonDec, latDec ]
 		},
 		"properties": {
-		    "description": "<p>hello</p>",
 		    "color": color,
-		    "title": "Waterloo",
-		    "icon": "monument"
 		}
 	    }]
 	});
@@ -145,8 +122,6 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 			'description':
 			'<strong>geotag' + n + '</strong><p>' + message + '</p>',
 			"color": color,
-			"title": "Waterloo",
-			"icon": "monument"
 		    }
 		}]
 	    }
@@ -156,17 +131,6 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 	map.addLayer({
 	    "id": "point"+n,
 	    "source": "point"+n,
-
-	    /*
-	      if we figured this out, icon is already passed into this function
-	      'type': 'symbol',
-	      'layout': {
-	      //'icon-image': '{icon}',
-	      'icon-image': "music-15.svg",
-	      'icon-allow-overlap': true
-	      }
-	    */
-
 	    "type": "circle",
 	    "paint": {
 		"circle-radius": 10,
@@ -197,23 +161,13 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 	    map.getCanvas().style.cursor = '';
 	});
     }
-
-}
-
-//IS THIS USED ANYWHERE???
-function getDMS2DD(days, minutes, seconds, direction) {
-    direction.toUpperCase();
-    var dd = days + minutes/60 + seconds/(60*60);
-    if (direction == "S" || direction == "W") {
-        dd = dd*-1;
-    } //don't change N and E
-    return dd;
 }
 
 // THIS MAY HAVE TO BE GLOBAL
 var map;
 
 function initMap(appname) {
+  // TODO: Neil, take this from an environment variable.
     mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
 
@@ -228,7 +182,6 @@ function initMap(appname) {
 	map.on('load', function () {
 	    firebase.database().ref('/apps/' + appname + "/tags/").once('value').then(function(snapshot) {
 		var v = snapshot.val();
-		//DELTE V AND N??
 		for(const prop in v) {
 		    const n = parseInt(prop.substring("geotag".length));
 		    gt = v[prop];

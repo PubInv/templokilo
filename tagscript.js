@@ -1,3 +1,14 @@
+
+
+const checkForAppInDatabase = (appName) => {
+  return new Promise((resolve) => {
+    firebase.database().ref('/apps/' + appName).once('value')
+      .then(function(snapshot) {
+	return resolve(snapshot.exists());
+      });
+  });
+}
+
 function writeTag(tagId, lat, lon, color, message, username, appname) {
     var d = new Date();
 

@@ -102,6 +102,19 @@
   <script type="text/javascript" src="tagscript.js"></script>
   <script>
 
+
+    let params = (new URL(document.location)).searchParams;
+    let appname = params.get('app');
+    console.log("app",name);
+    var GLOBAL_APPNAME = appname;
+    if (appname) {
+      // Turn off the visibility of the "searchname"
+//      document.getElementById("searchname").value;
+    }
+
+    // PUT query param evaluation for APP_NAME here...
+
+
     var GLOBAL_CONFIG = { yesname: false,
 		          yestextmessage: false,
 		          red: true,
@@ -109,7 +122,6 @@
 		          green: true,
 		        };
 
-    var GLOBAL_APPNAME = "";
 
     function reconfigureFromConfig(config) {
       //if no config file is found, this is still being triggered
@@ -127,15 +139,6 @@
 	  GLOBAL_CONFIG = snapshot.val();
 	  reconfigureFromConfig(GLOBAL_CONFIG);
 	});
-    }
-
-    const checkForAppInDatabase = (appName) => {
-      return new Promise((resolve) => {
-	firebase.database().ref('/apps/' + appName).once('value')
-	  .then(function(snapshot) {
-	    return resolve(snapshot.exists());
-	  });
-      });
     }
 
     async function searchforapp() {

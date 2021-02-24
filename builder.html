@@ -36,8 +36,6 @@
 
     <h1 class="center">Map Application Builder</h1>
 
-<!--    <form id="createapp"> -->
-      <!--- action? -->
       <div class="mb-3">
 	<label for="app-name" class="marginleft">Name of Application</label>
 	<input type="text" id="app-name" class="marginleft">
@@ -72,16 +70,6 @@
       </div>
       <br>
 
-      <select class="form-select form-select-sm marginleft" aria-label=".form-select-sm example" id="icon">
-	<option selected>choose marker icon</option>
-	<option value="american-football-15.svg">Football</option>
-	<option value="attraction-15.svg">Camera</option>
-	<option value="car-15.svg">Car</option>
-	<option value="marker-15.svg">Marker</option>
-	<option value="gift-15.svg">Gift</option>
-	<option value="hardware-15.svg">Tool</option>
-	<option value="music-15.svg">Note</option>
-      </select>
       <br><br><br>
 
       <p class="marginleft">Select any colors you want for your icon</p>
@@ -99,14 +87,6 @@
       </div>
       <br>
 
-      <div class="form-check marginleft">
-	<input class="form-check-input" type="checkbox" value="" id="yes-photo">
-	<label class="form-check-label" for="yes-photo">
-	  Ask for photo
-	</label>
-      </div>
-      <br>
-
       <button onclick="createApplication()" class="btn btn-primary">Create Application</button>
 
 
@@ -114,106 +94,63 @@
 </body>
 <script type="text/javascript" src="firebase.js"></script>
 <script>
-  /*
-  function checkForApp(appName) {
-      return new Promise(function (resolve, reject) {
-	  firebase.database().ref('/apps/' + appName).once('value')
-	      .then(function(snapshot) {
-		  if (snapshot.exists()) {
-		      return resolve();
-		  }
-		  else {
-		      return reject();
-		  }
-	      });
-      });
-  }*/
-
 
   const checkForApp = (appName) => {
-      return new Promise((resolve) => {
-	  firebase.database().ref('/apps/' + appName).once('value')
-	      .then(function(snapshot) {
-		  return resolve(snapshot.exists());
-	      });
-      });
+    return new Promise((resolve) => {
+      firebase.database().ref('/apps/' + appName).once('value')
+	.then(function(snapshot) {
+	  return resolve(snapshot.exists());
+	});
+    });
   }
-  
 
   async function createApplication() {
-      //THIS COULD BE MADE SHORTER. SOLVING THE PROBLEM ITSELF IS A GOOD IDEA, BUT I DON'T UNDERSTAND HOW TO CHANGE IT.
-      var name = $('input[name=name]:checked').val();
-      if (name == "false") {
-	  name = false;
+    var name = !($('input[name=name]:checked').val() == "false");
+    var textmessage = !($('input[name=text]:checked').val() == "false");
+
+    var red = $("#red").is(":checked");
+    var blue = $("#blue").is(":checked");
+    var green = $("#green").is(":checked");
+    // Add "dynamic location" configuration check box
+    var appName = $("#app-name").val();
+
+    var stop;
+    if (blue==false && green==false && red ==false) {
+      stop = true;
+    } //maybe this can go directly into if statement on line193
+
+    function actuallyCreate(appName) {
+      if (stop == true || appName == "") {
+	alert("Please fill out all fields");
       }
       else {
-	  name = true;
-      }
-      var textmessage = $('input[name=text]:checked').val();
-       if (textmessage == "false") {
-	  textmessage = false;
-      }
-      else {
-	  textmessage = true;
-      }
+	var config = { yesname: name,
+		       yestextmessage: textmessage,
+		       red: red,
+		       blue: blue,
+		       green: green,
+                       tags: {},
+		     };
 
-      var icon = $("#icon").val();
-      var red = $("#red").is(":checked");
-      var blue = $("#blue").is(":checked");
-      var green = $("#green").is(":checked");
-      var photo = $("#yes-photo").is(":checked");
-      var appName = $("#app-name").val();
-
-
-      var stop;
-      if (blue==false && green==false && red ==false) {
-	  stop = true;
-      } //maybe this can go directly into if statement on line193
-
-      function actuallyCreate(appName) {
-	  if (stop == true || icon == "choose marker icon" || appName == "") {
-	      alert("Please fill out all fields");
-	  }
-	  else {
-	      var config = { yesname: name,
-			     yestextmessage: textmessage,
-			     icon: icon,
-			     red: red,
-			     blue: blue,
-			     green: green,
-			     yesphoto: photo,
-                             tags: {},
-			   };
-
-	      firebase.database().ref('apps/' + appName).set(config,
-							     function(error) {
-								 if (error) {
-								     // The write failed...
-								     console.log("ERROR:",error);
-								 } else {
-								     // Data saved successfully!
-								     console.log("SUCCESS");
-								 }
-							     });
-	  }
+	firebase.database().ref('apps/' + appName).set(config,
+						       function(error) {
+							 if (error) {
+							   // The write failed...
+							   console.log("ERROR:",error);
+							 } else {
+							   // Data saved successfully!
+							   console.log("SUCCESS");
+							 }
+						       });
       }
-/*
-      checkForApp(appName)
-	  .then(function() { console.log("XXX");
-                             alert("This app name already exists. Please find another one.");
-			   })
-	  .catch(function() { console.log("YYY");
-                       	      //alert("name text icon rbg photo" + name +" "+ textmessage +" "+ icon + red +" "+ blue +" "+ green + " " + photo);
-	                      //alert("this application doesn't exist");
-                              actuallyCreate(appName);});
-*/
-      const appThere = await checkForApp(appName);
-      if (appThere) {
-	  alert("This app name already exists. Please find another one.");
-      }
-      else {
-	  actuallyCreate(appName);
-      }
+    }
+    const appThere = await checkForApp(appName);
+    if (appThere) {
+      alert("This app name already exists. Please find another one.");
+    }
+    else {
+      actuallyCreate(appName);
+    }
   }
 
 </script>

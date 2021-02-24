@@ -49,6 +49,9 @@ async function getLastTagNumInDBandWrite(color) {
 }
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
+  if (err.code == 3) {
+    console.warn('This may be because you are in a location where gps is weak. You may not be able to set a mark until you move');
+  }
 }
 function getLocation(color) {
     //MAKE INTO IF, ELSE IF, ELSE??
@@ -95,7 +98,7 @@ function showPositionOnPage(position,color) {
     //too much effort to put latest number and message in
 }
 
-function showLngLatOnMap(lonDec,latDec,color,n,message,icon) {
+function showLngLatOnMap(lonDec,latDec,color,n,message) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
     if (message == undefined) {
@@ -144,7 +147,6 @@ function showLngLatOnMap(lonDec,latDec,color,n,message,icon) {
 			"color": color,
 			"title": "Waterloo",
 			"icon": "monument"
-			//"icon": icon
 		    }
 		}]
 	    }
@@ -211,7 +213,7 @@ function getDMS2DD(days, minutes, seconds, direction) {
 // THIS MAY HAVE TO BE GLOBAL
 var map;
 
-function initMap(appname,icon) {
+function initMap(appname) {
     mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
 
@@ -230,7 +232,7 @@ function initMap(appname,icon) {
 		for(const prop in v) {
 		    const n = parseInt(prop.substring("geotag".length));
 		    gt = v[prop];
-		    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message,icon);
+		    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
 		}
 	    });
 	});

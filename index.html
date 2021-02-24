@@ -103,91 +103,62 @@
   <script>
 
     var GLOBAL_CONFIG = { yesname: false,
-		   yestextmessage: false,
-		   icon: "music-15.svg",
-		   red: true,
-		   blue: true,
-		   green: true,
-		   yesphoto: true
-		 };
-    //Placeholder
-    //TODO: Icon and upload photo
+		          yestextmessage: false,
+		          red: true,
+		          blue: true,
+		          green: true,
+		        };
 
-    var GLOBAL_APPNAME = "abby";
+    var GLOBAL_APPNAME = "";
 
     function reconfigureFromConfig(config) {
-	//if no config file is found, this is still being triggered
-	$("#hideusername").toggle(config.yesname);
-	$("#hidemessage").toggle(config.yestextmessage);
-	$("#blue").toggle(config.blue);
-	$("#green").toggle(config.green);
-	$("#red").toggle(config.red);
-	$("#hideAddImage").hide();
-	//$("#hideAddImage").toggle(config.yesphoto);
+      //if no config file is found, this is still being triggered
+      $("#hideusername").toggle(config.yesname);
+      $("#hidemessage").toggle(config.yestextmessage);
+      $("#blue").toggle(config.blue);
+      $("#green").toggle(config.green);
+      $("#red").toggle(config.red);
+      $("#hideAddImage").hide();
     }
 
     function reconfigureFromApp(appName) {
-	firebase.database().ref('/apps/'+appName).once('value')
-            .then(function(snapshot) {
-		GLOBAL_CONFIG = snapshot.val();
-		reconfigureFromConfig(GLOBAL_CONFIG);
-	    });
+      firebase.database().ref('/apps/'+appName).once('value')
+        .then(function(snapshot) {
+	  GLOBAL_CONFIG = snapshot.val();
+	  reconfigureFromConfig(GLOBAL_CONFIG);
+	});
     }
 
     const checkForAppInDatabase = (appName) => {
-	return new Promise((resolve) => {
-	    firebase.database().ref('/apps/' + appName).once('value')
-		.then(function(snapshot) {
-		    return resolve(snapshot.exists());
-		});
-	});
+      return new Promise((resolve) => {
+	firebase.database().ref('/apps/' + appName).once('value')
+	  .then(function(snapshot) {
+	    return resolve(snapshot.exists());
+	  });
+      });
     }
-    
-    /*
-    async function checkForAppInDatabase(name) {
-	var v = await firebase.database().ref('/apps/'+name).once('value').then(function(snapshot) {
-	    var v = snapshot.val();
-            return v;
-	    //BOTH RETURNS NEEDED??
-        });
-	console.log("checkForAppInDatabase: ",v);
-	return v;
-    }
-
-    function searchforapp() {
-	GLOBAL_APPNAME = document.getElementById("searchname").value;
-	console.log("Search text: ", GLOBAL_APPNAME);
-
-	if (checkForAppInDatabase(GLOBAL_APPNAME)) {
-	    // check for the app...
-            reconfigureFromApp(GLOBAL_APPNAME);
-	    initMap(GLOBAL_APPNAME,GLOBAL_CONFIG.icon);
-	} else {
-            alert("app: "+GLOBAL_APPNAME + " not found!");
-	}
-    }
-    */
 
     async function searchforapp() {
-	GLOBAL_APPNAME = document.getElementById("searchname").value;
-	console.log("Search text: ", GLOBAL_APPNAME);
-	const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
+      GLOBAL_APPNAME = document.getElementById("searchname").value;
+      console.log("Search text: ", GLOBAL_APPNAME);
+      const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
 
-	if (appCheck) {
-	    // check for the app...
-            reconfigureFromApp(GLOBAL_APPNAME);
-	    initMap(GLOBAL_APPNAME,GLOBAL_CONFIG.icon);
-	} else {
-            alert("app: "+GLOBAL_APPNAME + " not found!");
-	}
+      if (appCheck) {
+	// check for the app...
+        reconfigureFromApp(GLOBAL_APPNAME);
+	initMap(GLOBAL_APPNAME);
+      } else {
+        alert("app: "+GLOBAL_APPNAME + " not found!");
+      }
     }
 
     $(document).ready(function(){
-	reconfigureFromConfig(GLOBAL_CONFIG);
+      reconfigureFromConfig(GLOBAL_CONFIG);
     });
 
     $(initMap(null,null));
 
+    // Create a configuration variable for this
     //"var = " NOT NEEDED HERE?
     //    updatePosition = setInterval(function() { getLocation('black'); }, 5000);
 

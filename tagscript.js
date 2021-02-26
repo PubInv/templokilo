@@ -65,7 +65,7 @@ function getLocation(color) {
 	  var options = { enableHighAccuracy: false,
 			  timeout:10000};
 	  navigator.geolocation.getCurrentPosition(
-              (position) => showPositionOnPage(position,color),
+              (position) => showPositionOnPage(position,color,"current location",""),
               error,
 	      options);
       } else {
@@ -77,34 +77,35 @@ function getLocation(color) {
 }
 
 function createTag(position,color,tagnum,appname) {
-  showPositionOnPage(position,color);
-  writeTag("geotag" + tagnum,
-           position.coords.latitude,
-           position.coords.longitude,
-           color,
-           // Better done with JQUERY
-           document.getElementById('message').value,
-           document.getElementById('user-name').value,
-           appname);
+    var message = $('#message').val();
+    showPositionOnPage(position,color,message,tagnum);
+    writeTag("geotag" + tagnum,
+             position.coords.latitude,
+             position.coords.longitude,
+             color,
+	     message,
+	     $('#user-name').val(),
+             appname);
 }
-function showPositionOnPage(position,color) {
+function showPositionOnPage(position,color,message,number) {
     if (color != 'black') {
 	var x = document.getElementById("demo").innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
     }
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
-    var message = 'Reload to see your latest message';
-  showLngLatOnMap(lonDec,latDec,color," submitted now",message);
-  // TODO: We need to update the geotag with the with the number and message
-  // so that you don't have to reload
+    showLngLatOnMap(lonDec,latDec,color,number,message);
+    // TODO: We need to update the geotag with the with the number and message
+    // so that you don't have to reload
     //too much effort to put latest number and message in
 }
 
 function showLngLatOnMap(lonDec,latDec,color,n,message) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
-    if (color == 'black' && map.getStyle().sources["point submitted now"]) {
-	map.getSource('point submitted now').setData({
+    if (color == 'black' && map.getStyle().sources["point"]) {
+	console.log('black point: ',lonDec,latDec);
+	//this works, but the black point changes every 15-30 seconds instead of 5
+	map.getSource('point').setData({
 	    "type": "FeatureCollection",
 	    "features": [{
 		"type": "Feature",
@@ -113,7 +114,9 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 		    "coordinates": [lonDec, latDec ]
 		},
 		"properties": {
-		    "color": color,
+		    'description':
+		    '<strong>geotag' + n + '</strong><p>' + message + '</p>',
+		    "color": color
 		}
 	    }]
 	});
@@ -132,7 +135,7 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 		    "properties": {
 			'description':
 			'<strong>geotag' + n + '</strong><p>' + message + '</p>',
-			"color": color,
+			"color": color
 		    }
 		}]
 	    }

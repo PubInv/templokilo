@@ -65,10 +65,6 @@
       <input type="text" id="user-name" class="marginleft">
     </div>
 
-    <label class="cameraButton marginleft" id="hideAddImage">Add an image:
-      <input id="file-input" type="file" accept="image/*;capture=camera">
-    </label>
-
     <div id="demo"> </div>
 
     <br/>
@@ -130,7 +126,6 @@
       $("#blue").toggle(config.blue);
       $("#green").toggle(config.green);
       $("#red").toggle(config.red);
-      $("#hideAddImage").hide();
     }
 
     function reconfigureFromApp(appName) {
@@ -159,11 +154,10 @@
       reconfigureFromConfig(GLOBAL_CONFIG);
     });
 
-    $(initMap(null,null));
+    $(initMap(null));
 
     // Create a configuration variable for this
-    //"var = " NOT NEEDED HERE?
-    //    updatePosition = setInterval(function() { getLocation('black'); }, 5000);
+    var updatePosition = setInterval(function() { getLocation('black'); }, 5000);
 
   </script>
 

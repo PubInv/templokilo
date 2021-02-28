@@ -76,7 +76,12 @@
       <textarea id="message" class="form-control" aria-label="Enter Message:"></textarea>
     </div>
     <br>
-    <p class="center">Then select a color to go with your message</p>
+
+    <p id="plocation-switch" class="center">Display your current location?</p>
+
+    <button id="location-switch" class="center" type="button" onclick="locationSwitch()">Change to YES</button>
+    
+    <p class="center">Select a color to go with your message</p>
 
 
     <div class="btn-group-vertical, center">
@@ -110,22 +115,41 @@
 
     // PUT query param evaluation for APP_NAME here...
 
+    var GLOBAL_UPDATE_POSITION;
 
     var GLOBAL_CONFIG = { yesname: false,
 		          yestextmessage: false,
-		          red: true,
-		          blue: true,
-		          green: true,
+		          red: false,
+		          blue: false,
+		          green: false,
+			  currentlocation: true
 		        };
 
 
+    function locationSwitch() {
+	if ($('#location-switch').text() == "Change to YES" && GLOBAL_CONFIG.currentlocation == true) {
+	    console.log("change to YES clicked");
+	    $('#location-switch').text("Change to NO");
+	    GLOBAL_UPDATE_POSITION = setInterval(function() { getLocation('black'); }, 5000);
+	}
+	else {
+	    console.log("change to NO clicked");
+	    $('#location-switch').text("Change to YES");
+	    clearInterval(GLOBAL_UPDATE_POSITION);
+	    removeCurrentLoc();
+	}
+    }
+    
     function reconfigureFromConfig(config) {
-      //if no config file is found, this is still being triggered
-      $("#hideusername").toggle(config.yesname);
-      $("#hidemessage").toggle(config.yestextmessage);
-      $("#blue").toggle(config.blue);
-      $("#green").toggle(config.green);
-      $("#red").toggle(config.red);
+	$("#hideusername").toggle(config.yesname);
+	$("#hidemessage").toggle(config.yestextmessage);
+	$("#blue").toggle(config.blue);
+	$("#green").toggle(config.green);
+	$("#red").toggle(config.red);
+	var currentLocation = config.currentlocation;
+	if (currentLocation === undefined) {currentLocation = false;}
+	$('#location-switch').toggle(currentLocation);
+	$('#plocation-switch').toggle(currentLocation);
     }
 
     function reconfigureFromApp(appName) {
@@ -137,9 +161,15 @@
     }
 
     async function searchforapp() {
-      GLOBAL_APPNAME = document.getElementById("searchname").value;
-      console.log("Search text: ", GLOBAL_APPNAME);
-      const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
+	$('#location-switch').text("Change to YES");
+	if (GLOBAL_UPDATE_POSITION) {
+	    clearInterval(GLOBAL_UPDATE_POSITION);
+	}
+	removeCurrentLoc();
+	$('#demo').text("");
+	GLOBAL_APPNAME = document.getElementById("searchname").value;
+	console.log("Search text: ", GLOBAL_APPNAME);
+	const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
 
       if (appCheck) {
 	// check for the app...
@@ -157,7 +187,7 @@
     $(initMap(null));
 
     // Create a configuration variable for this
-    var updatePosition = setInterval(function() { getLocation('black'); }, 5000);
+    //var updatePosition = setInterval(function() { getLocation('black'); }, 5000);
 
   </script>
 

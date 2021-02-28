@@ -205,3 +205,11 @@ function initMap(appname) {
 	});
     }
 }
+
+function removeCurrentLoc() {
+    var mapLayer = map.getLayer('point');
+
+    if(typeof mapLayer !== 'undefined') {
+	map.removeLayer('point').removeSource('point');
+    }
+}

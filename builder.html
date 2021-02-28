@@ -85,6 +85,21 @@
 	<input class="form-check-input" type="checkbox" id="green" checked>
 	<label class="form-check-label" for="green">Green</label>
       </div>
+      <br><br>
+
+      <div class="form-check marginleft">
+	<input class="form-check-input" type="radio" name="currentloc" id="yes-currentloc" value="true">
+	<label class="form-check-label" for="yes-currentloc">
+	  Display the user's current location
+	</label>
+      </div>
+      <div class="form-check marginleft">
+	<input class="form-check-input" type="radio" name="currentloc" id="no-currentloc" value="false" checked>
+	<label class="form-check-label" for="no-currentloc">
+	  Don't display the user's current location
+	</label>
+      </div>
+
       <br>
 
       <button onclick="createApplication()" class="btn btn-primary">Create Application</button>
@@ -99,6 +114,7 @@
   async function createApplication() {
     var name = !($('input[name=name]:checked').val() == "false");
     var textmessage = !($('input[name=text]:checked').val() == "false");
+    var currentloc = !($('input[name=currentloc]:checked').val() == "false");
 
     var red = $("#red").is(":checked");
     var blue = $("#blue").is(":checked");
@@ -122,6 +138,7 @@
 		       blue: blue,
 		       green: green,
                        tags: {},
+		       currentlocation: currentloc
 		     };
 
 	firebase.database().ref('apps/' + appName).set(config,

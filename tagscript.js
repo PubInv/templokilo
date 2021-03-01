@@ -65,7 +65,7 @@ function getLocation(color) {
 	  var options = { enableHighAccuracy: false,
 			  timeout:10000};
 	  navigator.geolocation.getCurrentPosition(
-              (position) => showPositionOnPage(position,color,"current location",""),
+              (position) => showPositionOnPage(position,color,"current location","-current"),
               error,
 	      options);
       } else {
@@ -94,18 +94,15 @@ function showPositionOnPage(position,color,message,number) {
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
     showLngLatOnMap(lonDec,latDec,color,number,message);
-    // TODO: We need to update the geotag with the with the number and message
-    // so that you don't have to reload
-    //too much effort to put latest number and message in
 }
 
 function showLngLatOnMap(lonDec,latDec,color,n,message) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
-    if (color == 'black' && map.getStyle().sources["point"]) {
+    if (color == 'black' && map.getStyle().sources["point-current"]) {
 	console.log('black point: ',lonDec,latDec);
 	//this works, but the black point changes every 15-30 seconds instead of 5
-	map.getSource('point').setData({
+	map.getSource('point-current').setData({
 	    "type": "FeatureCollection",
 	    "features": [{
 		"type": "Feature",
@@ -207,9 +204,9 @@ function initMap(appname) {
 }
 
 function removeCurrentLoc() {
-    var mapLayer = map.getLayer('point');
+    var mapLayer = map.getLayer('point-current');
 
     if(typeof mapLayer !== 'undefined') {
-	map.removeLayer('point').removeSource('point');
+	map.removeLayer('point-current').removeSource('point-current');
     }
 }

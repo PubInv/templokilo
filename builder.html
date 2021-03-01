@@ -158,8 +158,11 @@
       alert("This app name already exists. Please find another one.");
     }
     else {
-      actuallyCreate(appName);
-      // alert that it succeeded here!
+	actuallyCreate(appName);
+	//THIS WILL HAVE TO BE CHANGED IF USING HEROKU!!
+	//alert("Succesfully created: " + "https://pubinv.github.io/geotagtext/index.html/?app="+appName);
+	//window.location.replace("http://127.0.0.1:8080/?app="+appName);
+	window.location.replace("https://pubinv.github.io/geotagtext/index.html/?app="+appName);
     }
   }
 

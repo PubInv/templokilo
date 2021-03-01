@@ -48,17 +48,18 @@
     </style>
 
     <h1 class="center">GeotagText</h1>
-    <br>
+
+    <div class="center" id="appnametitle"></div>
 
     <div class="mb-3">
-      <label for="searchname" class="marginleft">Search for app</label>
+      <label for="searchname" class="marginleft">Search for an app</label>
       <input type="text" id="searchname" class="marginleft">
     </div>
 
-    <button type="button" onclick="searchforapp()" class="btn btn-primary marginleft">Search</button>
+    <button type="button" onclick="searchforapp('searchbar')" class="btn btn-primary marginleft">Search</button>
 
 
-    <br><br>
+    <br><br><br>
 
     <div class="mb-3" id="hideusername">
       <label for="user-name" class="marginleft">Name of user</label>
@@ -66,8 +67,6 @@
     </div>
 
     <div id="demo"> </div>
-
-    <br/>
 
     <div class="input-group" id="hidemessage">
       <div class="input-group-prepend">
@@ -103,14 +102,16 @@
   <script type="text/javascript" src="tagscript.js"></script>
   <script>
 
-
     let params = (new URL(document.location)).searchParams;
-    let appname = params.get('app');
-    console.log("app",name);
-    var GLOBAL_APPNAME = appname;
-    if (appname) {
-      // Turn off the visibility of the "searchname"
-//      document.getElementById("searchname").value;
+    let queryappname = params.get('app');
+    //console.log("app:",queryappname);
+    var GLOBAL_APPNAME = queryappname;
+    if (queryappname) {
+	      // Turn off the visibility of the "searchname"
+	//      document.getElementById("searchname").value;
+	// I don't think this is a good idea. You can't look for another app if the searchbar is gone
+	//console.log('yes app');
+	searchforapp('query');
     }
 
     // PUT query param evaluation for APP_NAME here...
@@ -160,24 +161,34 @@
 	});
     }
 
-    async function searchforapp() {
+    async function searchforapp(placeUsed) {
 	$('#location-switch').text("Change to YES");
 	if (GLOBAL_UPDATE_POSITION) {
 	    clearInterval(GLOBAL_UPDATE_POSITION);
 	}
-	removeCurrentLoc();
 	$('#demo').text("");
-	GLOBAL_APPNAME = document.getElementById("searchname").value;
+	if (placeUsed == 'searchbar') {
+	    GLOBAL_APPNAME = document.getElementById("searchname").value;
+	    removeCurrentLoc();
+	    //CHANGE LINK OR REMOVE PARAMETERS!!
+	    //https://stackoverflow.com/questions/1634748/how-can-i-delete-a-query-string-parameter-in-javascript
+	    //It might be a little late for this:
+	    //Having a search change the query parameter for app would make this a little less complicated. Either way works though.
+	}
+	else if (placeUsed == 'query') { //I guess else would be simpler
+	    GLOBAL_APPNAME = queryappname;
+	}
 	console.log("Search text: ", GLOBAL_APPNAME);
 	const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
 
-      if (appCheck) {
-	// check for the app...
-        reconfigureFromApp(GLOBAL_APPNAME);
-	initMap(GLOBAL_APPNAME);
-      } else {
-        alert("app: "+GLOBAL_APPNAME + " not found!");
-      }
+	if (appCheck) {
+	    // check for the app...
+            reconfigureFromApp(GLOBAL_APPNAME);
+	    initMap(GLOBAL_APPNAME);
+	    $('#appnametitle').text("Map Application Name: "+GLOBAL_APPNAME);
+	} else {
+            alert("app: "+GLOBAL_APPNAME + " not found!");
+	}
     }
 
     $(document).ready(function(){
@@ -185,9 +196,6 @@
     });
 
     $(initMap(null));
-
-    // Create a configuration variable for this
-    //var updatePosition = setInterval(function() { getLocation('black'); }, 5000);
 
   </script>
 

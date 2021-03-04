@@ -36,6 +36,8 @@
 
     <h1 class="center">Map Application Builder</h1>
 
+    <div id="redirect-anchor"></div>
+
       <div class="mb-3">
 	<label for="app-name" class="marginleft">Name of Application</label>
 	<input type="text" id="app-name" class="marginleft">
@@ -119,7 +121,6 @@
     var red = $("#red").is(":checked");
     var blue = $("#blue").is(":checked");
     var green = $("#green").is(":checked");
-    // Add "dynamic location" configuration check box
     var appName = $("#app-name").val();
 
     var stop;
@@ -159,10 +160,13 @@
     }
     else {
 	actuallyCreate(appName);
+	$('body > :not(#redirect-anchor)').hide();
+	$('#redirect-anchor').appendTo('body');
 	//THIS WILL HAVE TO BE CHANGED IF USING HEROKU!!
-	//alert("Succesfully created: " + "https://pubinv.github.io/geotagtext/index.html/?app="+appName);
+	//var link = 'http://127.0.0.1:8080/?app=' + appName;
+	var link = 'https://pubinv.github.io/geotagtext/?app='+appName;
+	$('#redirect-anchor').html("<br><a style='text-align: center;' href='"+link+"'>Your app link</a>");
 	//window.location.replace("http://127.0.0.1:8080/?app="+appName);
-	window.location.replace("https://pubinv.github.io/geotagtext/?app="+appName);
     }
   }
 

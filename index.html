@@ -51,12 +51,14 @@
 
     <div class="center" id="appnametitle"></div>
 
-    <div class="mb-3">
-      <label for="searchname" class="marginleft">Search for an app</label>
-      <input type="text" id="searchname" class="marginleft">
-    </div>
+    <div id="searchsection">
+      <div class="mb-3">
+	<label for="searchname" class="marginleft">Search for an app</label>
+	<input type="text" id="searchname" class="marginleft">
+      </div>
 
-    <button type="button" onclick="searchforapp('searchbar')" class="btn btn-primary marginleft">Search</button>
+      <button type="button" onclick="searchforapp('searchbar')" class="btn btn-primary marginleft">Search</button>
+    </div>
 
 
     <br><br><br>
@@ -107,16 +109,12 @@
     //console.log("app:",queryappname);
     var GLOBAL_APPNAME = queryappname;
     if (queryappname) {
-	      // Turn off the visibility of the "searchname"
-	//      document.getElementById("searchname").value;
-	// I don't think this is a good idea. You can't look for another app if the searchbar is gone
 	//console.log('yes app');
 	searchforapp('query');
     }
 
-    // PUT query param evaluation for APP_NAME here...
-
-    var GLOBAL_UPDATE_POSITION;
+    var GLOBAL_UPDATE_POSITION_TIMER;
+    //What is var equal to when clearInterval is called???
 
     var GLOBAL_CONFIG = { yesname: false,
 		          yestextmessage: false,
@@ -131,12 +129,12 @@
 	if ($('#location-switch').text() == "Change to YES" && GLOBAL_CONFIG.currentlocation == true) {
 	    console.log("change to YES clicked");
 	    $('#location-switch').text("Change to NO");
-	    GLOBAL_UPDATE_POSITION = setInterval(function() { getLocation('black'); }, 5000);
+	    GLOBAL_UPDATE_POSITION_TIMER = setInterval(function() { getLocation('black'); }, 5000);
 	}
 	else {
 	    console.log("change to NO clicked");
 	    $('#location-switch').text("Change to YES");
-	    clearInterval(GLOBAL_UPDATE_POSITION);
+	    clearInterval(GLOBAL_UPDATE_POSITION_TIMER);
 	    removeCurrentLoc();
 	}
     }
@@ -163,17 +161,13 @@
 
     async function searchforapp(placeUsed) {
 	$('#location-switch').text("Change to YES");
-	if (GLOBAL_UPDATE_POSITION) {
-	    clearInterval(GLOBAL_UPDATE_POSITION);
+	if (GLOBAL_UPDATE_POSITION_TIMER) {
+	    clearInterval(GLOBAL_UPDATE_POSITION_TIMER);
 	}
 	$('#demo').text("");
 	if (placeUsed == 'searchbar') {
 	    GLOBAL_APPNAME = document.getElementById("searchname").value;
 	    removeCurrentLoc();
-	    //CHANGE LINK OR REMOVE PARAMETERS!!
-	    //https://stackoverflow.com/questions/1634748/how-can-i-delete-a-query-string-parameter-in-javascript
-	    //It might be a little late for this:
-	    //Having a search change the query parameter for app would make this a little less complicated. Either way works though.
 	}
 	else if (placeUsed == 'query') { //I guess else would be simpler
 	    GLOBAL_APPNAME = queryappname;
@@ -186,6 +180,7 @@
             reconfigureFromApp(GLOBAL_APPNAME);
 	    initMap(GLOBAL_APPNAME);
 	    $('#appnametitle').text("Map Application Name: "+GLOBAL_APPNAME);
+	    $('#searchsection').hide();
 	} else {
             alert("app: "+GLOBAL_APPNAME + " not found!");
 	}

@@ -6,7 +6,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/x', function (req, res) {
-  res.send('Hello, mr. X!');
+  res.send('Hello, mr. X!:'+process.env.apiKey);
 });
 
 const port = process.env.PORT || 3000;

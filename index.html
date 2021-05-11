@@ -97,13 +97,19 @@
 	<div id="map"></div>
       </div>
     </div>
-
+    
+    <div id="div1">Hello</div>
+    
   </body>
 
   <script type="text/javascript" src="firebase.js"></script>
   <script type="text/javascript" src="tagscript.js"></script>
   <script>
 
+    $.ajax({url: "x", success: function(result){
+	$("#div1").html(result);
+    }});
+    
     let params = (new URL(document.location)).searchParams;
     let queryappname = params.get('app');
     //console.log("app:",queryappname);

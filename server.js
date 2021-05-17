@@ -15,7 +15,12 @@ storageBucket
 
 */
 
-// Initialize Firebase
+// Initialize Firebase - https://firebase.google.com/docs/web/setup#with-npm_1
+// Reference - https://firebase.google.com/docs/reference/node
+
+import firebase from "firebase/app";
+import "firebase/database";
+
 var config = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
@@ -26,6 +31,7 @@ var config = {
 };
 
 firebase.initializeApp(config);
+
 
 firebase.auth().signInAnonymously().catch(function(error) {
     // Handle Errors here.

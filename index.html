@@ -158,11 +158,29 @@
     }
 
     function reconfigureFromApp(appName) {
+	//HERE
+	console.log("reconfigureFromApp Called");
+	$.ajax({type : "GET",
+		url: "y",
+		dataType: 'json',
+		data: {appName: appName},
+		success: function(result){
+		    GLOBAL_CONFIG = JSON.parse(result).val();
+		    reconfigureFromConfig(GLOBAL_CONFIG);
+		    console.log("SUCCESS");
+		    console.log("GLOBAL_CONFIG: " + GLOBAL_CONFIG);
+		},
+		error : function(e) {
+		    console.log("ERROR: ", e);
+		}
+	       });
+	/*
       firebase.database().ref('/apps/'+appName).once('value')
         .then(function(snapshot) {
 	  GLOBAL_CONFIG = snapshot.val();
 	  reconfigureFromConfig(GLOBAL_CONFIG);
 	});
+*/
     }
 
     async function searchforapp(placeUsed) {

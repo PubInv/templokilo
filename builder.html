@@ -142,6 +142,7 @@
 		       currentlocation: currentloc
 		     };
 
+	//SERVER
 	firebase.database().ref('apps/' + appName).set(config,
 						       function(error) {
 							 if (error) {
@@ -167,6 +168,7 @@
 	var link = 'https://pubinv.github.io/geotagtext/?app='+appName;
 	$('#redirect-anchor').html("<br><a style='text-align: center;' href='"+link+"'>Your app link</a>");
 	//window.location.replace("http://127.0.0.1:8080/?app="+appName);
+	//WORK NEEDED FOR HEROKU QUERY!!!!!
     }
   }
 

@@ -1,5 +1,5 @@
 
-
+//SERVER
 const checkForAppInDatabase = (appName) => {
   return new Promise((resolve) => {
     firebase.database().ref('/apps/' + appName).once('value')
@@ -22,7 +22,7 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
     };
 
     console.log(obj);
-
+    //SERVER
     firebase.database().ref('/apps/' + appname + "/tags/" + tagId).set(obj,
                                                  function(error) {
                                                      if (error) {
@@ -36,6 +36,7 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
 
 async function getLastTagNumInDBandWrite(color) {
     var highestnum = 0;
+    //SERVER
     firebase.database().ref('/apps/' + GLOBAL_APPNAME + "/tags/").once('value').then(function(snapshot) {
 	var v = snapshot.val();
 	for(const prop in v) {
@@ -178,7 +179,7 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 var map;
 
 function initMap(appname) {
-  // TODO: Neil, take this from an environment variable.
+  //SERVER - Not sure how to do this on server. The browser needs the access token to display the map. The map can't (as far as I know) be sent to the browser from the server.
     mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
 
@@ -191,6 +192,7 @@ function initMap(appname) {
 
     if (appname){
 	map.on('load', function () {
+	    //SERVER
 	    firebase.database().ref('/apps/' + appname + "/tags/").once('value').then(function(snapshot) {
 		var v = snapshot.val();
 		for(const prop in v) {

@@ -18,8 +18,12 @@ storageBucket
 // Initialize Firebase - https://firebase.google.com/docs/web/setup#with-npm_1
 // Reference - https://firebase.google.com/docs/reference/node
 
+const firebase = require('firebase/app');
+const firebase_database = require('firebase/database');
+/*
 import firebase from "firebase/app";
 import "firebase/database";
+*/
 
 var config = {
     apiKey: process.env.apiKey,
@@ -70,4 +74,3 @@ const port = process.env.PORT || 3000;
 app.listen(port, function () {
   console.log('myapp listening on port ' + port);
 });
-

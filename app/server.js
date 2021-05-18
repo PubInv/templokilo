@@ -15,16 +15,18 @@ storageBucket
 
 */
 
-// Initialize Firebase - https://firebase.google.com/docs/web/setup#with-npm_1
-// Reference - https://firebase.google.com/docs/reference/node
+// Firebase App (the core Firebase SDK) is always required and
+// must be listed before other Firebase SDKs
+var firebase = require("firebase/app");
 
-const firebase = require('firebase/app');
-const firebase_database = require('firebase/database');
-var admin = require('firebase-admin');
-/*
-import firebase from "firebase/app";
-import "firebase/database";
-*/
+// Add the Firebase products that you want to use
+require("firebase/auth");
+require('firebase/database');
+
+console.dir(firebase);
+console.dir("XXXX")
+console.dir(firebase.apps);
+
 
 var config = {
     apiKey: process.env.apiKey,

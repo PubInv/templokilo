@@ -64,9 +64,29 @@ app.get('/x', function (req, res) {
   res.send('Hello, mr. X!:'+process.env.apiKey);
 });
 
-app.get('/y', function (req, res) {
+app.get('/reconfigureFromApp', function (req, res) {
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName).once('value')
+        .then(function(snapshot) {
+	    var SNAPSHOT = JSON.stringify(snapshot);
+	    res.send(SNAPSHOT);
+	});
+});
+
+app.get('/checkForAppInDatabase', function (req, res) {
+    var appName = req.query.appName;
+    firebase.database().ref('/apps/'+appName).once('value')
+        .then(function(snapshot) {
+	    var SNAPSHOT = JSON.stringify({appExists : snapshot.exists()});
+	    //var SNAPSHOT = JSON.stringify({appExists : true});
+	    res.send(SNAPSHOT);
+	});
+});
+
+app.get('/initMap', function (req, res) {
+    //SAME AS /reconfigureFromApp!!!!
+    var appName = req.query.appName;
+    firebase.database().ref('/apps/'+appName+'/tags/').once('value')
         .then(function(snapshot) {
 	    var SNAPSHOT = JSON.stringify(snapshot);
 	    res.send(SNAPSHOT);

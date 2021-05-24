@@ -1,12 +1,32 @@
 
 //SERVER
 const checkForAppInDatabase = (appName) => {
-  return new Promise((resolve) => {
-    firebase.database().ref('/apps/' + appName).once('value')
-      .then(function(snapshot) {
-	return resolve(snapshot.exists());
-      });
-  });
+    return new Promise((resolve) => {
+	
+	$.ajax({type : "GET",
+		url: "checkForAppInDatabase",
+		dataType: 'json',
+		data: {appName: appName},
+		success: function(result){
+		    //SNAPSHOT = JSON.parse(result).val();;
+		    //return resolve(SNAPSHOT.appExists);
+		    console.log(result.appExists);
+		    return resolve(result.appExists);
+		    console.log("SUCCESS");
+		    console.log("SNAPSHOT EXISTS? " + SNAPSHOT);
+		},
+		error : function(e) {
+		    console.log("ERROR: ", e);
+		}
+	       });
+	
+	/*
+	  firebase.database().ref('/apps/' + appName).once('value')
+	  .then(function(snapshot) {
+	  return resolve(snapshot.exists());
+	  });
+	*/
+    });
 }
 
 function writeTag(tagId, lat, lon, color, message, username, appname) {
@@ -22,7 +42,7 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
     };
 
     console.log(obj);
-    //SERVER
+    //SERVER WRITE - POST
     firebase.database().ref('/apps/' + appname + "/tags/" + tagId).set(obj,
                                                  function(error) {
                                                      if (error) {
@@ -193,6 +213,31 @@ function initMap(appname) {
     if (appname){
 	map.on('load', function () {
 	    //SERVER
+
+	    $.ajax({type : "GET",
+		    url: "initMap",
+		    dataType: 'json',
+		    data: {appName: appname},
+		    success: function(result){
+			console.log(result);
+			//var v = result.val();
+			var v = result;
+			//console.log(result.value);
+			for(const prop in v) {
+			    //console.log("Prop: " + prop);
+			    const n = parseInt(prop.substring("geotag".length));
+			    gt = v[prop];
+			    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
+			    //console.log("SUCCESS");
+			}
+			},
+			error : function(e) {
+			    console.log("ERROR: ", e);
+			}
+		    });
+
+	    /*
+	    
 	    firebase.database().ref('/apps/' + appname + "/tags/").once('value').then(function(snapshot) {
 		var v = snapshot.val();
 		for(const prop in v) {
@@ -201,6 +246,7 @@ function initMap(appname) {
 		    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
 		}
 	    });
+*/
 	});
     }
 }

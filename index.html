@@ -102,6 +102,7 @@
     
   </body>
 
+  <!--COMMENT THIS OUT LATER-->
   <script type="text/javascript" src="firebase.js"></script>
   <script type="text/javascript" src="tagscript.js"></script>
   <script>
@@ -161,14 +162,15 @@
 	//HERE
 	console.log("reconfigureFromApp Called");
 	$.ajax({type : "GET",
-		url: "y",
+		url: "reconfigureFromApp",
 		dataType: 'json',
 		data: {appName: appName},
 		success: function(result){
-		    GLOBAL_CONFIG = JSON.parse(result).val();
-		    reconfigureFromConfig(GLOBAL_CONFIG);
+		    console.log(result);
+		    //GLOBAL_CONFIG = JSON.parse(result).val();
+		    //reconfigureFromConfig(GLOBAL_CONFIG);
+		    reconfigureFromConfig(result);
 		    console.log("SUCCESS");
-		    console.log("GLOBAL_CONFIG: " + GLOBAL_CONFIG);
 		},
 		error : function(e) {
 		    console.log("ERROR: ", e);

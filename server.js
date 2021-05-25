@@ -53,7 +53,6 @@ var ref = firebase.database().ref();
 //This should all be in server.js, right??
 
 
-
 app.use(express.static(__dirname));
 //app.use(express.bodyParser());
 //for POST

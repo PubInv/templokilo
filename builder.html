@@ -109,7 +109,7 @@
 
 
 </body>
-  <script type="text/javascript" src="firebase.js"></script>
+ <!-- <script type="text/javascript" src="firebase.js"></script>-->
   <script type="text/javascript" src="tagscript.js"></script>
 <script>
 
@@ -133,16 +133,36 @@
 	alert("Please fill out all fields");
       }
       else {
-	var config = { yesname: name,
-		       yestextmessage: textmessage,
-		       red: red,
-		       blue: blue,
-		       green: green,
-                       tags: {},
-		       currentlocation: currentloc
-		     };
+	  var config = {
+	      appname: appName,
+	      obj: {
+		  yesname: name,
+		  yestextmessage: textmessage,
+		  red: red,
+		  blue: blue,
+		  green: green,
+                  tags: {},
+		  currentlocation: currentloc
+	      }
+	  };
 
-	//SERVER
+	  //SERVER
+
+	  console.log(config);
+
+	  $.ajax({type : "GET",
+		  url: "actuallyCreate",
+		  dataType: 'json',
+		  data: config,
+		  success: function(result){
+		      console.log("CONFIG sent successfully");
+		  },
+		  error : function(e) {
+		      console.log("ERROR: ", e);
+		  }
+		 });
+	  
+	  /*
 	firebase.database().ref('apps/' + appName).set(config,
 						       function(error) {
 							 if (error) {
@@ -152,7 +172,7 @@
 							   // Data saved successfully!
 							   console.log("SUCCESS");
 							 }
-						       });
+						       });*/
       }
     }
     const appThere = await checkForAppInDatabase(appName);

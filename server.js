@@ -55,6 +55,8 @@ var ref = firebase.database().ref();
 
 
 app.use(express.static(__dirname));
+//app.use(express.bodyParser());
+//for POST
 
 app.get('/', function (req, res) {
   res.send('Hello, mundo!');
@@ -84,13 +86,78 @@ app.get('/checkForAppInDatabase', function (req, res) {
 });
 
 app.get('/initMap', function (req, res) {
-    //SAME AS /reconfigureFromApp!!!!
+    //SAME AS /reconfigureFromApp!!!!, /getLastTagNum
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName+'/tags/').once('value')
         .then(function(snapshot) {
 	    var SNAPSHOT = JSON.stringify(snapshot);
 	    res.send(SNAPSHOT);
 	});
+});
+
+app.get('/getLastTagNum', function (req, res) {
+    var appName = req.query.appName;
+    firebase.database().ref('/apps/'+appName+'/tags/').once('value')
+        .then(function(snapshot) {
+	    var SNAPSHOT = JSON.stringify(snapshot);
+	    res.send(SNAPSHOT);
+	});
+});
+
+/*
+app.post('/writeTag', function (req, res){  
+    console.log("Req received: "+req);
+    console.log("Req received: "+req.hello);
+    console.log("Req received: "+req.query.hello);
+    //console.log('body: ' + JSON.stringify(req.body));
+    //console.log("Req received: "+JSON.stringify(req));
+    //console.log("body.id "+req.body.id);
+    //console.log("body.title "+req.body.title);
+    //console.log("body.content "+req.body.content);
+   //res.redirect('/'); - NEEDED???
+   });*/
+
+app.get('/writeTag', function (req, res) {
+    //console.log(req.query.appname);
+    //console.log(req.query.tagId);
+    //console.log(req.query.taginfo);
+    var obj = req.query.taginfo;
+    obj["latitude"] = parseFloat(obj.latitude);
+    obj["longitude"] = parseFloat(obj.longitude);
+    //console.log(obj);
+    
+    firebase.database().ref('/apps/' + req.query.appname + "/tags/" + req.query.tagId).set(obj,
+                                                 function(error) {
+                                                     if (error) {
+                                                         console.log("ERROR:",error);
+                                                     } else {
+                                                         console.log("SUCCESS");
+                                                     }
+                                                 });
+});
+
+app.get('/actuallyCreate', function (req, res) {
+    console.log(req.query.appname);
+    //console.log(req.query.taginfo);
+    console.log(req.query.obj);
+    var config = req.query.obj;
+    for (const property in config) {
+	if (config[property] == "false") {config[property] = false;}
+	if (config[property] == "true") {config[property] = true;}
+    }
+    config.tags = {};
+    //config.push(tags : {});
+    console.log(config);
+    firebase.database().ref('apps/' + req.query.appname).set(config,
+						   function(error) {
+						       if (error) {
+							   // The write failed...
+							   console.log("ERROR:",error);
+						       } else {
+							   // Data saved successfully!
+							   console.log("SUCCESS");
+						       }
+						   });
 });
 
 const port = process.env.PORT || 3000;

@@ -33,16 +33,47 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
     var d = new Date();
 
     var obj = {
-	username: username,
-        latitude: lat,
-        longitude: lon,
-        color: color,
-	message: message,
-	date: d.toUTCString()
+	appname: appname,
+	tagId: tagId,
+	taginfo: {
+	    username: username,
+            latitude: lat,
+            longitude: lon,
+            color: color,
+	    message: message,
+	    date: d.toUTCString()
+	}
     };
 
     console.log(obj);
-    //SERVER WRITE - POST
+    //SERVER WRITE - POST, CAN ONLY GET 'GET' TO WORK
+
+    $.ajax({type : "GET",
+		url: "writeTag",
+		dataType: 'json',
+		data: obj,
+		success: function(result){
+		    console.log("OBJ sent successfully");
+		},
+		error : function(e) {
+		    console.log("ERROR: ", e);
+		}
+	   });/*
+    $.ajax({ 
+        url: 'writeTag',
+        type: 'POST',
+        //cache: false, 
+        //data: obj,
+	data: JSON.stringify({hello: "hi there"}),
+        success: function(data){
+            console.log("SUCCESFUL POST!");
+        }
+        , error: function(jqXHR, textStatus, err){
+            console.log('text status '+textStatus+', err '+err)
+        }
+    });*/
+    
+    /*
     firebase.database().ref('/apps/' + appname + "/tags/" + tagId).set(obj,
                                                  function(error) {
                                                      if (error) {
@@ -50,13 +81,41 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
                                                      } else {
                                                          console.log("SUCCESS");
                                                      }
-                                                 });
+                                                 });*/
     document.getElementById("message").value = '';
 }
 
 async function getLastTagNumInDBandWrite(color) {
     var highestnum = 0;
     //SERVER
+
+    	$.ajax({type : "GET",
+		url: "getLastTagNum",
+		dataType: 'json',
+		data: {appName: GLOBAL_APPNAME},
+		success: function(result){
+		    var v = result;
+		    for(const prop in v) {
+			const n = parseInt(prop.substring("geotag".length));
+			highestnum = Math.max(highestnum,n);
+			if (highestnum == NaN) {
+			    highestnum = 0;
+			}
+		    }
+		    var options = { enableHighAccuracy: false,
+				    timeout:10000};
+		    navigator.geolocation.getCurrentPosition(
+			(position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME),
+			error,
+			options);
+		    console.log("SUCCESS");
+		    //console.log("Highest Num: "+ highestnum+" plus one");
+		},
+		error : function(e) {
+		    console.log("ERROR: ", e);
+		}
+	       });
+    /*
     firebase.database().ref('/apps/' + GLOBAL_APPNAME + "/tags/").once('value').then(function(snapshot) {
 	var v = snapshot.val();
 	for(const prop in v) {
@@ -72,7 +131,7 @@ async function getLastTagNumInDBandWrite(color) {
             (position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME),
             error,
 	    options);
-    });
+    });*/
 }
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);

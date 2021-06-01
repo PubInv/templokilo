@@ -43,12 +43,7 @@ app.use(express.static(__dirname));
 app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
 //app.use(express.bodyParser());
-//for POST, THIS COULD BE DELETED IF WE DON'T USE IT^^
 
-/*
-
-//They could all possibly be merged. The directory is different between initMap+getLastTagNum and (reconfigureFromApp and checkforAppInDatabase). This could be simplified by putting the appname and exact directory into appName in the data object in the GET AJAX. checkForAppInDatabase has a slightly different output.
-*/
 function returnFirebaseSnapshot(req, ref, res) {
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName+ref).once('value')
@@ -135,4 +130,3 @@ const port = process.env.PORT || 3000;
 app.listen(port, function () {
   console.log('myapp listening on port ' + port);
 });
-//THIS CAN BE DELETED, RIGHT? ^^

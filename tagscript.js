@@ -5,6 +5,7 @@ const checkForAppInDatabase = (appName) => {
 		url: "checkForAppInDatabase",
 		dataType: 'json',
 		data: {appName: appName},
+		//data: {appName: "/apps/"+appName+"/tags/"},
 		success: function(result){
 		    //SNAPSHOT = JSON.parse(result).val();;
 		    //return resolve(SNAPSHOT.appExists);
@@ -17,13 +18,6 @@ const checkForAppInDatabase = (appName) => {
 		    console.log("ERROR: ", e);
 		}
 	       });
-	
-	/*
-	  firebase.database().ref('/apps/' + appName).once('value')
-	  .then(function(snapshot) {
-	  return resolve(snapshot.exists());
-	  });
-	*/
     });
 }
 
@@ -93,15 +87,6 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
         }
     });*/
     
-    /*
-    firebase.database().ref('/apps/' + appname + "/tags/" + tagId).set(obj,
-                                                 function(error) {
-                                                     if (error) {
-                                                         console.log("ERROR:",error);
-                                                     } else {
-                                                         console.log("SUCCESS");
-                                                     }
-                                                 });*/
     document.getElementById("message").value = '';
 }
 
@@ -109,7 +94,6 @@ async function getLastTagNumInDBandWrite(color) {
     var highestnum = 0;
 
     	$.ajax({type : "GET",
-		//url: "getLastTagNum",
 		url: "returnTags",
 		dataType: 'json',
 		data: {appName: GLOBAL_APPNAME},
@@ -135,23 +119,6 @@ async function getLastTagNumInDBandWrite(color) {
 		    console.log("ERROR: ", e);
 		}
 	       });
-    /*
-    firebase.database().ref('/apps/' + GLOBAL_APPNAME + "/tags/").once('value').then(function(snapshot) {
-	var v = snapshot.val();
-	for(const prop in v) {
-	    const n = parseInt(prop.substring("geotag".length));
-	    highestnum = Math.max(highestnum,n);
-	    if (highestnum == NaN) {
-		highestnum = 0;
-	    }
-	}
-	var options = { enableHighAccuracy: false,
-			timeout:10000};
-	navigator.geolocation.getCurrentPosition(
-            (position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME),
-            error,
-	    options);
-    });*/
 }
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
@@ -293,7 +260,6 @@ function initMap(appname) {
 	map.on('load', function () {
 
 	    $.ajax({type : "GET",
-		    //url: "initMap",
 		    url: "returnTags",
 		    dataType: 'json',
 		    data: {appName: appname},
@@ -314,18 +280,6 @@ function initMap(appname) {
 			    console.log("ERROR: ", e);
 			}
 		    });
-
-	    /*
-	    
-	    firebase.database().ref('/apps/' + appname + "/tags/").once('value').then(function(snapshot) {
-		var v = snapshot.val();
-		for(const prop in v) {
-		    const n = parseInt(prop.substring("geotag".length));
-		    gt = v[prop];
-		    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
-		}
-	    });
-*/
 	});
     }
 }

@@ -45,58 +45,35 @@ app.use(bodyParser.json());
 //app.use(express.bodyParser());
 //for POST, THIS COULD BE DELETED IF WE DON'T USE IT^^
 
-app.get('/reconfigureFromApp', function (req, res) {
+/*
+
+//They could all possibly be merged. The directory is different between initMap+getLastTagNum and (reconfigureFromApp and checkforAppInDatabase). This could be simplified by putting the appname and exact directory into appName in the data object in the GET AJAX. checkForAppInDatabase has a slightly different output.
+*/
+function returnFirebaseSnapshot(req, ref, res) {
     var appName = req.query.appName;
-    firebase.database().ref('/apps/'+appName).once('value')
+    firebase.database().ref('/apps/'+appName+ref).once('value')
         .then(function(snapshot) {
 	    var SNAPSHOT = JSON.stringify(snapshot);
 	    res.send(SNAPSHOT);
 	});
+}
+app.get('/returnTags', function (req, res) {
+    returnFirebaseSnapshot(req,'/tags/', res);
+});
+
+app.get('/reconfigureFromApp', function (req, res) {
+    returnFirebaseSnapshot(req,'', res);
 });
 
 app.get('/checkForAppInDatabase', function (req, res) {
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName).once('value')
         .then(function(snapshot) {
-	    var SNAPSHOT = JSON.stringify({appExists : snapshot.exists()});
-	    //var SNAPSHOT = JSON.stringify({appExists : true});
-	    res.send(SNAPSHOT);
-	});
-});
-/*
-app.get('/initMap+getLastTagNum', function (req, res) {
-    var appName = req.query.appName;
-    firebase.database().ref('/apps/'+appName+'/tags/').once('value')
-        .then(function(snapshot) {
-	    var SNAPSHOT = JSON.stringify(snapshot);
-	    res.send(SNAPSHOT);
+	    var exists = JSON.stringify({appExists : snapshot.exists()});
+	    res.send(exists);
 	});
 });
 
-/*
-//MERGING THESE TWO!!
-
-//They could all possibly be merged. The directory is different between initMap+getLastTagNum and (reconfigureFromApp and checkforAppInDatabase). This could be simplified by putting the appname and exact directory into appName in the data object in the GET AJAX. checkForAppInDatabase has a slightly different output.
-*/
-app.get('/returnTags', function (req, res) {
-    //SAME AS /reconfigureFromApp!!!!, /getLastTagNum
-    var appName = req.query.appName;
-    firebase.database().ref('/apps/'+appName+'/tags/').once('value')
-        .then(function(snapshot) {
-	    var SNAPSHOT = JSON.stringify(snapshot);
-	    res.send(SNAPSHOT);
-	});
-});
-
-/*
-app.get('/getLastTagNum', function (req, res) {
-    var appName = req.query.appName;
-    firebase.database().ref('/apps/'+appName+'/tags/').once('value')
-        .then(function(snapshot) {
-	    var SNAPSHOT = JSON.stringify(snapshot);
-	    res.send(SNAPSHOT);
-	});
-});*/
 
 /*
 app.post('/writeTag', function (req, res){  

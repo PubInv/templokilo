@@ -45,17 +45,6 @@ app.use(bodyParser.json());
 //app.use(express.bodyParser());
 //for POST, THIS COULD BE DELETED IF WE DON'T USE IT^^
 
-/*
-app.get('/', function (req, res) {
-  res.send('Hello, mundo!');
-});
-
-app.get('/x', function (req, res) {
-  res.send('Hello, mr. X!:'+process.env.apiKey);
-});
-//ALL THIS DELETED
-*/
-
 app.get('/reconfigureFromApp', function (req, res) {
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName).once('value')
@@ -89,7 +78,7 @@ app.get('/initMap+getLastTagNum', function (req, res) {
 
 //They could all possibly be merged. The directory is different between initMap+getLastTagNum and (reconfigureFromApp and checkforAppInDatabase). This could be simplified by putting the appname and exact directory into appName in the data object in the GET AJAX. checkForAppInDatabase has a slightly different output.
 */
-app.get('/initMap', function (req, res) {
+app.get('/returnTags', function (req, res) {
     //SAME AS /reconfigureFromApp!!!!, /getLastTagNum
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName+'/tags/').once('value')
@@ -99,6 +88,7 @@ app.get('/initMap', function (req, res) {
 	});
 });
 
+/*
 app.get('/getLastTagNum', function (req, res) {
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName+'/tags/').once('value')
@@ -106,7 +96,7 @@ app.get('/getLastTagNum', function (req, res) {
 	    var SNAPSHOT = JSON.stringify(snapshot);
 	    res.send(SNAPSHOT);
 	});
-});
+});*/
 
 /*
 app.post('/writeTag', function (req, res){  

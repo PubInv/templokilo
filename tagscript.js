@@ -109,8 +109,8 @@ async function getLastTagNumInDBandWrite(color) {
     var highestnum = 0;
 
     	$.ajax({type : "GET",
-		url: "getLastTagNum",
-		//url: "initMap+getLastTagNum",
+		//url: "getLastTagNum",
+		url: "returnTags",
 		dataType: 'json',
 		data: {appName: GLOBAL_APPNAME},
 		success: function(result){
@@ -293,8 +293,8 @@ function initMap(appname) {
 	map.on('load', function () {
 
 	    $.ajax({type : "GET",
-		    url: "initMap",
-		    //url: "initMap+getLastTagNum",
+		    //url: "initMap",
+		    url: "returnTags",
 		    dataType: 'json',
 		    data: {appName: appname},
 		    success: function(result){

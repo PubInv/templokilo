@@ -1,5 +1,3 @@
-
-//SERVER
 const checkForAppInDatabase = (appName) => {
     return new Promise((resolve) => {
 	
@@ -49,18 +47,40 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
     //SERVER WRITE - POST, CAN ONLY GET 'GET' TO WORK
 
     $.ajax({type : "GET",
-		url: "writeTag",
-		dataType: 'json',
-		data: obj,
-		success: function(result){
-		    console.log("OBJ sent successfully");
-		},
-		error : function(e) {
-		    console.log("ERROR: ", e);
-		}
-	   });/*
-    $.ajax({ 
-        url: 'writeTag',
+	    url: "writeTag",
+	    dataType: 'json',
+	    data: obj,
+	    success: function(result){
+		console.log("OBJ sent successfully");
+	    },
+	    error : function(e) {
+		console.log("ERROR: ", e);
+	    }
+	   });
+    
+    /*
+      $.ajax({type : "POST",
+      url: "writeTag",
+      dataType: 'json',
+      contentType: 'application/json',
+      data: obj,
+      success: function(result){
+      console.log("OBJ sent successfully");
+      },
+      error : function(e) {
+      console.log("ERROR: ", e);
+      }
+      });*/
+    /*
+      $.post('writeTag',
+      obj,
+	   function(result){
+	       console.log("SUCCESS");
+	   }
+	  );*/
+    /*
+		$.ajax({ 
+		url: 'writeTag',
         type: 'POST',
         //cache: false, 
         //data: obj,
@@ -87,10 +107,10 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
 
 async function getLastTagNumInDBandWrite(color) {
     var highestnum = 0;
-    //SERVER
 
     	$.ajax({type : "GET",
 		url: "getLastTagNum",
+		//url: "initMap+getLastTagNum",
 		dataType: 'json',
 		data: {appName: GLOBAL_APPNAME},
 		success: function(result){
@@ -271,10 +291,10 @@ function initMap(appname) {
 
     if (appname){
 	map.on('load', function () {
-	    //SERVER
 
 	    $.ajax({type : "GET",
 		    url: "initMap",
+		    //url: "initMap+getLastTagNum",
 		    dataType: 'json',
 		    data: {appName: appname},
 		    success: function(result){

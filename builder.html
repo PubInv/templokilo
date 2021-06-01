@@ -10,10 +10,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
-    <!-- Firebase App is always required and must be first REMOVE -->
+    <!-- Firebase App is always required and must be first  -->
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
 
-    <!-- Add additional services that you want to use REMOVE -->
+    <!-- Add additional services that you want to use  -->
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
   </head>
@@ -109,7 +109,6 @@
 
 
 </body>
- <!-- <script type="text/javascript" src="firebase.js"></script>-->
   <script type="text/javascript" src="tagscript.js"></script>
 <script>
 
@@ -159,18 +158,6 @@
 		      console.log("ERROR: ", e);
 		  }
 		 });
-	  
-	  /*
-	firebase.database().ref('apps/' + appName).set(config,
-						       function(error) {
-							 if (error) {
-							   // The write failed...
-							   console.log("ERROR:",error);
-							 } else {
-							   // Data saved successfully!
-							   console.log("SUCCESS");
-							 }
-						       });*/
       }
     }
     const appThere = await checkForAppInDatabase(appName);
@@ -183,7 +170,6 @@
 	$('#redirect-anchor').appendTo('body');
 	var link = '/index.html?app='+appName;
 	$('#redirect-anchor').html("<br><a style='text-align: center;' href='"+link+"'>Your app link</a>");
-	//relative link
     }
   }
 

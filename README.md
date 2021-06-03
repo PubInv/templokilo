@@ -33,7 +33,7 @@ we are happy to have anyone help.
 
 ### Help us think of good uses
 
-The easisest way to help us to help us think of compelling uses for this fundamental technology. For example,
+The easiest way to help us to help us think of compelling uses for this fundamental technology. For example,
 we have toyed with the idea of creating a game: one person walks through a city laying down red dots, and the
 goal of the other players is place a green dot with 10 meters of each red dot.
 

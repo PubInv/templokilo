@@ -10,10 +10,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
-    <!-- Firebase App is always required and must be first -->
+    <!-- Firebase App is always required and must be first  -->
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
 
-    <!-- Add additional services that you want to use -->
+    <!-- Add additional services that you want to use  -->
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
   </head>
@@ -35,6 +35,8 @@
     </nav>
 
     <h1 class="center">Map Application Builder</h1>
+
+    <div id="redirect-anchor"></div>
 
       <div class="mb-3">
 	<label for="app-name" class="marginleft">Name of Application</label>
@@ -70,7 +72,7 @@
       </div>
       <br>
 
-      <br><br><br>
+      <br>
 
       <p class="marginleft">Select any colors you want for your icon</p>
       <div class="form-check form-switch marginleft">
@@ -85,6 +87,21 @@
 	<input class="form-check-input" type="checkbox" id="green" checked>
 	<label class="form-check-label" for="green">Green</label>
       </div>
+      <br><br>
+
+      <div class="form-check marginleft">
+	<input class="form-check-input" type="radio" name="currentloc" id="yes-currentloc" value="true">
+	<label class="form-check-label" for="yes-currentloc">
+	  Display the user's current location
+	</label>
+      </div>
+      <div class="form-check marginleft">
+	<input class="form-check-input" type="radio" name="currentloc" id="no-currentloc" value="false" checked>
+	<label class="form-check-label" for="no-currentloc">
+	  Don't display the user's current location
+	</label>
+      </div>
+
       <br>
 
       <button onclick="createApplication()" class="btn btn-primary">Create Application</button>
@@ -92,17 +109,17 @@
 
 
 </body>
-<script type="text/javascript" src="firebase.js"></script>
+  <script type="text/javascript" src="tagscript.js"></script>
 <script>
 
   async function createApplication() {
     var name = !($('input[name=name]:checked').val() == "false");
     var textmessage = !($('input[name=text]:checked').val() == "false");
+    var currentloc = !($('input[name=currentloc]:checked').val() == "false");
 
     var red = $("#red").is(":checked");
     var blue = $("#blue").is(":checked");
     var green = $("#green").is(":checked");
-    // Add "dynamic location" configuration check box
     var appName = $("#app-name").val();
 
     var stop;
@@ -115,24 +132,32 @@
 	alert("Please fill out all fields");
       }
       else {
-	var config = { yesname: name,
-		       yestextmessage: textmessage,
-		       red: red,
-		       blue: blue,
-		       green: green,
-                       tags: {},
-		     };
+	  var config = {
+	      appname: appName,
+	      obj: {
+		  yesname: name,
+		  yestextmessage: textmessage,
+		  red: red,
+		  blue: blue,
+		  green: green,
+                  tags: {},
+		  currentlocation: currentloc
+	      }
+	  };
 
-	firebase.database().ref('apps/' + appName).set(config,
-						       function(error) {
-							 if (error) {
-							   // The write failed...
-							   console.log("ERROR:",error);
-							 } else {
-							   // Data saved successfully!
-							   console.log("SUCCESS");
-							 }
-						       });
+	  console.log(config);
+
+	  $.ajax({type : "GET",
+		  url: "actuallyCreate",
+		  dataType: 'json',
+		  data: config,
+		  success: function(result){
+		      console.log("CONFIG sent successfully");
+		  },
+		  error : function(e) {
+		      console.log("ERROR: ", e);
+		  }
+		 });
       }
     }
     const appThere = await checkForAppInDatabase(appName);
@@ -140,8 +165,11 @@
       alert("This app name already exists. Please find another one.");
     }
     else {
-      actuallyCreate(appName);
-      // alert that it succeeded here!
+	actuallyCreate(appName);
+	$('body > :not(#redirect-anchor)').hide();
+	$('#redirect-anchor').appendTo('body');
+	var link = '/index.html?app='+appName;
+	$('#redirect-anchor').html("<br><a style='text-align: center;' href='"+link+"'>Your app link</a>");
     }
   }
 

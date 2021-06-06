@@ -1,57 +1,124 @@
-
-
 const checkForAppInDatabase = (appName) => {
-  return new Promise((resolve) => {
-    firebase.database().ref('/apps/' + appName).once('value')
-      .then(function(snapshot) {
-	return resolve(snapshot.exists());
-      });
-  });
+    return new Promise((resolve) => {
+	
+	$.ajax({type : "GET",
+		url: "checkForAppInDatabase",
+		dataType: 'json',
+		data: {appName: appName},
+		//data: {appName: "/apps/"+appName+"/tags/"},
+		success: function(result){
+		    //SNAPSHOT = JSON.parse(result).val();;
+		    //return resolve(SNAPSHOT.appExists);
+		    console.log(result.appExists);
+		    return resolve(result.appExists);
+		    console.log("SUCCESS");
+		    console.log("SNAPSHOT EXISTS? " + SNAPSHOT);
+		},
+		error : function(e) {
+		    console.log("ERROR: ", e);
+		}
+	       });
+    });
 }
 
 function writeTag(tagId, lat, lon, color, message, username, appname) {
     var d = new Date();
 
     var obj = {
-	username: username,
-        latitude: lat,
-        longitude: lon,
-        color: color,
-	message: message,
-	date: d.toUTCString()
+	appname: appname,
+	tagId: tagId,
+	taginfo: {
+	    username: username,
+            latitude: lat,
+            longitude: lon,
+            color: color,
+	    message: message,
+	    date: d.toUTCString()
+	}
     };
 
     console.log(obj);
+    //SERVER WRITE - POST, CAN ONLY GET 'GET' TO WORK
 
-    firebase.database().ref('/apps/' + appname + "/tags/" + tagId).set(obj,
-                                                 function(error) {
-                                                     if (error) {
-                                                         console.log("ERROR:",error);
-                                                     } else {
-                                                         console.log("SUCCESS");
-                                                     }
-                                                 });
+    $.ajax({type : "GET",
+	    url: "writeTag",
+	    dataType: 'json',
+	    data: obj,
+	    success: function(result){
+		console.log("OBJ sent successfully");
+	    },
+	    error : function(e) {
+		console.log("ERROR: ", e);
+	    }
+	   });
+    
+    /*
+      $.ajax({type : "POST",
+      url: "writeTag",
+      dataType: 'json',
+      contentType: 'application/json',
+      data: obj,
+      success: function(result){
+      console.log("OBJ sent successfully");
+      },
+      error : function(e) {
+      console.log("ERROR: ", e);
+      }
+      });*/
+    /*
+      $.post('writeTag',
+      obj,
+	   function(result){
+	       console.log("SUCCESS");
+	   }
+	  );*/
+    /*
+		$.ajax({ 
+		url: 'writeTag',
+        type: 'POST',
+        //cache: false, 
+        //data: obj,
+	data: JSON.stringify({hello: "hi there"}),
+        success: function(data){
+            console.log("SUCCESFUL POST!");
+        }
+        , error: function(jqXHR, textStatus, err){
+            console.log('text status '+textStatus+', err '+err)
+        }
+    });*/
+    
     document.getElementById("message").value = '';
 }
 
 async function getLastTagNumInDBandWrite(color) {
     var highestnum = 0;
-    firebase.database().ref('/apps/' + GLOBAL_APPNAME + "/tags/").once('value').then(function(snapshot) {
-	var v = snapshot.val();
-	for(const prop in v) {
-	    const n = parseInt(prop.substring("geotag".length));
-	    highestnum = Math.max(highestnum,n);
-	    if (highestnum == NaN) {
-		highestnum = 0;
-	    }
-	}
-	var options = { enableHighAccuracy: false,
-			timeout:10000};
-	navigator.geolocation.getCurrentPosition(
-            (position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME),
-            error,
-	    options);
-    });
+
+    	$.ajax({type : "GET",
+		url: "returnTags",
+		dataType: 'json',
+		data: {appName: GLOBAL_APPNAME},
+		success: function(result){
+		    var v = result;
+		    for(const prop in v) {
+			const n = parseInt(prop.substring("geotag".length));
+			highestnum = Math.max(highestnum,n);
+			if (highestnum == NaN) {
+			    highestnum = 0;
+			}
+		    }
+		    var options = { enableHighAccuracy: false,
+				    timeout:10000};
+		    navigator.geolocation.getCurrentPosition(
+			(position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME),
+			error,
+			options);
+		    console.log("SUCCESS");
+		    //console.log("Highest Num: "+ highestnum+" plus one");
+		},
+		error : function(e) {
+		    console.log("ERROR: ", e);
+		}
+	       });
 }
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
@@ -65,7 +132,7 @@ function getLocation(color) {
 	  var options = { enableHighAccuracy: false,
 			  timeout:10000};
 	  navigator.geolocation.getCurrentPosition(
-              (position) => showPositionOnPage(position,color),
+              (position) => showPositionOnPage(position,color,"current location","-current"),
               error,
 	      options);
       } else {
@@ -77,34 +144,32 @@ function getLocation(color) {
 }
 
 function createTag(position,color,tagnum,appname) {
-  showPositionOnPage(position,color);
-  writeTag("geotag" + tagnum,
-           position.coords.latitude,
-           position.coords.longitude,
-           color,
-           // Better done with JQUERY
-           document.getElementById('message').value,
-           document.getElementById('user-name').value,
-           appname);
+    var message = $('#message').val();
+    showPositionOnPage(position,color,message,tagnum);
+    writeTag("geotag" + tagnum,
+             position.coords.latitude,
+             position.coords.longitude,
+             color,
+	     message,
+	     $('#user-name').val(),
+             appname);
 }
-function showPositionOnPage(position,color) {
+function showPositionOnPage(position,color,message,number) {
     if (color != 'black') {
 	var x = document.getElementById("demo").innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
     }
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
-    var message = 'Reload to see your latest message';
-  showLngLatOnMap(lonDec,latDec,color," submitted now",message);
-  // TODO: We need to update the geotag with the with the number and message
-  // so that you don't have to reload
-    //too much effort to put latest number and message in
+    showLngLatOnMap(lonDec,latDec,color,number,message);
 }
 
 function showLngLatOnMap(lonDec,latDec,color,n,message) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
-    if (color == 'black' && map.getStyle().sources["point submitted now"]) {
-	map.getSource('point submitted now').setData({
+    if (color == 'black' && map.getStyle().sources["point-current"]) {
+	console.log('black point: ',lonDec,latDec);
+	//this works, but the black point changes every 15-30 seconds instead of 5
+	map.getSource('point-current').setData({
 	    "type": "FeatureCollection",
 	    "features": [{
 		"type": "Feature",
@@ -113,7 +178,9 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 		    "coordinates": [lonDec, latDec ]
 		},
 		"properties": {
-		    "color": color,
+		    'description':
+		    '<strong>geotag' + n + '</strong><p>' + message + '</p>',
+		    "color": color
 		}
 	    }]
 	});
@@ -132,7 +199,7 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 		    "properties": {
 			'description':
 			'<strong>geotag' + n + '</strong><p>' + message + '</p>',
-			"color": color,
+			"color": color
 		    }
 		}]
 	    }
@@ -178,7 +245,7 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 var map;
 
 function initMap(appname) {
-  // TODO: Neil, take this from an environment variable.
+  //SERVER - Not sure how to do this on server. The browser needs the access token to display the map. The map can't (as far as I know) be sent to the browser from the server.
     mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
 
@@ -191,14 +258,36 @@ function initMap(appname) {
 
     if (appname){
 	map.on('load', function () {
-	    firebase.database().ref('/apps/' + appname + "/tags/").once('value').then(function(snapshot) {
-		var v = snapshot.val();
-		for(const prop in v) {
-		    const n = parseInt(prop.substring("geotag".length));
-		    gt = v[prop];
-		    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
-		}
-	    });
+
+	    $.ajax({type : "GET",
+		    url: "returnTags",
+		    dataType: 'json',
+		    data: {appName: appname},
+		    success: function(result){
+			console.log(result);
+			//var v = result.val();
+			var v = result;
+			//console.log(result.value);
+			for(const prop in v) {
+			    //console.log("Prop: " + prop);
+			    const n = parseInt(prop.substring("geotag".length));
+			    gt = v[prop];
+			    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
+			    //console.log("SUCCESS");
+			}
+			},
+			error : function(e) {
+			    console.log("ERROR: ", e);
+			}
+		    });
 	});
+    }
+}
+
+function removeCurrentLoc() {
+    var mapLayer = map.getLayer('point-current');
+
+    if(typeof mapLayer !== 'undefined') {
+	map.removeLayer('point-current').removeSource('point-current');
     }
 }

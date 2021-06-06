@@ -5,16 +5,12 @@
     <title>Add to your geotag map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <link href="styles.css" rel="stylesheet">
-    <script type="text/javascript" src="exif.js"></script>
     <!---added mapbox-->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <!---added Bootstrap-->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Experimentally trying tesseract -->
-    <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
     <!-- Firebase App is always required and must be first -->
     <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
@@ -48,30 +44,27 @@
     </style>
 
     <h1 class="center">GeotagText</h1>
-    <br>
 
-    <div class="mb-3">
-      <label for="searchname" class="marginleft">Search for app</label>
-      <input type="text" id="searchname" class="marginleft">
+    <div class="center" id="appnametitle"></div>
+
+    <div id="searchsection">
+      <div class="mb-3">
+	<label for="searchname" class="marginleft">Search for an app</label>
+	<input type="text" id="searchname" class="marginleft">
+      </div>
+
+      <button type="button" onclick="searchforapp('searchbar')" class="btn btn-primary marginleft">Search</button>
     </div>
 
-    <button type="button" onclick="searchforapp()" class="btn btn-primary marginleft">Search</button>
 
-
-    <br><br>
+    <br><br><br>
 
     <div class="mb-3" id="hideusername">
       <label for="user-name" class="marginleft">Name of user</label>
       <input type="text" id="user-name" class="marginleft">
     </div>
 
-    <label class="cameraButton marginleft" id="hideAddImage">Add an image:
-      <input id="file-input" type="file" accept="image/*;capture=camera">
-    </label>
-
     <div id="demo"> </div>
-
-    <br/>
 
     <div class="input-group" id="hidemessage">
       <div class="input-group-prepend">
@@ -80,7 +73,12 @@
       <textarea id="message" class="form-control" aria-label="Enter Message:"></textarea>
     </div>
     <br>
-    <p class="center">Then select a color to go with your message</p>
+
+    <p id="plocation-switch" class="center">Display your current location?</p>
+
+    <button id="location-switch" class="center" type="button" onclick="locationSwitch()">Change to YES</button>
+    
+    <p class="center">Select a color to go with your message</p>
 
 
     <div class="btn-group-vertical, center">
@@ -95,75 +93,109 @@
 	<div id="map"></div>
       </div>
     </div>
-
+        
   </body>
 
-  <script type="text/javascript" src="firebase.js"></script>
   <script type="text/javascript" src="tagscript.js"></script>
   <script>
-
-
+    
     let params = (new URL(document.location)).searchParams;
-    let appname = params.get('app');
-    console.log("app",name);
-    var GLOBAL_APPNAME = appname;
-    if (appname) {
-      // Turn off the visibility of the "searchname"
-//      document.getElementById("searchname").value;
+    let queryappname = params.get('app');
+    //console.log("app:",queryappname);
+    var GLOBAL_APPNAME = queryappname;
+    if (queryappname) {
+	//console.log('yes app');
+	searchforapp('query');
     }
 
-    // PUT query param evaluation for APP_NAME here...
-
+    var GLOBAL_UPDATE_POSITION_TIMER;
+    //What is var equal to when clearInterval is called???
 
     var GLOBAL_CONFIG = { yesname: false,
 		          yestextmessage: false,
-		          red: true,
-		          blue: true,
-		          green: true,
+		          red: false,
+		          blue: false,
+		          green: false,
+			  currentlocation: true
 		        };
 
 
+    function locationSwitch() {
+	if ($('#location-switch').text() == "Change to YES" && GLOBAL_CONFIG.currentlocation == true) {
+	    console.log("change to YES clicked");
+	    $('#location-switch').text("Change to NO");
+	    GLOBAL_UPDATE_POSITION_TIMER = setInterval(function() { getLocation('black'); }, 5000);
+	}
+	else {
+	    console.log("change to NO clicked");
+	    $('#location-switch').text("Change to YES");
+	    clearInterval(GLOBAL_UPDATE_POSITION_TIMER);
+	    removeCurrentLoc();
+	}
+    }
+    
     function reconfigureFromConfig(config) {
-      //if no config file is found, this is still being triggered
-      $("#hideusername").toggle(config.yesname);
-      $("#hidemessage").toggle(config.yestextmessage);
-      $("#blue").toggle(config.blue);
-      $("#green").toggle(config.green);
-      $("#red").toggle(config.red);
-      $("#hideAddImage").hide();
+	$("#hideusername").toggle(config.yesname);
+	$("#hidemessage").toggle(config.yestextmessage);
+	$("#blue").toggle(config.blue);
+	$("#green").toggle(config.green);
+	$("#red").toggle(config.red);
+	var currentLocation = config.currentlocation;
+	if (currentLocation === undefined) {currentLocation = false;}
+	$('#location-switch').toggle(currentLocation);
+	$('#plocation-switch').toggle(currentLocation);
     }
 
     function reconfigureFromApp(appName) {
-      firebase.database().ref('/apps/'+appName).once('value')
-        .then(function(snapshot) {
-	  GLOBAL_CONFIG = snapshot.val();
-	  reconfigureFromConfig(GLOBAL_CONFIG);
-	});
+	console.log("reconfigureFromApp Called");
+	$.ajax({type : "GET",
+		url: "reconfigureFromApp",
+		dataType: 'json',
+		data: {appName: appName},
+		success: function(result){
+		    console.log(result);
+		    //GLOBAL_CONFIG = JSON.parse(result).val();
+		    //reconfigureFromConfig(GLOBAL_CONFIG);
+		    reconfigureFromConfig(result);
+		    console.log("SUCCESS");
+		},
+		error : function(e) {
+		    console.log("ERROR: ", e);
+		}
+	       });
     }
 
-    async function searchforapp() {
-      GLOBAL_APPNAME = document.getElementById("searchname").value;
-      console.log("Search text: ", GLOBAL_APPNAME);
-      const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
+    async function searchforapp(placeUsed) {
+	$('#location-switch').text("Change to YES");
+	if (GLOBAL_UPDATE_POSITION_TIMER) {
+	    clearInterval(GLOBAL_UPDATE_POSITION_TIMER);
+	}
+	$('#demo').text("");
+	if (placeUsed == 'searchbar') {
+	    GLOBAL_APPNAME = document.getElementById("searchname").value;
+	    removeCurrentLoc();
+	}
+	else if (placeUsed == 'query') {
+	    GLOBAL_APPNAME = queryappname;
+	}
+	console.log("Search text: ", GLOBAL_APPNAME);
+	const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
 
-      if (appCheck) {
-	// check for the app...
-        reconfigureFromApp(GLOBAL_APPNAME);
-	initMap(GLOBAL_APPNAME);
-      } else {
-        alert("app: "+GLOBAL_APPNAME + " not found!");
-      }
+	if (appCheck) {
+            reconfigureFromApp(GLOBAL_APPNAME);
+	    initMap(GLOBAL_APPNAME);
+	    $('#appnametitle').text("Map Application Name: "+GLOBAL_APPNAME);
+	    $('#searchsection').hide();
+	} else {
+            alert("app: "+GLOBAL_APPNAME + " not found!");
+	}
     }
 
     $(document).ready(function(){
       reconfigureFromConfig(GLOBAL_CONFIG);
     });
 
-    $(initMap(null,null));
-
-    // Create a configuration variable for this
-    //"var = " NOT NEEDED HERE?
-    //    updatePosition = setInterval(function() { getLocation('black'); }, 5000);
+    $(initMap(null));
 
   </script>
 

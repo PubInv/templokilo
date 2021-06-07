@@ -5,14 +5,8 @@ const checkForAppInDatabase = (appName) => {
 		url: "checkForAppInDatabase",
 		dataType: 'json',
 		data: {appName: appName},
-		//data: {appName: "/apps/"+appName+"/tags/"},
 		success: function(result){
-		    //SNAPSHOT = JSON.parse(result).val();;
-		    //return resolve(SNAPSHOT.appExists);
-		    console.log(result.appExists);
 		    return resolve(result.appExists);
-		    console.log("SUCCESS");
-		    console.log("SNAPSHOT EXISTS? " + SNAPSHOT);
 		},
 		error : function(e) {
 		    console.log("ERROR: ", e);
@@ -37,7 +31,6 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
 	}
     };
 
-    console.log(obj);
     //SERVER WRITE - POST, CAN ONLY GET 'GET' TO WORK
 
     $.ajax({type : "GET",
@@ -102,9 +95,7 @@ async function getLastTagNumInDBandWrite(color) {
 		    for(const prop in v) {
 			const n = parseInt(prop.substring("geotag".length));
 			highestnum = Math.max(highestnum,n);
-			if (highestnum == NaN) {
-			    highestnum = 0;
-			}
+			if (highestnum == NaN) {highestnum = 0;}
 		    }
 		    var options = { enableHighAccuracy: false,
 				    timeout:10000};
@@ -112,20 +103,20 @@ async function getLastTagNumInDBandWrite(color) {
 			(position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME),
 			error,
 			options);
-		    console.log("SUCCESS");
-		    //console.log("Highest Num: "+ highestnum+" plus one");
 		},
 		error : function(e) {
 		    console.log("ERROR: ", e);
 		}
 	       });
 }
+
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
   if (err.code == 3) {
-    console.warn('This may be because you are in a location where gps is weak. You may not be able to set a mark until you move');
+    console.warn('This may be because you are in a location where gps signal is weak. You may not be able to set a mark until you move.');
   }
 }
+
 function getLocation(color) {
   if (navigator.geolocation) {
       if (color == 'black') {
@@ -167,8 +158,6 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
     if (color == 'black' && map.getStyle().sources["point-current"]) {
-	console.log('black point: ',lonDec,latDec);
-	//this works, but the black point changes every 15-30 seconds instead of 5
 	map.getSource('point-current').setData({
 	    "type": "FeatureCollection",
 	    "features": [{
@@ -205,7 +194,6 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 	    }
 	});
 
-	// Possibly this is inefficient; possibly there should be a layer for all tags.
 	map.addLayer({
 	    "id": "point"+n,
 	    "source": "point"+n,
@@ -241,11 +229,9 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
     }
 }
 
-// THIS MAY HAVE TO BE GLOBAL
 var map;
 
 function initMap(appname) {
-  //SERVER - Not sure how to do this on server. The browser needs the access token to display the map. The map can't (as far as I know) be sent to the browser from the server.
     mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
 
@@ -264,16 +250,11 @@ function initMap(appname) {
 		    dataType: 'json',
 		    data: {appName: appname},
 		    success: function(result){
-			console.log(result);
-			//var v = result.val();
 			var v = result;
-			//console.log(result.value);
 			for(const prop in v) {
-			    //console.log("Prop: " + prop);
 			    const n = parseInt(prop.substring("geotag".length));
 			    gt = v[prop];
 			    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
-			    //console.log("SUCCESS");
 			}
 			},
 			error : function(e) {

@@ -8,14 +8,6 @@
     <!---added Bootstrap-->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase.js"></script>
-    <!-- Firebase App is always required and must be first  -->
-    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
-
-    <!-- Add additional services that you want to use  -->
-    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
   </head>
 
 
@@ -110,69 +102,62 @@
 
 </body>
   <script type="text/javascript" src="tagscript.js"></script>
-<script>
+  <script>
 
-  async function createApplication() {
-    var name = !($('input[name=name]:checked').val() == "false");
-    var textmessage = !($('input[name=text]:checked').val() == "false");
-    var currentloc = !($('input[name=currentloc]:checked').val() == "false");
+    async function createApplication() {
+	var name = !($('input[name=name]:checked').val() == "false");
+	var textmessage = !($('input[name=text]:checked').val() == "false");
+	var currentloc = !($('input[name=currentloc]:checked').val() == "false");
 
-    var red = $("#red").is(":checked");
-    var blue = $("#blue").is(":checked");
-    var green = $("#green").is(":checked");
-    var appName = $("#app-name").val();
+	var red = $("#red").is(":checked");
+	var blue = $("#blue").is(":checked");
+	var green = $("#green").is(":checked");
+	var appName = $("#app-name").val();
+	
+	function actuallyCreate(appName) {
+	    if ((blue == false && green == false && red == false) || appName == "") {
+		alert("Please fill out all fields");
+	    }
+	    else {
+		var config = {
+		    appname: appName,
+		    obj: {
+			yesname: name,
+			yestextmessage: textmessage,
+			red: red,
+			blue: blue,
+			green: green,
+			tags: {},
+			currentlocation: currentloc
+		    }
+		};
 
-    var stop;
-    if (blue==false && green==false && red ==false) {
-      stop = true;
-    } //maybe this can go directly into if statement on line193
-
-    function actuallyCreate(appName) {
-      if (stop == true || appName == "") {
-	alert("Please fill out all fields");
-      }
-      else {
-	  var config = {
-	      appname: appName,
-	      obj: {
-		  yesname: name,
-		  yestextmessage: textmessage,
-		  red: red,
-		  blue: blue,
-		  green: green,
-                  tags: {},
-		  currentlocation: currentloc
-	      }
-	  };
-
-	  console.log(config);
-
-	  $.ajax({type : "GET",
-		  url: "actuallyCreate",
-		  dataType: 'json',
-		  data: config,
-		  success: function(result){
-		      console.log("CONFIG sent successfully");
-		  },
-		  error : function(e) {
-		      console.log("ERROR: ", e);
-		  }
-		 });
-      }
+		$.ajax({type : "GET",
+			url: "actuallyCreate",
+			dataType: 'json',
+			data: config,
+			success: function(result){
+			    console.log("CONFIG sent successfully");
+			},
+			error : function(e) {
+			    console.log("ERROR: ", e);
+			}
+		       });
+		$('body > :not(#redirect-anchor)').hide();
+		$('#redirect-anchor').appendTo('body');
+		var link = '/index.html?app='+appName;
+		$('#redirect-anchor').html("<br><a style='text-align: center;' href='"+link+"'>Your app link</a>");
+	    }
+	}
+	
+	const appThere = await checkForAppInDatabase(appName);
+	if (appThere && appName != "") {
+	    alert("This app name already exists. Please find another one.");
+	}
+	else {
+	    actuallyCreate(appName);
+	}
     }
-    const appThere = await checkForAppInDatabase(appName);
-    if (appThere) {
-      alert("This app name already exists. Please find another one.");
-    }
-    else {
-	actuallyCreate(appName);
-	$('body > :not(#redirect-anchor)').hide();
-	$('#redirect-anchor').appendTo('body');
-	var link = '/index.html?app='+appName;
-	$('#redirect-anchor').html("<br><a style='text-align: center;' href='"+link+"'>Your app link</a>");
-    }
-  }
-
 </script>
 
 

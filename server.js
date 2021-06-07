@@ -20,8 +20,6 @@ var config = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
     databaseURL: process.env.databaseURL,
-    projectId: process.env.projectId,
-    storageBucket: process.env.storageBucket,
     messagingSenderId: process.env.messagingSenderId
 };
 
@@ -71,7 +69,7 @@ app.get('/checkForAppInDatabase', function (req, res) {
 
 
 /*
-app.post('/writeTag', function (req, res){  
+app.post('/writeTag', function (req, res){
     console.log("Req received: "+req);
     console.log("Req received: "+req.hello);
     console.log("Req received: "+req.query.hello);
@@ -91,7 +89,7 @@ app.get('/writeTag', function (req, res) {
     obj["latitude"] = parseFloat(obj.latitude);
     obj["longitude"] = parseFloat(obj.longitude);
     //console.log(obj);
-    
+
     firebase.database().ref('/apps/' + req.query.appname + "/tags/" + req.query.tagId).set(obj,
                                                  function(error) {
                                                      if (error) {

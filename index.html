@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset='utf-8' />
+    <meta charset='utf-8'/>
+    <!--make all of us authors-->
+    <!--add aferro gpl-->
     <title>Add to your geotag map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <link href="styles.css" rel="stylesheet">
@@ -48,9 +50,6 @@
       <button type="button" onclick="searchforapp('searchbar')" class="btn btn-primary marginleft">Search</button>
     </div>
 
-
-    <br><br><br>
-
     <div class="mb-3" id="hideusername">
       <label for="user-name" class="marginleft">Name of user</label>
       <input type="text" id="user-name" class="marginleft">
@@ -64,7 +63,7 @@
       </div>
       <textarea id="message" class="form-control" aria-label="Enter Message:"></textarea>
     </div>
-    <br>
+    <p></p>
 
     <p id="plocation-switch" class="center">Display your current location?</p>
 
@@ -89,10 +88,11 @@
   <script type="text/javascript" src="tagscript.js"></script>
   <script>
     
-    let params = (new URL(document.location)).searchParams;
-    let queryappname = params.get('app');
-    var GLOBAL_APPNAME = queryappname;
-    if (queryappname) {searchforapp('query');}
+    const params = (new URL(document.location)).searchParams;
+    var GLOBAL_APPNAME = params.get('app');
+    //var GLOBAL_APPNAME = queryappname;
+    //if (queryappname) {searchforapp('query');}
+    if (GLOBAL_APPNAME) {searchforapp('query');}
 
     var GLOBAL_UPDATE_POSITION_TIMER;
 
@@ -106,7 +106,8 @@
 
 
     function locationSwitch() {
-	if ($('#location-switch').text() == "Change to YES" && GLOBAL_CONFIG.currentlocation == true) {
+	if (($('#location-switch').text() == "Change to YES") &&
+	    (GLOBAL_CONFIG.currentlocation == true)) {
 	    $('#location-switch').text("Change to NO");
 	    GLOBAL_UPDATE_POSITION_TIMER = setInterval(function() { getLocation('black'); }, 5000);
 	}
@@ -123,8 +124,9 @@
 	$("#blue").toggle(config.blue);
 	$("#green").toggle(config.green);
 	$("#red").toggle(config.red);
-	var currentLocation = config.currentlocation;
-	if (currentLocation === undefined) {currentLocation = false;}
+	//var currentLocation = config.currentlocation;
+	//if (currentLocation === undefined) {currentLocation = false;}
+	const currentLocation = (config.currentLocation ===undefined) ? false : config.currentLocation;
 	$('#location-switch').toggle(currentLocation);
 	$('#plocation-switch').toggle(currentLocation);
     }
@@ -153,9 +155,10 @@
 	    GLOBAL_APPNAME = document.getElementById("searchname").value;
 	    removeCurrentLoc();
 	}
+	/*
 	else if (placeUsed == 'query') {
 	    GLOBAL_APPNAME = queryappname;
-	}
+	}*/
 	const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
 
 	if (appCheck) {

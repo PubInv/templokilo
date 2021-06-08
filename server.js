@@ -1,15 +1,13 @@
 const express = require('express');
-const bodyParser = require("body-parser");
-//DELETE WITHOUT POST ^^
 const app = express();
 
 
-var firebase = require("firebase/app");
+const firebase = require("firebase/app");
 
 require("firebase/auth");
 require('firebase/database');
 
-var config = {
+const config = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
     databaseURL: process.env.databaseURL,
@@ -27,19 +25,18 @@ firebase.auth().signInAnonymously().catch(function(error) {
     console.log(errorMessage);
 });
 
-var ref = firebase.database().ref();
+const ref = firebase.database().ref();
 
 app.use(express.static(__dirname));
 
-app.use(bodyParser.urlencoded({ extended:false }));
-app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended:false }));
+//app.use(bodyParser.json());
 
 function returnFirebaseSnapshot(req, ref, res) {
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName+ref).once('value')
         .then(function(snapshot) {
-	    var SNAPSHOT = JSON.stringify(snapshot);
-	    res.send(SNAPSHOT);
+	    res.send(JSON.stringify(snapshot));
 	});
 }
 app.get('/returnTags', function (req, res) {
@@ -54,24 +51,10 @@ app.get('/checkForAppInDatabase', function (req, res) {
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName).once('value')
         .then(function(snapshot) {
-	    var exists = JSON.stringify({appExists : snapshot.exists()});
-	    res.send(exists);
+	    //var exists = JSON.stringify({appExists : snapshot.exists()});
+	    res.send(JSON.stringify({appExists : snapshot.exists()}));
 	});
 });
-
-
-/*
-app.post('/writeTag', function (req, res){  
-    console.log("Req received: "+req);
-    console.log("Req received: "+req.hello);
-    console.log("Req received: "+req.query.hello);
-    //console.log('body: ' + JSON.stringify(req.body));
-    //console.log("Req received: "+JSON.stringify(req));
-    //console.log("body.id "+req.body.id);
-    //console.log("body.title "+req.body.title);
-    //console.log("body.content "+req.body.content);
-   //res.redirect('/'); - NEEDED???
-   });*/
 
 app.get('/writeTag', function (req, res) {
     var obj = req.query.taginfo;

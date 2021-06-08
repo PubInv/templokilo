@@ -105,20 +105,20 @@
   <script>
 
     async function createApplication() {
-	var name = !($('input[name=name]:checked').val() == "false");
-	var textmessage = !($('input[name=text]:checked').val() == "false");
-	var currentloc = !($('input[name=currentloc]:checked').val() == "false");
+	const name = !($('input[name=name]:checked').val() == "false");
+	const textmessage = !($('input[name=text]:checked').val() == "false");
+	const currentloc = !($('input[name=currentloc]:checked').val() == "false");
 
-	var red = $("#red").is(":checked");
-	var blue = $("#blue").is(":checked");
-	var green = $("#green").is(":checked");
-	var appName = $("#app-name").val();
+	const red = $("#red").is(":checked");
+	const blue = $("#blue").is(":checked");
+	const green = $("#green").is(":checked");
+	const appName = $("#app-name").val();
 	
 	function actuallyCreate(appName) {
-	    if ((blue == false && green == false && red == false) || appName == "") {
+	    if ((blue == false && green == false && red == false) ||
+		(appName == "")) {
 		alert("Please fill out all fields");
-	    }
-	    else {
+	    } else {
 		var config = {
 		    appname: appName,
 		    obj: {
@@ -159,6 +159,5 @@
 	}
     }
 </script>
-
 
 </html>

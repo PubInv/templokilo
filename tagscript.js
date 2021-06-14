@@ -1,3 +1,21 @@
+/*
+Geotagtext allows you to create map applications and record geomarkers in the app of your choosing.
+Copyright (C) 2021 Robert Read, Diego Aspinwall and Neil Martis
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 const checkForAppInDatabase = (appName) => {
     return new Promise((resolve) => {
 	
@@ -44,41 +62,6 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
 		console.log("ERROR: ", e);
 	    }
 	   });
-    
-    /*
-      $.ajax({type : "POST",
-      url: "writeTag",
-      dataType: 'json',
-      contentType: 'application/json',
-      data: obj,
-      success: function(result){
-      console.log("OBJ sent successfully");
-      },
-      error : function(e) {
-      console.log("ERROR: ", e);
-      }
-      });*/
-    /*
-      $.post('writeTag',
-      obj,
-	   function(result){
-	       console.log("SUCCESS");
-	   }
-	  );*/
-    /*
-		$.ajax({ 
-		url: 'writeTag',
-        type: 'POST',
-        //cache: false, 
-        //data: obj,
-	data: JSON.stringify({hello: "hi there"}),
-        success: function(data){
-            console.log("SUCCESFUL POST!");
-        }
-        , error: function(jqXHR, textStatus, err){
-            console.log('text status '+textStatus+', err '+err)
-        }
-    });*/
     
     document.getElementById("message").value = '';
 }

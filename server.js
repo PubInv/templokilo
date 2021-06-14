@@ -1,3 +1,21 @@
+/*
+Geotagtext allows you to create map applications and record geomarkers in the app of your choosing.
+Copyright (C) 2021 Robert Read, Diego Aspinwall and Neil Martis
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 const express = require('express');
 const app = express();
 
@@ -32,12 +50,12 @@ app.use(express.static(__dirname));
 //app.use(bodyParser.urlencoded({ extended:false }));
 //app.use(bodyParser.json());
 
-function returnFirebaseSnapshot(req, ref, res) {
+var returnFirebaseSnapshot = (req, ref, res) => {
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName+ref).once('value')
-        .then(function(snapshot) {
-	    res.send(JSON.stringify(snapshot));
-	});
+        .then((snapshot) => 
+	    {res.send(JSON.stringify(snapshot));}
+	);
 }
 app.get('/returnTags', function (req, res) {
     returnFirebaseSnapshot(req,'/tags/', res);
@@ -50,10 +68,9 @@ app.get('/reconfigureFromApp', function (req, res) {
 app.get('/checkForAppInDatabase', function (req, res) {
     var appName = req.query.appName;
     firebase.database().ref('/apps/'+appName).once('value')
-        .then(function(snapshot) {
-	    //var exists = JSON.stringify({appExists : snapshot.exists()});
-	    res.send(JSON.stringify({appExists : snapshot.exists()}));
-	});
+        .then((snapshot) =>
+	    {res.send(JSON.stringify({appExists : snapshot.exists()}));}
+	);
 });
 
 app.get('/writeTag', function (req, res) {
@@ -88,6 +105,6 @@ app.get('/actuallyCreate', function (req, res) {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, function () {
+app.listen(port, () => {
   console.log('myapp listening on port ' + port);
 });

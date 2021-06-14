@@ -1,9 +1,25 @@
 <!DOCTYPE html>
+<!---
+Geotagtext allows you to create map applications and record geomarkers in the app of your choosing.
+Copyright (C) 2021 Robert Read, Diego Aspinwall and Neil Martis
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
 <html>
   <head>
     <meta charset='utf-8'/>
-    <!--make all of us authors-->
-    <!--add aferro gpl-->
+    <meta name="author" content="Robert Read, Diego Aspinwall and Neil Martis">
     <title>Add to your geotag map</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <link href="styles.css" rel="stylesheet">
@@ -90,8 +106,6 @@
     
     const params = (new URL(document.location)).searchParams;
     var GLOBAL_APPNAME = params.get('app');
-    //var GLOBAL_APPNAME = queryappname;
-    //if (queryappname) {searchforapp('query');}
     if (GLOBAL_APPNAME) {searchforapp('query');}
 
     var GLOBAL_UPDATE_POSITION_TIMER;
@@ -124,8 +138,6 @@
 	$("#blue").toggle(config.blue);
 	$("#green").toggle(config.green);
 	$("#red").toggle(config.red);
-	//var currentLocation = config.currentlocation;
-	//if (currentLocation === undefined) {currentLocation = false;}
 	const currentLocation = (config.currentLocation ===undefined) ? false : config.currentLocation;
 	$('#location-switch').toggle(currentLocation);
 	$('#plocation-switch').toggle(currentLocation);
@@ -155,10 +167,7 @@
 	    GLOBAL_APPNAME = document.getElementById("searchname").value;
 	    removeCurrentLoc();
 	}
-	/*
-	else if (placeUsed == 'query') {
-	    GLOBAL_APPNAME = queryappname;
-	}*/
+	
 	const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
 
 	if (appCheck) {

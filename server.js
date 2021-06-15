@@ -17,7 +17,7 @@ console.dir("XXXX")
 console.dir(firebase.apps);
 
 var config = {
-    apiKey: process.env.apiKey,
+    apiKey: process.env.apiKey, // This is the firebase web API Key
     authDomain: process.env.authDomain,
     databaseURL: process.env.databaseURL,
     messagingSenderId: process.env.messagingSenderId

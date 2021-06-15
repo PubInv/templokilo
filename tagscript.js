@@ -16,9 +16,13 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+
+// It is possible this accessToken will someday reach a limit. We recomment you change it if that occurs.
+const MAPBOXGL_ACCESSTOKEN  = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
+
 const checkForAppInDatabase = (appName) => {
     return new Promise((resolve) => {
-	
+
 	$.ajax({type : "GET",
 		url: "checkForAppInDatabase",
 		dataType: 'json',
@@ -62,7 +66,7 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
 		console.log("ERROR: ", e);
 	    }
 	   });
-    
+
     document.getElementById("message").value = '';
 }
 
@@ -215,10 +219,9 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 var map;
 
 function initMap(appname) {
-    mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
+    mapboxgl.accessToken = MAPBOXGL_ACCESSTOKEN;
 
-
-    map = new mapboxgl.Map({
+  map = new mapboxgl.Map({
 	container: 'map',
 	style: 'mapbox://styles/mapbox/light-v9',
 	center: [-96, 37.8],

@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 
-// It is possible this accessToken will someday reach a limit. We recomment you change it if that occurs.
+// It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.
 const MAPBOXGL_ACCESSTOKEN  = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
 
 const checkForAppInDatabase = (appName) => {

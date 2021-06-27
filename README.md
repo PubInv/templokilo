@@ -1,7 +1,7 @@
 # geotagtext
 
 This is a system for easily using a phone or computer to tag a geolocation with a simple message.
-We have a prototype [here](https://pubinv.github.io/geotagtext/).
+We have a prototype [here](https://geotagtext-server.herokuapp.com/).
 
 ## Basic Idea
 

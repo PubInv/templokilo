@@ -1,4 +1,20 @@
 # These are supported funding model platforms
+# Geotagtext allows you to create map applications and record geomarkers in the app of your choosing.
+# Copyright (C) 2021 Robert Read, Diego Aspinwall and Neil Martis
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
 
 github: [PubInv] # Replace with up to 4 GitHub Sponsors-enabled usernames e.g., [user1, user2]
 custom: ["https://www.pubinv.org/donate", www.pubinv.org]

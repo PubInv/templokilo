@@ -1,16 +1,29 @@
-# geotagtext
+# pjournal
 
-This is a system for easily using a phone or computer to tag a geolocation with a simple message.
-We have a prototype [here](https://geotagtext-server.herokuapp.com/).
+This is a system for easily using a phone or computer to upload a geolocated photo to create a spatial and temporal database. The database can then be viewed on a map.
+
+The general purpose is to create a journalistic record that allows study or open source intelligence (OSINT).
+
+## History
+
+This is a fork of geotagtext, a geotagging tutorial app written by Robert L. Read, Diego Aspinwall, and Neil Martis.
+Currently the only expected author of this fork is Robert L. Read
+
 
 ## Basic Idea
 
 The goal of this project is to allow a group of people, perhaps in an emegency situation, to geotag locations
 to be on a map. Like all Public Invention projects, it is free-libre open source.
 
-
 Imagine using your phone to place a red tag on a flooded area, or where a person needs help, and
 green tag on a road which is passable.
+
+More generally, the ability to quickly upload a photo and have it reliably placed in time and space
+with the "EXIF" data typically embedded by modern phones will allow a GUI that is a valuable journalastic
+record of an event.
+
+In particular, this response was made in response to the invasion of the Ukraine by Russia and
+the potential need for making a journalistic record of that event.
 
 ## Basic Technology
 
@@ -18,7 +31,6 @@ The web page use the geolocation feature now built in to most browsers and acces
 
 It uses free and open map technology.
 
-Currently it uses Google Firebase as a simple backend to provide shared persistence.
 
 ## Goals
 
@@ -26,50 +38,7 @@ The goal is to further enhance and build on the existing application thereby dev
 public API which can used and incorporated into existing applications or a brand new project for example during natural disaster
 or in applications like Free Little Libraries or Free Little Food Pantries.
 
-## How to Help
-
-It is possible this project will be assisted by students of Brown University in their "CS for Social Change" class. However,
-we are happy to have anyone help.
-
-### Help us think of good uses
-
-The easiest way to help us to help us think of compelling uses for this fundamental technology. For example,
-we have toyed with the idea of creating a game: one person walks through a city laying down red dots, and the
-goal of the other players is place a green dot with 10 meters of each red dot.
-
-However, this technology could be used for much more interesting things:
-
-* Tagging invasive plant species for removal.
-* Tagging hard-to-remove litter (such as old tires) for removal.
-* Marking road or trail hazzards or cleared sections.
-
-A good designer or creative person could specify a particular target for us to work on.
-
-### Move to Bootstrap
-
-The current GUI was done as quickly as possible. An improved mobile-friendly GUI would be a step forward.
-
-### Develop New Features
-
-* Allow tags to be directly responded to. For example, a click a red dot and add a textual response like: "Yeah, picked up that tire."
-* Provide a way for tags to be removed.
-* Provide a way for users to create an entire new database, perhaps with a simple URL parameter, for their own purposes.
-* Provide an administrative interface that lets a dataset be cleaned up.
-* Provide a means for a dataset to be exported/imported.
-* Allow written text and/or photos to be added to a geotag.
-* Provide a "proximity feature" that allows events to be created when, for example, a green dot is placed next to a red dot.
-
-### Document Use
-
-The system currently gives no indication how to use it.
-
-The internal code was hacked together as quickly as possible in about 5 2-hour sessions be Neil and Rob; it is very sloppy.
-
 ## History
 
-Begun by Neil Martis and Rob Read.
-
-
-
-
-
+Begun by Neil Martis and Rob Read. Improved by Neil Martis.
+Written as a [tutorial](https://medium.com/nerd-for-tech/geotagtext-a-tutorial-a-free-geotagging-web-application-composed-of-free-tools-b42bcbcca202), then forked on Feb. 26th, 2022, the 3rd day of the invasion of Ukraine.

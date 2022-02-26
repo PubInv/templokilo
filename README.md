@@ -41,4 +41,4 @@ or in applications like Free Little Libraries or Free Little Food Pantries.
 ## History
 
 Begun by Neil Martis and Rob Read. Improved by Neil Martis.
-Written as a [tutorial](https://medium.com/nerd-for-tech/geotagtext-a-tutorial-a-free-geotagging-web-application-composed-of-free-tools-b42bcbcca202), then forked on Feb. 26th, 2022, the 3rd day of the invasion of Ukraine.
+Written as a [tutorial](https://medium.com/nerd-for-tech/geotagtext-a-tutorial-a-free-geotagging-web-application-composed-of-free-tools-b42bcbcca202), then forked on Feb. 26th, 2022, the 3rd day of the invasion of Ukraine, by Robert L. Read.

@@ -31,12 +31,24 @@ The web page use the geolocation feature now built in to most browsers and acces
 
 It uses free and open map technology.
 
+## Usage
 
-## Goals
+This was recently hosted at Heroku. It uses an express server. The fundamenal way to run it without
+using heroku and Procifle is to set certain environment variables that contain "secrets":
 
-The goal is to further enhance and build on the existing application thereby developing an application user interface or a
-public API which can used and incorporated into existing applications or a brand new project for example during natural disaster
-or in applications like Free Little Libraries or Free Little Food Pantries.
+> export apiKey=
+> export authDomain=
+> export databaseURL=
+> export mapbox_accessToken=
+> export messagingSenderId=
+> export projectId=
+> export storageBucket=
+
+And then run the express server:
+
+> node server.js
+
+The web application with then be running on port :3000.
 
 ## History
 

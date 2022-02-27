@@ -135,6 +135,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   </body>
 
   <script type="text/javascript" src="tagscript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
   <script>
 
     const params = (new URL(document.location)).searchParams;
@@ -217,7 +219,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
     async function handleFile(event) {
       try {
-        const tags = await ExifReader.load(event.target.files[0]);
+
+        // Does this imply that files may allow multiple uploads and this should be in a loop?
+        const file = event.target.files[0];
+        const tags = await ExifReader.load(file);
+        console.dir(file);
+        upload(file).then(resp => console.log(resp));
 
         // The MakerNote tag can be really large. Remove it to lower
         // memory usage if you're parsing a lot of files and saving the
@@ -239,6 +246,30 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         console.log(error);
       }
     }
+
+    const upload = async (file) => {
+      try {
+        const title = 'My file';
+        const form = new FormData();
+        form.append('title', title);
+        form.append('file', file);
+        form.append('filename',file.originalname);
+        console.dir("form",form);
+        console.dir(file);
+
+        const resp = await axios.post('http://localhost:3000/upload', form, {
+        });
+
+        if (resp.status === 200) {
+          return 'Upload complete';
+        }
+      } catch(err) {
+        return new Error(err.message);
+      }
+    }
+
+
+
     /* eslint-disable no-var */
 
     $(document).ready(function(){

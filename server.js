@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 const express = require('express');
 const app = express();
-
+var cors = require('cors');
 
 const firebase = require("firebase/app");
 
@@ -43,7 +43,10 @@ firebase.auth().signInAnonymously().catch(function(error) {
 
 const ref = firebase.database().ref();
 
+
+
 app.use(express.static(__dirname));
+app.use(cors());
 
 //app.use(bodyParser.urlencoded({ extended:false }));
 //app.use(bodyParser.json());
@@ -101,6 +104,23 @@ app.get('/actuallyCreate', function (req, res) {
 						       }
 						   });
 });
+
+
+const multer  = require('multer');
+const os = require('os');
+
+
+const upload = multer({ dest: "./uploads" });
+
+app.post('/upload',upload.single('file'),
+         function(req, res) {
+           const title = req.body.title;
+           const file = req.file;
+           console.log(title);
+           file.filename = file.originalname;
+           console.log(file);
+           res.sendStatus(200);
+         });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

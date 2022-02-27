@@ -33,7 +33,15 @@ It uses free and open map technology.
 
 ## Usage
 
-This was recently hosted at Heroku. It uses an express server. The fundamenal way to run it without
+This was recently hosted at Heroku. It uses an express server.
+I am currently moving away from heroku for this app.
+
+Like most node apps, you will want to run:
+> npm install
+
+To pull in all needed libraries.
+
+The fundamenal way to run it without
 using heroku and Procifle is to set certain environment variables that contain "secrets":
 
 > export apiKey=

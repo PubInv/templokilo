@@ -27,6 +27,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+    <script src="./js/exif-reader.js"></script>
     <!---added Bootstrap-->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   </head>
@@ -53,9 +56,39 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       }
     </style>
 
-    <h1 class="center">GeotagText</h1>
+    <h1 class="center">PJournal</h1>
 
     <div class="center" id="appnametitle"></div>
+
+
+      <form>
+            <label>
+                Choose an image file from your computer:<br>
+                <input type="file" id="file" name="file">
+            </label>
+      </form>
+      <img id="thumbnail" src="" alt="Thumbnail of image." class="thumbnail hidden"></img>
+
+        <table class="tags">
+            <thead>
+                <tr>
+                    <th>Tag name</th>
+                    <th>Tag description</th>
+                </tr>
+            </thead>
+            <tbody id="exif-table-body">
+            </tbody>
+        </table>
+
+
+    <div id="uploadsection">
+      <div class="mb-3">
+	<label for="searchname" class="marginleft">Upload a Geotagged Photo</label>
+<!--        <button type="button" onclick="uploadGeotagged()" class="btn btn-primary marginleft">Upload</button> -->
+      </div>
+    </div>
+
+    <div class="error hidden"></div>
 
     <div id="searchsection">
       <div class="mb-3">
@@ -84,7 +117,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     <p id="plocation-switch" class="center">Display your current location?</p>
 
     <button id="location-switch" class="center" type="button" onclick="locationSwitch()">Change to YES</button>
-    
+
     <p class="center">Select a color for your geotag</p>
 
     <div class="btn-group-vertical, center">
@@ -98,12 +131,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	<div id="map"></div>
       </div>
     </div>
-    
+
   </body>
 
   <script type="text/javascript" src="tagscript.js"></script>
   <script>
-    
+
     const params = (new URL(document.location)).searchParams;
     var GLOBAL_APPNAME = params.get('app');
     if (GLOBAL_APPNAME) {searchforapp('query');}
@@ -131,7 +164,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	    removeCurrentLoc();
 	}
     }
-    
+
     function reconfigureFromConfig(config) {
 	$("#hideusername").toggle(config.yesname);
 	$("#hidemessage").toggle(config.yestextmessage);
@@ -167,7 +200,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	    GLOBAL_APPNAME = document.getElementById("searchname").value;
 	    removeCurrentLoc();
 	}
-	
+
 	const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
 
 	if (appCheck) {
@@ -180,11 +213,92 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	}
     }
 
-    $(document).ready(function(){
-	reconfigureFromConfig(GLOBAL_CONFIG);
-    });
+    document.getElementById('file').addEventListener('change', handleFile);
 
+    async function handleFile(event) {
+      try {
+        const tags = await ExifReader.load(event.target.files[0]);
+
+        // The MakerNote tag can be really large. Remove it to lower
+        // memory usage if you're parsing a lot of files and saving the
+        // tags.
+        delete tags['MakerNote'];
+
+        // If you want to extract the thumbnail you can use it like
+        // this:
+        if (tags['Thumbnail'] && tags['Thumbnail'].image) {
+          const image = document.getElementById('thumbnail');
+          image.classList.remove('hidden');
+          image.src = 'data:image/jpg;base64,' + tags['Thumbnail'].base64;
+        }
+        console.dir(tags);
+        window.exifReaderClear();
+        window.exifReaderListTags(tags);
+      } catch (error) {
+        // Handle error.
+        console.log(error);
+      }
+    }
+    /* eslint-disable no-var */
+
+    $(document).ready(function(){
+      reconfigureFromConfig(GLOBAL_CONFIG);
+
+
+    (function (window) {
+      'use strict';
+
+      window.exifReaderError = function (message) {
+        var errorContainer = document.querySelector('.error');
+        errorContainer.innerHTML = message;
+        errorContainer.classList.remove('hidden');
+      };
+
+      window.exifReaderClear = function () {
+        var errorContainer;
+        var tableBody;
+        var thumbnail;
+
+        errorContainer = document.querySelector('.error');
+        errorContainer.classList.add('hidden');
+        errorContainer.innerHTML = '';
+
+        tableBody = document.getElementById('exif-table-body');
+        tableBody.innerHTML = '';
+
+        thumbnail = document.getElementById('thumbnail');
+        thumbnail.classList.add('hidden');
+        thumbnail.innerHTML = '';
+      };
+
+      window.exifReaderListTags = function (tags) {
+        var tableBody;
+        var name;
+        var description;
+        var row;
+
+        tableBody = document.getElementById('exif-table-body');
+        for (name in tags) {
+          description = getDescription(tags[name]);
+          if (description !== undefined) {
+            row = document.createElement('tr');
+            row.innerHTML = '<td>' + name + '</td><td>' + description + '</td>';
+            tableBody.appendChild(row);
+          }
+        }
+      };
+
+      function getDescription(tag) {
+        if (Array.isArray(tag)) {
+          return tag.map((item) => item.description).join(', ');
+        }
+        return tag.description;
+      }
+    }(window));
+
+    });
     $(initMap(null));
+
 
   </script>
 

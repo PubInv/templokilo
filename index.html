@@ -224,12 +224,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         const file = event.target.files[0];
         const tags = await ExifReader.load(file);
         console.dir(file);
-        upload(file).then(resp => console.log(resp));
+//        upload(file).then(resp => console.log(resp));
 
         // The MakerNote tag can be really large. Remove it to lower
         // memory usage if you're parsing a lot of files and saving the
         // tags.
-        delete tags['MakerNote'];
+        //        delete tags['MakerNote'];
 
         // If you want to extract the thumbnail you can use it like
         // this:
@@ -239,94 +239,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           image.src = 'data:image/jpg;base64,' + tags['Thumbnail'].base64;
         }
         console.dir(tags);
-        window.exifReaderClear();
-        window.exifReaderListTags(tags);
+        var username = "spud";
+        // This should be used for tagging the photo, perhaps
+        // from a selector, but I don't have that now.
+        createPhotoUploadTag(file,tags,username,"black");
       } catch (error) {
         // Handle error.
         console.log(error);
       }
     }
 
-    const upload = async (file) => {
-      try {
-        const title = 'My file';
-        const form = new FormData();
-        form.append('title', title);
-        form.append('file', file);
-        form.append('filename',file.originalname);
-        console.dir("form",form);
-        console.dir(file);
-
-        const resp = await axios.post('http://localhost:3000/upload', form, {
-        });
-
-        if (resp.status === 200) {
-          return 'Upload complete';
-        }
-      } catch(err) {
-        return new Error(err.message);
-      }
-    }
-
-
 
     /* eslint-disable no-var */
 
     $(document).ready(function(){
       reconfigureFromConfig(GLOBAL_CONFIG);
-
-
-    (function (window) {
-      'use strict';
-
-      window.exifReaderError = function (message) {
-        var errorContainer = document.querySelector('.error');
-        errorContainer.innerHTML = message;
-        errorContainer.classList.remove('hidden');
-      };
-
-      window.exifReaderClear = function () {
-        var errorContainer;
-        var tableBody;
-        var thumbnail;
-
-        errorContainer = document.querySelector('.error');
-        errorContainer.classList.add('hidden');
-        errorContainer.innerHTML = '';
-
-        tableBody = document.getElementById('exif-table-body');
-        tableBody.innerHTML = '';
-
-        thumbnail = document.getElementById('thumbnail');
-        thumbnail.classList.add('hidden');
-        thumbnail.innerHTML = '';
-      };
-
-      window.exifReaderListTags = function (tags) {
-        var tableBody;
-        var name;
-        var description;
-        var row;
-
-        tableBody = document.getElementById('exif-table-body');
-        for (name in tags) {
-          description = getDescription(tags[name]);
-          if (description !== undefined) {
-            row = document.createElement('tr');
-            row.innerHTML = '<td>' + name + '</td><td>' + description + '</td>';
-            tableBody.appendChild(row);
-          }
-        }
-      };
-
-      function getDescription(tag) {
-        if (Array.isArray(tag)) {
-          return tag.map((item) => item.description).join(', ');
-        }
-        return tag.description;
-      }
-    }(window));
-
     });
     $(initMap(null));
 

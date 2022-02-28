@@ -70,6 +70,44 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
     document.getElementById("message").value = '';
 }
 
+function getLastTagNumInDB() {
+  return new Promise(function (resolve,reject) {
+    $.ajax({type : "GET",
+	    url: "returnTags",
+	    dataType: 'json',
+	    data: {appName: GLOBAL_APPNAME},
+	    success: function(result){
+              var highestnum = 0;
+	      var v = result;
+	      for(const prop in v) {
+	        const n = parseInt(prop.substring("geotag".length));
+                console.log("prop:");
+                console.log(prop);
+                console.log("n :");
+                console.log(n);
+	        highestnum = Math.max(highestnum,n);
+	        if (highestnum == NaN) {highestnum = 0;}
+	      }
+              resolve(highestnum);
+	    },
+	    error : function(e) {
+	      console.log("ERROR: ", e);
+	    }
+	   });
+  });
+}
+
+
+function getLastTagNumInDBSynchronously() {
+  var highestnum = 0;
+  getLastTagNumInDB().then(function(data) {
+    highestnum = data;
+    console.log("data in promise");
+    console.log(data);
+  });
+  return highestnum;
+}
+
 async function getLastTagNumInDBandWrite(color) {
     var highestnum = 0;
 
@@ -120,6 +158,49 @@ function getLocation(color) {
       alert("Geolocation is not supported by this browser.");
   }
 }
+
+async function createPhotoUploadTag(file,tags,username,color) {
+    const title = 'My file';
+    const form = new FormData();
+    form.append('title', title);
+    form.append('file', file);
+    form.append('filename',file.originalname);
+    console.dir("form",form);
+    getLastTagNumInDB().then(
+      function (highest_num) {
+        var tagId = "geotag"+(highest_num+1);
+        console.log("tagId:");
+        console.log(tagId);
+        // This tshould actually from the tags!
+        var d = new Date();
+        var lat = parseFloat(tags.GPSLatitude.description);
+        var lon = parseFloat(tags.GPSLongitude.description);
+        var obj = {
+          appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
+          tagId: tagId,
+          taginfo: {
+	    username: username,
+            latitude: lat,
+            longitude: lon,
+            color: color,
+	    message: "This is an uploaded image",
+	    date: d.toUTCString()
+          }
+        };
+        form.append("obj",JSON.stringify(obj));
+        try {
+          const resp = axios.post('http://localhost:3000/upload', form, {
+          });
+          if (resp.status === 200) {
+            return 'Upload complete';
+          }
+        } catch(err) {
+          return new Error(err.message);
+        }
+      }
+    );
+}
+
 
 function createTag(position,color,tagnum,appname) {
     var message = $('#message').val();

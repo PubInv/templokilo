@@ -160,6 +160,8 @@ function getLocation(color) {
 }
 
 async function createPhotoUploadTag(file,tags,username,color) {
+  // This should really come from the GUI somehow
+  const message = "uploaded image";
     const title = 'My file';
     const form = new FormData();
     form.append('title', title);
@@ -172,9 +174,13 @@ async function createPhotoUploadTag(file,tags,username,color) {
         console.log("tagId:");
         console.log(tagId);
         // This tshould actually from the tags!
-        var d = new Date();
+        // Hopefully this is a UTC
         var lat = parseFloat(tags.GPSLatitude.description);
+
+        // note: By convention, East longitude is positive
+        // Check
         var lon = parseFloat(tags.GPSLongitude.description);
+        lon = (tags.GPSLongitudeRef.value[0] == 'W') ? -lon : lon;
         var obj = {
           appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
           tagId: tagId,
@@ -183,22 +189,22 @@ async function createPhotoUploadTag(file,tags,username,color) {
             latitude: lat,
             longitude: lon,
             color: color,
-	    message: "This is an uploaded image",
-	    date: d.toUTCString()
+	    message: message,
+	    date: tags.DateTime.description
           }
         };
         form.append("obj",JSON.stringify(obj));
-        try {
-          const resp = axios.post('http://localhost:3000/upload', form, {
-          });
-          if (resp.status === 200) {
-            return 'Upload complete';
-          }
-        } catch(err) {
-          return new Error(err.message);
-        }
-      }
-    );
+          const resp = axios.post('http://localhost:3000/upload', form, {}).then((resp) => {
+            console.log(response)
+            if (resp.status === 200) {
+              var position = { coords :
+                               { latitude: lat,
+                                 longitude: lon }
+                             };
+              showPositionOnPage(position,color,message,tagnum);
+            }
+          }).catch((error) => console.log(error));
+      });
 }
 
 

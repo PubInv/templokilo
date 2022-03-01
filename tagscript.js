@@ -16,88 +16,100 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-
 // It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.
-const MAPBOXGL_ACCESSTOKEN  = 'pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ';
+const MAPBOXGL_ACCESSTOKEN =
+  "pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ";
 
 const checkForAppInDatabase = (appName) => {
-    return new Promise((resolve) => {
-
-	$.ajax({type : "GET",
-		url: "checkForAppInDatabase",
-		dataType: 'json',
-		data: {appName: appName},
-		success: function(result){
-		    return resolve(result.appExists);
-		},
-		error : function(e) {
-		    console.log("ERROR: ", e);
-		}
-	       });
+  return new Promise((resolve) => {
+    $.ajax({
+      type: "GET",
+      url: "checkForAppInDatabase",
+      dataType: "json",
+      data: { appName: appName },
+      success: function (result) {
+        return resolve(result.appExists);
+      },
+      error: function (e) {
+        console.log("ERROR: ", e);
+      },
     });
-}
+  });
+};
 
-function writeTag(tagId, lat, lon, color, message, username, appname, filepath) {
-    var d = new Date();
+function writeTag(
+  tagId,
+  lat,
+  lon,
+  color,
+  message,
+  username,
+  appname,
+  filepath
+) {
+  var d = new Date();
 
-    var obj = {
-	appname: appname,
-	tagId: tagId,
-	taginfo: {
-	    username: username,
-            latitude: lat,
-            longitude: lon,
-            color: color,
-	    message: message,
-	  date: d.toUTCString(),
-          filepath: filepath
-	}
-    };
+  var obj = {
+    appname: appname,
+    tagId: tagId,
+    taginfo: {
+      username: username,
+      latitude: lat,
+      longitude: lon,
+      color: color,
+      message: message,
+      date: d.toUTCString(),
+      filepath: filepath,
+    },
+  };
 
-    //SERVER WRITE - POST, CAN ONLY GET 'GET' TO WORK
+  //SERVER WRITE - POST, CAN ONLY GET 'GET' TO WORK
 
-    $.ajax({type : "GET",
-	    url: "writeTag",
-	    dataType: 'json',
-	    data: obj,
-	    success: function(result){
-		console.log("OBJ sent successfully");
-	    },
-	    error : function(e) {
-		console.log("ERROR: ", e);
-	    }
-	   });
+  $.ajax({
+    type: "GET",
+    url: "writeTag",
+    dataType: "json",
+    data: obj,
+    success: function (result) {
+      console.log("OBJ sent successfully");
+    },
+    error: function (e) {
+      console.log("ERROR: ", e);
+    },
+  });
 
-    document.getElementById("message").value = '';
+  document.getElementById("message").value = "";
 }
 
 function getLastTagNumInDB() {
-  return new Promise(function (resolve,reject) {
-    $.ajax({type : "GET",
-	    url: "returnTags",
-	    dataType: 'json',
-	    data: {appName: GLOBAL_APPNAME},
-	    success: function(result){
-              var highestnum = 0;
-	      var v = result;
-	      for(const prop in v) {
-	        const n = parseInt(prop.substring("geotag".length));
-	        highestnum = Math.max(highestnum,n);
-	        if (highestnum == NaN) {highestnum = 0;}
-	      }
-              resolve(highestnum);
-	    },
-	    error : function(e) {
-	      console.log("ERROR: ", e);
-	    }
-	   });
+  return new Promise(function (resolve, reject) {
+    $.ajax({
+      type: "GET",
+      url: "returnTags",
+      dataType: "json",
+      data: { appName: GLOBAL_APPNAME },
+      success: function (result) {
+        var highestnum = 0;
+        var v = result;
+        for (const prop in v) {
+          const n = parseInt(prop.substring("geotag".length));
+          highestnum = Math.max(highestnum, n);
+          if (highestnum == NaN) {
+            highestnum = 0;
+          }
+        }
+        resolve(highestnum);
+      },
+      error: function (e) {
+        console.log("ERROR: ", e);
+      },
+    });
   });
 }
 
-
 function getLastTagNumInDBSynchronously() {
   var highestnum = 0;
-  getLastTagNumInDB().then(function(data) {
+  getLastTagNumInDB().then(function (data) {
     highestnum = data;
     console.log("data in promise");
     console.log(data);
@@ -106,259 +118,282 @@ function getLastTagNumInDBSynchronously() {
 }
 
 async function getLastTagNumInDBandWrite(color) {
-    var highestnum = 0;
+  var highestnum = 0;
 
-    	$.ajax({type : "GET",
-		url: "returnTags",
-		dataType: 'json',
-		data: {appName: GLOBAL_APPNAME},
-		success: function(result){
-		    var v = result;
-		    for(const prop in v) {
-			const n = parseInt(prop.substring("geotag".length));
-			highestnum = Math.max(highestnum,n);
-			if (highestnum == NaN) {highestnum = 0;}
-		    }
-		    var options = { enableHighAccuracy: false,
-				    timeout:10000};
-		    navigator.geolocation.getCurrentPosition(
-		      (position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME,"createdbyclick"),
-			error,
-			options);
-		},
-		error : function(e) {
-		    console.log("ERROR: ", e);
-		}
-	       });
+  $.ajax({
+    type: "GET",
+    url: "returnTags",
+    dataType: "json",
+    data: { appName: GLOBAL_APPNAME },
+    success: function (result) {
+      var v = result;
+      for (const prop in v) {
+        const n = parseInt(prop.substring("geotag".length));
+        highestnum = Math.max(highestnum, n);
+        if (highestnum == NaN) {
+          highestnum = 0;
+        }
+      }
+      var options = { enableHighAccuracy: false, timeout: 10000 };
+      navigator.geolocation.getCurrentPosition(
+        (position) =>
+          createTag(
+            position,
+            color,
+            highestnum + 1,
+            GLOBAL_APPNAME,
+            "createdbyclick"
+          ),
+        error,
+        options
+      );
+    },
+    error: function (e) {
+      console.log("ERROR: ", e);
+    },
+  });
 }
 
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
   if (err.code == 3) {
-    console.warn('This may be because you are in a location where gps signal is weak. You may not be able to set a mark until you move.');
+    console.warn(
+      "This may be because you are in a location where gps signal is weak. You may not be able to set a mark until you move."
+    );
   }
 }
 
 function getLocation(color) {
   if (navigator.geolocation) {
-      if (color == 'black') {
-	  var options = { enableHighAccuracy: false,
-			  timeout:10000};
-	  navigator.geolocation.getCurrentPosition(
-              (position) => showPositionOnPage(position,color,"current location","-current"),
-              error,
-	      options);
-      } else {
-	  getLastTagNumInDBandWrite(color);
-      }
+    if (color == "black") {
+      var options = { enableHighAccuracy: false, timeout: 10000 };
+      navigator.geolocation.getCurrentPosition(
+        (position) =>
+          showPositionOnPage(position, color, "current location", "-current"),
+        error,
+        options
+      );
+    } else {
+      getLastTagNumInDBandWrite(color);
+    }
   } else {
-      alert("Geolocation is not supported by this browser.");
+    alert("Geolocation is not supported by this browser.");
   }
 }
 
-async function createPhotoUploadTag(file,tags,username,color) {
+async function createPhotoUploadTag(file, tags, username, color) {
   // This should really come from the GUI somehow
   const message = "uploaded image";
-    const title = 'My file';
-    const form = new FormData();
-    form.append('title', title);
-    form.append('file', file);
-    form.append('filename',file.originalname);
-    console.dir("form",form);
-    getLastTagNumInDB().then(
-      function (highest_num) {
-        var tagnum = highest_num+1;
-        var tagId = "geotag"+tagnum;
-        console.log("tagId:");
-        console.log(tagId);
-        // This tshould actually from the tags!
-        // Hopefully this is a UTC
-        var lat = parseFloat(tags.GPSLatitude.description);
+  const title = "My file";
+  const form = new FormData();
+  form.append("title", title);
+  form.append("file", file);
+  form.append("filename", file.originalname);
+  console.dir("form", form);
+  getLastTagNumInDB().then(function (highest_num) {
+    var tagnum = highest_num + 1;
+    var tagId = "geotag" + tagnum;
+    console.log("tagId:");
+    console.log(tagId);
+    // This tshould actually from the tags!
+    // Hopefully this is a UTC
+    var lat = parseFloat(tags.GPSLatitude.description);
 
-        // note: By convention, East longitude is positive
-        // Check
-        var lon = parseFloat(tags.GPSLongitude.description);
-        lon = (tags.GPSLongitudeRef.value[0] == 'W') ? -lon : lon;
-        var obj = {
-          appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
-          tagId: tagId,
-          taginfo: {
-	    username: username,
-            latitude: lat,
-            longitude: lon,
-            color: color,
-	    message: message,
-	    date: tags.DateTime.description
-          }
-        };
-        form.append("obj",JSON.stringify(obj));
-          const resp = axios.post('http://localhost:3000/upload', form, {}).then((resp) => {
-            console.log(resp);
-            if (resp.status === 200) {
-              var position = { coords :
-                               { latitude: lat,
-                                 longitude: lon }
-                             };
-              // I might actually have to read the tag to get
-              // the correct filepath here...
-              console.log("GLOBAL_APPNAME");
-              console.log(GLOBAL_APPNAME);
-              axios.get('./tags/'+tagId,
-	                {params: {appName: GLOBAL_APPNAME}}
-                       ).then(tresp => {
-                console.log("tresp");
-                console.log(tresp);
-                var filepath = tresp.data.filePath;
-                showPositionOnPage(position,color,message,tagnum,filepath);
-              });
-            }
-          }).catch((error) => console.log(error));
-      });
+    // note: By convention, East longitude is positive
+    // Check
+    var lon = parseFloat(tags.GPSLongitude.description);
+    lon = tags.GPSLongitudeRef.value[0] == "W" ? -lon : lon;
+    var obj = {
+      appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
+      tagId: tagId,
+      taginfo: {
+        username: username,
+        latitude: lat,
+        longitude: lon,
+        color: color,
+        message: message,
+        date: tags.DateTime.description,
+      },
+    };
+    form.append("obj", JSON.stringify(obj));
+    const resp = axios
+      .post("http://localhost:3000/upload", form, {})
+      .then((resp) => {
+        console.log(resp);
+        if (resp.status === 200) {
+          var position = { coords: { latitude: lat, longitude: lon } };
+          // I might actually have to read the tag to get
+          // the correct filepath here...
+          console.log("GLOBAL_APPNAME");
+          console.log(GLOBAL_APPNAME);
+          axios
+            .get("./tags/" + tagId, { params: { appName: GLOBAL_APPNAME } })
+            .then((tresp) => {
+              console.log("tresp");
+              console.log(tresp);
+              var filepath = tresp.data.filePath;
+              showPositionOnPage(position, color, message, tagnum, filepath);
+            });
+        }
+      })
+      .catch((error) => console.log(error));
+  });
 }
 
-
-function createTag(position,color,tagnum,appname,filepath) {
-  var message = $('#message').val();
-  showPositionOnPage(position,color,message,tagnum,filepath);
-  writeTag("geotag" + tagnum,
-           position.coords.latitude,
-           position.coords.longitude,
-           color,
-	   message,
-	   $('#user-name').val(),
-           appname);
+function createTag(position, color, tagnum, appname, filepath) {
+  var message = $("#message").val();
+  showPositionOnPage(position, color, message, tagnum, filepath);
+  writeTag(
+    "geotag" + tagnum,
+    position.coords.latitude,
+    position.coords.longitude,
+    color,
+    message,
+    $("#user-name").val(),
+    appname
+  );
 }
-function showPositionOnPage(position,color,message,number,filepath) {
-    if (color != 'black') {
-	var x = document.getElementById("demo").innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
-    }
-    var lonDec = position.coords.longitude;
-    var latDec = position.coords.latitude;
-  showLngLatOnMap(lonDec,latDec,color,number,message,filepath);
+function showPositionOnPage(position, color, message, number, filepath) {
+  if (color != "black") {
+    var x = (document.getElementById("demo").innerHTML =
+      "Latitude: " +
+      position.coords.latitude +
+      "<br>Longitude: " +
+      position.coords.longitude);
+  }
+  var lonDec = position.coords.longitude;
+  var latDec = position.coords.latitude;
+  showLngLatOnMap(lonDec, latDec, color, number, message, filepath);
 }
 
 // if we embedded the file link, we could make this pop up render it,
 // and then we could have it open the photo in a different page.
 // I need to add a fileid for this to work.
-function showLngLatOnMap(lonDec,latDec,color,n,message,filepath) {
-    var ll = new mapboxgl.LngLat(lonDec, latDec);
+function showLngLatOnMap(lonDec, latDec, color, n, message, filepath) {
+  var ll = new mapboxgl.LngLat(lonDec, latDec);
 
-    if (color == 'black' && map.getStyle().sources["point-current"]) {
-	map.getSource('point-current').setData({
-	    "type": "FeatureCollection",
-	    "features": [{
-		"type": "Feature",
-		"geometry": {
-		    "type": "Point",
-		    "coordinates": [lonDec, latDec ]
-		},
-		"properties": {
-		    'description':
-		    '<strong>geotag' + n + '</strong><p>' + message + '</p>',
-		    "color": color
-		}
-	    }]
-	});
-    }
-    else {
-	map.addSource('point'+n, {
-	    "type": "geojson",
-	    "data": {
-		"type": "FeatureCollection",
-		"features": [{
-		    "type": "Feature",
-		    "geometry": {
-			"type": "Point",
-			"coordinates": [lonDec, latDec ]
-		    },
-		    "properties": {
-			'description':
-			'<strong>geotag' + n + '</strong><p>' + message + '</p>',
-			"color": color
-		    }
-		}]
-	    }
-	});
+  if (color == "black" && map.getStyle().sources["point-current"]) {
+    map.getSource("point-current").setData({
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [lonDec, latDec],
+          },
+          properties: {
+            description:
+              "<strong>geotag" + n + "</strong><p>" + message + "</p>",
+            color: color,
+          },
+        },
+      ],
+    });
+  } else {
+    map.addSource("point" + n, {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [lonDec, latDec],
+            },
+            properties: {
+              description:
+                "<strong>geotag" + n + "</strong><p>" + message + "</p>",
+              color: color,
+            },
+          },
+        ],
+      },
+    });
 
-	map.addLayer({
-	    "id": "point"+n,
-	    "source": "point"+n,
-	    "type": "circle",
-	    "paint": {
-		"circle-radius": 10,
-		'circle-color': ['get', 'color']
-	    }
+    map.addLayer({
+      id: "point" + n,
+      source: "point" + n,
+      type: "circle",
+      paint: {
+        "circle-radius": 10,
+        "circle-color": ["get", "color"],
+      },
+    });
 
-	});
+    map.on("click", "point" + n, function (e) {
+      var coordinates = e.features[0].geometry.coordinates.slice();
+      var description = e.features[0].properties.description;
 
-	map.on('click',"point"+n, function (e) {
-	    var coordinates = e.features[0].geometry.coordinates.slice();
-	    var description = e.features[0].properties.description;
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
 
-	    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-		coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-	    }
-
-          // We will now add a direct link to the photo to the HTML in the popup,
-          // and then try to add a nice thumbnail.
-          var fullHTML = `<a href='./${filepath}'>click for window</a> \br <a href='${filepath}'>click for download</a> \br
+      // We will now add a direct link to the photo to the HTML in the popup,
+      // and then try to add a nice thumbnail.
+      var fullHTML = `<a href='./${filepath}'>click for window</a> \br <a href='${filepath}'>click for download</a> \br
 <img src="./${filepath}" alt="${filepath}" width="500" height="600">
 ${description}`;
-	    new mapboxgl.Popup()
-		.setLngLat(coordinates)
-		.setHTML(fullHTML)
-		.addTo(map);
-	});
+      new mapboxgl.Popup().setLngLat(coordinates).setHTML(fullHTML).addTo(map);
+    });
 
-	map.on('mouseenter', "point"+n , function () {
-	    map.getCanvas().style.cursor = 'pointer';
-	});
+    map.on("mouseenter", "point" + n, function () {
+      map.getCanvas().style.cursor = "pointer";
+    });
 
-	map.on('mouseleave', "point"+n , function () {
-	    map.getCanvas().style.cursor = '';
-	});
-    }
+    map.on("mouseleave", "point" + n, function () {
+      map.getCanvas().style.cursor = "";
+    });
+  }
 }
 
 var map;
 
 function initMap(appname) {
-    mapboxgl.accessToken = MAPBOXGL_ACCESSTOKEN;
+  mapboxgl.accessToken = MAPBOXGL_ACCESSTOKEN;
 
   map = new mapboxgl.Map({
-	container: 'map',
-	style: 'mapbox://styles/mapbox/light-v9',
-	center: [-96, 37.8],
-	zoom: 3
+    container: "map",
+    style: "mapbox://styles/mapbox/light-v9",
+    center: [-96, 37.8],
+    zoom: 3,
+  });
+
+  if (appname) {
+    map.on("load", function () {
+      $.ajax({
+        type: "GET",
+        url: "returnTags",
+        dataType: "json",
+        data: { appName: appname },
+        success: function (result) {
+          var v = result;
+          for (const prop in v) {
+            const n = parseInt(prop.substring("geotag".length));
+            gt = v[prop];
+            showLngLatOnMap(
+              gt.longitude,
+              gt.latitude,
+              gt.color,
+              n,
+              gt.message,
+              gt.filePath
+            );
+          }
+        },
+        error: function (e) {
+          console.log("ERROR: ", e);
+        },
+      });
     });
-
-    if (appname){
-	map.on('load', function () {
-
-	    $.ajax({type : "GET",
-		    url: "returnTags",
-		    dataType: 'json',
-		    data: {appName: appname},
-		    success: function(result){
-			var v = result;
-			for(const prop in v) {
-			    const n = parseInt(prop.substring("geotag".length));
-			    gt = v[prop];
-			  showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message,gt.filePath);
-			}
-			},
-			error : function(e) {
-			    console.log("ERROR: ", e);
-			}
-		    });
-	});
-    }
+  }
 }
 
 function removeCurrentLoc() {
-    var mapLayer = map.getLayer('point-current');
+  var mapLayer = map.getLayer("point-current");
 
-    if(typeof mapLayer !== 'undefined') {
-	map.removeLayer('point-current').removeSource('point-current');
-    }
+  if (typeof mapLayer !== "undefined") {
+    map.removeLayer("point-current").removeSource("point-current");
+  }
 }

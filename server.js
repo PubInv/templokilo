@@ -16,30 +16,36 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const express = require('express');
+const express = require("express");
 const app = express();
-var cors = require('cors');
+var cors = require("cors");
+require("dotenv").config({ path: __dirname + "/.env" });
 
 const firebase = require("firebase/app");
 
 require("firebase/auth");
-require('firebase/database');
+require("firebase/database");
 
-const config = {
-    apiKey: process.env.apiKey,
-    authDomain: process.env.authDomain,
-    databaseURL: process.env.databaseURL,
-    messagingSenderId: process.env.messagingSenderId
+const firebaseConfig = {
+  apiKey: process.env.apiKey,
+  authDomain: process.env.authDomain,
+  projectId: process.env.projectId,
+  databaseURL: process.env.databaseURL,
+  messagingSenderId: process.env.messagingSenderId,
+  appId: process.env.appId,
 };
 
-firebase.initializeApp(config);
+firebase.initializeApp(firebaseConfig);
 
-firebase.auth().signInAnonymously().catch(function(error) {
+firebase
+  .auth()
+  .signInAnonymously()
+  .catch(function (error) {
     var errorCode = error.code;
     var errorMessage = error.message;
     console.log(errorCode);
     console.log(errorMessage);
-});
+  });
 
 const ref = firebase.database().ref();
 
@@ -51,133 +57,142 @@ app.use(cors());
 
 var returnFirebaseSnapshot = (req, ref, res) => {
   var appName = req.query.appName;
-  firebase.database().ref('/apps/'+appName+ref).once('value')
-    .then((snapshot) =>
-      {
-        res.send(JSON.stringify(snapshot));
-      }
-    );
-}
+  firebase
+    .database()
+    .ref("/apps/" + appName + ref)
+    .once("value")
+    .then((snapshot) => {
+      res.send(JSON.stringify(snapshot));
+    });
+};
 
-app.get('/returnTags', function (req, res) {
-    returnFirebaseSnapshot(req,'/tags/', res);
+app.get("/returnTags", function (req, res) {
+  returnFirebaseSnapshot(req, "/tags/", res);
 });
 
 // I could get a specific tag with a query param
 // but REST should not make that necessary
-app.get('/tags/*', function (req, res) {
-  returnFirebaseSnapshot(req,req.path, res);
+app.get("/tags/*", function (req, res) {
+  returnFirebaseSnapshot(req, req.path, res);
 });
 
-app.get('/reconfigureFromApp', function (req, res) {
-    returnFirebaseSnapshot(req,'', res);
+app.get("/reconfigureFromApp", function (req, res) {
+  returnFirebaseSnapshot(req, "", res);
 });
 
-app.get('/checkForAppInDatabase', function (req, res) {
-    var appName = req.query.appName;
-    firebase.database().ref('/apps/'+appName).once('value')
-        .then((snapshot) =>
-	    {res.send(JSON.stringify({appExists : snapshot.exists()}));}
-	);
+app.get("/checkForAppInDatabase", function (req, res) {
+  var appName = req.query.appName;
+  firebase
+    .database()
+    .ref("/apps/" + appName)
+    .once("value")
+    .then((snapshot) => {
+      res.send(JSON.stringify({ appExists: snapshot.exists() }));
+    });
 });
 
-function writeTagIntoDB(obj,req) {
-    firebase.database().ref('/apps/' + req.query.appname + "/tags/" + req.query.tagId).set(obj,
-                                                 function(error) {
-                                                     if (error) {
-                                                         console.log("ERROR:",error);
-                                                     }
-                                                 });
+function writeTagIntoDB(obj, req) {
+  firebase
+    .database()
+    .ref("/apps/" + req.query.appname + "/tags/" + req.query.tagId)
+    .set(obj, function (error) {
+      if (error) {
+        console.log("ERROR:", error);
+      }
+    });
 }
 
-app.get('/writeTag', function (req, res) {
+app.get("/writeTag", function (req, res) {
   var obj = req.query.taginfo;
   obj["latitude"] = parseFloat(obj.latitude);
   obj["longitude"] = parseFloat(obj.longitude);
-  writeTagIntoDB(obj,req);
+  writeTagIntoDB(obj, req);
 });
 
-app.get('/actuallyCreate', function (req, res) {
-    var config = req.query.obj;
-    for (const property in config) {
-	if (config[property] == "false") {config[property] = false;}
-	if (config[property] == "true") {config[property] = true;}
+app.get("/actuallyCreate", function (req, res) {
+  var config = req.query.obj;
+  for (const property in config) {
+    if (config[property] == "false") {
+      config[property] = false;
     }
-    config.tags = {};
-    firebase.database().ref('apps/' + req.query.appname).set(config,
-						   function(error) {
-						       if (error) {
-							   // The write failed...
-							   console.log("ERROR:",error);
-						       } else {
-							   // Data saved successfully!
-							   console.log("SUCCESS");
-						       }
-						   });
+    if (config[property] == "true") {
+      config[property] = true;
+    }
+  }
+  config.tags = {};
+  firebase
+    .database()
+    .ref("apps/" + req.query.appname)
+    .set(config, function (error) {
+      if (error) {
+        // The write failed...
+        console.log("ERROR:", error);
+      } else {
+        // Data saved successfully!
+        console.log("SUCCESS");
+      }
+    });
 });
 
-
-const multer  = require('multer');
-const os = require('os');
+const multer = require("multer");
+const os = require("os");
 //const ExifReader = require('exif-js')
-const ExifReader = require('exifreader');
-const fs = require('fs')
-
+const ExifReader = require("exifreader");
+const fs = require("fs");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './uploads')
+    cb(null, "./uploads");
   },
   filename: function (req, file, cb) {
     console.log("compting file name");
     console.log(file);
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, file.originalname)
-  }
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.originalname);
+  },
 });
 
 const upload = multer({ storage: storage });
 
-app.post('/upload',upload.single('file'),
-         function(req, res) {
-           // by the time we get here, multer
-           // has already generated a hash name.
-           // This has lost the mimetype information.
-           console.log("req.body");
-           console.log(req.body);
-           var myobj = JSON.parse(req.body.obj);
-           console.log("myobj");
-           console.log(myobj);
-           const title = req.body.title;
-           const file = req.file;
-           console.log(title);
-           file.filename = file.originalname;
-           console.log("file.path");
-           console.log(file.path);
-           console.log("file.path");
+app.post("/upload", upload.single("file"), function (req, res) {
+  // by the time we get here, multer
+  // has already generated a hash name.
+  // This has lost the mimetype information.
+  console.log("req.body");
+  console.log(req.body);
+  var myobj = JSON.parse(req.body.obj);
+  console.log("myobj");
+  console.log(myobj);
+  const title = req.body.title;
+  const file = req.file;
+  console.log(title);
+  file.filename = file.originalname;
+  console.log("file.path");
+  console.log(file.path);
+  console.log("file.path");
 
-           var fake_req = {};
-           fake_req.query = {};
+  var fake_req = {};
+  fake_req.query = {};
 
-           fake_req.query.appname = myobj.appname;
-           fake_req.query.tagId = myobj.tagId;
+  fake_req.query.appname = myobj.appname;
+  fake_req.query.tagId = myobj.tagId;
 
-           var obj = {};
-           try {
-             const data = fs.readFileSync(file.path)
-             const tags = ExifReader.load(data);
-             // the file.path is important to place in the
-             // datastore so we can render the photo...
-             myobj.taginfo.filePath = file.path;
-             writeTagIntoDB(myobj.taginfo,fake_req);
-           } catch (err) {
-             console.error(err)
-           }
+  var obj = {};
+  try {
+    const data = fs.readFileSync(file.path);
+    const tags = ExifReader.load(data);
+    // the file.path is important to place in the
+    // datastore so we can render the photo...
+    myobj.taginfo.filePath = file.path;
+    writeTagIntoDB(myobj.taginfo, fake_req);
+  } catch (err) {
+    console.error(err);
+  }
 
-           res.sendStatus(200);
-         });
+  res.sendStatus(200);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log('myapp listening on port ' + port);
+  console.log("PJournal listening on port " + port);
 });

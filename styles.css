@@ -15,43 +15,58 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#map
-{
-    width: 100px;
-    height:100px;
-    min-height: 100%;
-    min-width: 100%;
-    display: block;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+.app-container {
+  width: 100vw;
+  height: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  /* background-color: lightpink; */
 }
 
-html, body
-{
-    height: 90%;
+.upload-section {
+  /* background-color: lightgreen; */
+  padding: 1em;
 }
 
-#map-holder{
-    height: 100%;
+.editor {
+  /* background-color: lightblue; */
+  padding: 1em;
 }
 
-.fill
-{
-    min-height: 100%;
-    height: 100%;
-    width: 100%;
-    max-width: 100%;
+.map-container {
+  height: 100%;
+  /* background-color: darkorchid; */
 }
 
-.container{
-    max-width:60em;
-    padding: 0.2em;
+#map {
+  min-height: 100%;
+  min-width: 100%;
 }
 
-.center{
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 30px
+/* .fill {
+  min-height: 100%;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+} */
+
+.center {
+  text-align: center;
+  /* margin-top: 3em;
+  margin-bottom: 3em; */
 }
 
-.marginleft{
-    margin-left: 40px;
+.mapboxgl-popup {
+  max-width: 400px;
+  font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
 }

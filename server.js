@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 const express = require("express");
 const app = express();
 var cors = require("cors");
+require("dotenv").config({ path: __dirname + "/.env" });
 
 const firebase = require("firebase/app");
 

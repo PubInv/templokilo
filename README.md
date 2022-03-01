@@ -9,7 +9,6 @@ The general purpose is to create a journalistic record that allows study or open
 This is a fork of geotagtext, a geotagging tutorial app written by Robert L. Read, Diego Aspinwall, and Neil Martis.
 Currently the only expected author of this fork is Robert L. Read
 
-
 ## Basic Idea
 
 The goal of this project is to allow a group of people, perhaps in an emegency situation, to geotag locations
@@ -37,6 +36,7 @@ This was recently hosted at Heroku. It uses an express server.
 I am currently moving away from heroku for this app.
 
 Like most node apps, you will want to run:
+
 > npm install
 
 To pull in all needed libraries.

@@ -18,73 +18,76 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -->
 <html>
   <head>
-    <meta charset='utf-8'/>
-    <meta name="author" content="Robert Read, Diego Aspinwall and Neil Martis">
+    <meta charset="utf-8" />
+    <meta
+      name="author"
+      content="Robert Read, Diego Aspinwall and Neil Martis" />
     <title>Add to your geotag map</title>
-    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <link href="styles.css" rel="stylesheet">
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="styles.css" rel="stylesheet" />
     <!---added mapbox-->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.css" rel="stylesheet" />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.css"
+      rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
 
     <script src="./js/exif-reader.js"></script>
     <!---added Bootstrap-->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+      rel="stylesheet" />
   </head>
 
   <body>
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item active">
-            <a class="nav-link" href="index.html">User Page<span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="index.html"
+              >User Page<span class="sr-only">(current)</span></a
+            >
           </li>
-	  <li class="nav-item">
+          <li class="nav-item">
             <a class="nav-link" href="builder.html">App Builder</a>
           </li>
         </ul>
       </div>
     </nav>
 
-    <style>
-      .mapboxgl-popup {
-	  max-width: 400px;
-	  font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-      }
-    </style>
-
     <h1 class="center">PJournal</h1>
 
     <div class="center" id="appnametitle"></div>
+    <form>
+      <label>
+        Choose an image file from your computer:<br />
+        <input type="file" id="file" name="file" />
+      </label>
+    </form>
+    <img
+      id="thumbnail"
+      src=""
+      alt="Thumbnail of image."
+      class="thumbnail hidden" />
 
-
-      <form>
-            <label>
-                Choose an image file from your computer:<br>
-                <input type="file" id="file" name="file">
-            </label>
-      </form>
-      <img id="thumbnail" src="" alt="Thumbnail of image." class="thumbnail hidden"></img>
-
-        <table class="tags">
-            <thead>
-                <tr>
-                    <th>Tag name</th>
-                    <th>Tag description</th>
-                </tr>
-            </thead>
-            <tbody id="exif-table-body">
-            </tbody>
-        </table>
-
+    <table class="tags">
+      <thead>
+        <tr>
+          <th>Tag name</th>
+          <th>Tag description</th>
+        </tr>
+      </thead>
+      <tbody id="exif-table-body"></tbody>
+    </table>
 
     <div id="uploadsection">
       <div class="mb-3">
-	<label for="searchname" class="marginleft">Upload a Geotagged Photo</label>
-<!--        <button type="button" onclick="uploadGeotagged()" class="btn btn-primary marginleft">Upload</button> -->
+        <label for="searchname" class="marginleft"
+          >Upload a Geotagged Photo</label
+        >
+        <!--        <button type="button" onclick="uploadGeotagged()" class="btn btn-primary marginleft">Upload</button> -->
       </div>
     </div>
 
@@ -92,139 +95,173 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
     <div id="searchsection">
       <div class="mb-3">
-	<label for="searchname" class="marginleft">Search for an app</label>
-	<input type="text" id="searchname" class="marginleft">
+        <label for="searchname" class="marginleft">Search for an app</label>
+        <input type="text" id="searchname" class="marginleft" />
       </div>
-
-      <button type="button" onclick="searchforapp('searchbar')" class="btn btn-primary marginleft">Search</button>
+      <button
+        type="button"
+        onclick="searchforapp('searchbar')"
+        class="btn btn-primary marginleft">
+        Search
+      </button>
     </div>
 
     <div class="mb-3" id="hideusername">
       <label for="user-name" class="marginleft">Name of user</label>
-      <input type="text" id="user-name" class="marginleft">
+      <input type="text" id="user-name" class="marginleft" />
     </div>
 
-    <div id="demo"> </div>
+    <div id="demo"></div>
 
     <div class="input-group" id="hidemessage">
       <div class="input-group-prepend">
         <span class="input-group-text">Enter Message:</span>
       </div>
-      <textarea id="message" class="form-control" aria-label="Enter Message:"></textarea>
+      <textarea
+        id="message"
+        class="form-control"
+        aria-label="Enter Message:"></textarea>
     </div>
-    <p></p>
 
     <p id="plocation-switch" class="center">Display your current location?</p>
 
-    <button id="location-switch" class="center" type="button" onclick="locationSwitch()">Change to YES</button>
+    <button
+      id="location-switch"
+      class="center"
+      type="button"
+      onclick="locationSwitch()">
+      Change to YES
+    </button>
 
     <p class="center">Select a color for your geotag</p>
 
     <div class="btn-group-vertical, center">
-      <button type="button" onclick="getLocation('red')" class="btn btn-primary" id="red">Red</button>
-      <button type="button"  onclick="getLocation('blue')" class="btn btn-primary" id="blue">Blue</button>
-      <button type="button"  onclick="getLocation('green')" class="btn btn-primary" id="green">Green</button>
+      <button
+        type="button"
+        onclick="getLocation('red')"
+        class="btn btn-primary"
+        id="red">
+        Red
+      </button>
+      <button
+        type="button"
+        onclick="getLocation('blue')"
+        class="btn btn-primary"
+        id="blue">
+        Blue
+      </button>
+      <button
+        type="button"
+        onclick="getLocation('green')"
+        class="btn btn-primary"
+        id="green">
+        Green
+      </button>
     </div>
 
     <div id="map-holder">
       <div class="container fill">
-	<div id="map"></div>
+        <div id="map"></div>
       </div>
     </div>
-
   </body>
 
   <script type="text/javascript" src="tagscript.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
   <script>
-
-    const params = (new URL(document.location)).searchParams;
-    var GLOBAL_APPNAME = params.get('app');
-    if (GLOBAL_APPNAME) {searchforapp('query');}
+    const params = new URL(document.location).searchParams;
+    var GLOBAL_APPNAME = params.get("app");
+    if (GLOBAL_APPNAME) {
+      searchforapp("query");
+    }
 
     var GLOBAL_UPDATE_POSITION_TIMER;
 
-    var GLOBAL_CONFIG = { yesname: false,
-		          yestextmessage: false,
-		          red: false,
-		          blue: false,
-		          green: false,
-			  currentlocation: true
-		        };
-
+    var GLOBAL_CONFIG = {
+      yesname: false,
+      yestextmessage: false,
+      red: false,
+      blue: false,
+      green: false,
+      currentlocation: true,
+    };
 
     function locationSwitch() {
-	if (($('#location-switch').text() == "Change to YES") &&
-	    (GLOBAL_CONFIG.currentlocation == true)) {
-	    $('#location-switch').text("Change to NO");
-	    GLOBAL_UPDATE_POSITION_TIMER = setInterval(function() { getLocation('black'); }, 5000);
-	}
-	else {
-	    $('#location-switch').text("Change to YES");
-	    clearInterval(GLOBAL_UPDATE_POSITION_TIMER);
-	    removeCurrentLoc();
-	}
+      if (
+        $("#location-switch").text() == "Change to YES" &&
+        GLOBAL_CONFIG.currentlocation == true
+      ) {
+        $("#location-switch").text("Change to NO");
+        GLOBAL_UPDATE_POSITION_TIMER = setInterval(function () {
+          getLocation("black");
+        }, 5000);
+      } else {
+        $("#location-switch").text("Change to YES");
+        clearInterval(GLOBAL_UPDATE_POSITION_TIMER);
+        removeCurrentLoc();
+      }
     }
 
     function reconfigureFromConfig(config) {
-	$("#hideusername").toggle(config.yesname);
-	$("#hidemessage").toggle(config.yestextmessage);
-	$("#blue").toggle(config.blue);
-	$("#green").toggle(config.green);
-	$("#red").toggle(config.red);
-	const currentLocation = (config.currentLocation ===undefined) ? false : config.currentLocation;
-	$('#location-switch').toggle(currentLocation);
-	$('#plocation-switch').toggle(currentLocation);
+      $("#hideusername").toggle(config.yesname);
+      $("#hidemessage").toggle(config.yestextmessage);
+      $("#blue").toggle(config.blue);
+      $("#green").toggle(config.green);
+      $("#red").toggle(config.red);
+      const currentLocation =
+        config.currentLocation === undefined ? false : config.currentLocation;
+      $("#location-switch").toggle(currentLocation);
+      $("#plocation-switch").toggle(currentLocation);
     }
 
     function reconfigureFromApp(appName) {
-	$.ajax({type : "GET",
-		url: "reconfigureFromApp",
-		dataType: 'json',
-		data: {appName: appName},
-		success: function(result){
-		    reconfigureFromConfig(result);
-		},
-		error : function(e) {
-		    console.log("ERROR: ", e);
-		}
-	       });
+      $.ajax({
+        type: "GET",
+        url: "reconfigureFromApp",
+        dataType: "json",
+        data: { appName: appName },
+        success: function (result) {
+          reconfigureFromConfig(result);
+        },
+        error: function (e) {
+          console.log("ERROR: ", e);
+        },
+      });
     }
 
     async function searchforapp(placeUsed) {
-	$('#location-switch').text("Change to YES");
-	if (GLOBAL_UPDATE_POSITION_TIMER) {
-	    clearInterval(GLOBAL_UPDATE_POSITION_TIMER);
-	}
-	$('#demo').text("");
-	if (placeUsed == 'searchbar') {
-	    GLOBAL_APPNAME = document.getElementById("searchname").value;
-	    removeCurrentLoc();
-	}
+      $("#location-switch").text("Change to YES");
+      if (GLOBAL_UPDATE_POSITION_TIMER) {
+        clearInterval(GLOBAL_UPDATE_POSITION_TIMER);
+      }
+      $("#demo").text("");
+      if (placeUsed == "searchbar") {
+        GLOBAL_APPNAME = document.getElementById("searchname").value;
+        removeCurrentLoc();
+      }
 
-	const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
+      const appCheck = await checkForAppInDatabase(GLOBAL_APPNAME);
 
-	if (appCheck) {
-            reconfigureFromApp(GLOBAL_APPNAME);
-	    initMap(GLOBAL_APPNAME);
-	    $('#appnametitle').text("Map Application Name: "+GLOBAL_APPNAME);
-	    $('#searchsection').hide();
-	} else {
-            alert("app: "+GLOBAL_APPNAME + " not found!");
-	}
+      if (appCheck) {
+        reconfigureFromApp(GLOBAL_APPNAME);
+        initMap(GLOBAL_APPNAME);
+        $("#appnametitle").text("Map Application Name: " + GLOBAL_APPNAME);
+        $("#searchsection").hide();
+      } else {
+        alert("app: " + GLOBAL_APPNAME + " not found!");
+      }
     }
 
-    document.getElementById('file').addEventListener('change', handleFile);
+    document.getElementById("file").addEventListener("change", handleFile);
 
     async function handleFile(event) {
       try {
-
         // Does this imply that files may allow multiple uploads and this should be in a loop?
         const file = event.target.files[0];
         const tags = await ExifReader.load(file);
         console.dir(file);
-//        upload(file).then(resp => console.log(resp));
+        //        upload(file).then(resp => console.log(resp));
 
         // The MakerNote tag can be really large. Remove it to lower
         // memory usage if you're parsing a lot of files and saving the
@@ -233,31 +270,25 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
         // If you want to extract the thumbnail you can use it like
         // this:
-        if (tags['Thumbnail'] && tags['Thumbnail'].image) {
-          const image = document.getElementById('thumbnail');
-          image.classList.remove('hidden');
-          image.src = 'data:image/jpg;base64,' + tags['Thumbnail'].base64;
+        if (tags["Thumbnail"] && tags["Thumbnail"].image) {
+          const image = document.getElementById("thumbnail");
+          image.classList.remove("hidden");
+          image.src = "data:image/jpg;base64," + tags["Thumbnail"].base64;
         }
         console.dir(tags);
         var username = "spud";
         // This should be used for tagging the photo, perhaps
         // from a selector, but I don't have that now.
-        createPhotoUploadTag(file,tags,username,"black");
+        createPhotoUploadTag(file, tags, username, "black");
       } catch (error) {
         // Handle error.
         console.log(error);
       }
     }
 
-
-    /* eslint-disable no-var */
-
-    $(document).ready(function(){
+    $(document).ready(function () {
       reconfigureFromConfig(GLOBAL_CONFIG);
     });
     $(initMap(null));
-
-
   </script>
-
 </html>

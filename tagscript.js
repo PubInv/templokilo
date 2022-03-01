@@ -189,12 +189,9 @@ async function createPhotoUploadTag(file, tags, username, color) {
   form.append("title", title);
   form.append("file", file);
   form.append("filename", file.originalname);
-  console.dir("form", form);
   getLastTagNumInDB().then(function (highest_num) {
     var tagnum = highest_num + 1;
     var tagId = "geotag" + tagnum;
-    console.log("tagId:");
-    console.log(tagId);
     // This tshould actually from the tags!
     // Hopefully this is a UTC
     var lat = parseFloat(tags.GPSLatitude.description);
@@ -216,27 +213,38 @@ async function createPhotoUploadTag(file, tags, username, color) {
       },
     };
     form.append("obj", JSON.stringify(obj));
-    const resp = axios
-      .post("http://localhost:3000/upload", form, {})
-      .then((resp) => {
+    console.log("form");
+    console.log(form);
+    $.ajax({
+      method: "POST",
+      url: "http://localhost:3000/upload",
+      contentType: false,
+      processData: false,
+      data: form
+    })
+      .done((resp) => {
         console.log(resp);
-        if (resp.status === 200) {
-          var position = { coords: { latitude: lat, longitude: lon } };
-          // I might actually have to read the tag to get
-          // the correct filepath here...
-          console.log("GLOBAL_APPNAME");
-          console.log(GLOBAL_APPNAME);
-          axios
-            .get("./tags/" + tagId, { params: { appName: GLOBAL_APPNAME } })
-            .then((tresp) => {
-              console.log("tresp");
-              console.log(tresp);
-              var filepath = tresp.data.filePath;
-              showPositionOnPage(position, color, message, tagnum, filepath);
-            });
-        }
+        var position = { coords: { latitude: lat, longitude: lon } };
+        // I might actually have to read the tag to get
+        // the correct filepath here...
+        console.log("GLOBAL_APPNAME");
+        console.log(GLOBAL_APPNAME);
+        $.ajax({
+          method: "GET",
+          url: "./tags/" + tagId,
+          dataType: "json",
+          data: { appName: GLOBAL_APPNAME }
+        }).done(
+          (data) => {
+            // Possibly the first parameter in Ajax is just the data
+            var filepath = data.filePath;
+            showPositionOnPage(position, color, message, tagnum, filepath);
+          }).fail((error) => {
+            console.log("error in Get:");
+            console.log(error);
+          });
       })
-      .catch((error) => console.log(error));
+      .fail((error) => console.log(error));
   });
 }
 

@@ -37,7 +37,7 @@ const checkForAppInDatabase = (appName) => {
     });
 }
 
-function writeTag(tagId, lat, lon, color, message, username, appname) {
+function writeTag(tagId, lat, lon, color, message, username, appname, filepath) {
     var d = new Date();
 
     var obj = {
@@ -49,7 +49,8 @@ function writeTag(tagId, lat, lon, color, message, username, appname) {
             longitude: lon,
             color: color,
 	    message: message,
-	    date: d.toUTCString()
+	  date: d.toUTCString(),
+          filepath: filepath
 	}
     };
 
@@ -125,7 +126,7 @@ async function getLastTagNumInDBandWrite(color) {
 		    var options = { enableHighAccuracy: false,
 				    timeout:10000};
 		    navigator.geolocation.getCurrentPosition(
-			(position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME),
+		      (position) => createTag(position,color,highestnum+1,GLOBAL_APPNAME,"createdbyclick"),
 			error,
 			options);
 		},
@@ -195,7 +196,7 @@ async function createPhotoUploadTag(file,tags,username,color) {
         };
         form.append("obj",JSON.stringify(obj));
           const resp = axios.post('http://localhost:3000/upload', form, {}).then((resp) => {
-            console.log(response)
+            console.log(resp);
             if (resp.status === 200) {
               var position = { coords :
                                { latitude: lat,
@@ -208,27 +209,30 @@ async function createPhotoUploadTag(file,tags,username,color) {
 }
 
 
-function createTag(position,color,tagnum,appname) {
-    var message = $('#message').val();
-    showPositionOnPage(position,color,message,tagnum);
-    writeTag("geotag" + tagnum,
-             position.coords.latitude,
-             position.coords.longitude,
-             color,
-	     message,
-	     $('#user-name').val(),
-             appname);
+function createTag(position,color,tagnum,appname,filepath) {
+  var message = $('#message').val();
+  showPositionOnPage(position,color,message,tagnum,filepath);
+  writeTag("geotag" + tagnum,
+           position.coords.latitude,
+           position.coords.longitude,
+           color,
+	   message,
+	   $('#user-name').val(),
+           appname);
 }
-function showPositionOnPage(position,color,message,number) {
+function showPositionOnPage(position,color,message,number,filepath) {
     if (color != 'black') {
 	var x = document.getElementById("demo").innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
     }
     var lonDec = position.coords.longitude;
     var latDec = position.coords.latitude;
-    showLngLatOnMap(lonDec,latDec,color,number,message);
+  showLngLatOnMap(lonDec,latDec,color,number,message,filepath);
 }
 
-function showLngLatOnMap(lonDec,latDec,color,n,message) {
+// if we embedded the file link, we could make this pop up render it,
+// and then we could have it open the photo in a different page.
+// I need to add a fileid for this to work.
+function showLngLatOnMap(lonDec,latDec,color,n,message,filepath) {
     var ll = new mapboxgl.LngLat(lonDec, latDec);
 
     if (color == 'black' && map.getStyle().sources["point-current"]) {
@@ -287,9 +291,12 @@ function showLngLatOnMap(lonDec,latDec,color,n,message) {
 		coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
 	    }
 
+          // We will now add a direct link to the photo to the HTML in the popup,
+          // and then try to add a nice thumbnail.
+          var fullHTML = `<a href='./${filepath}'>click for window</a> \br <a href='${filepath}'>click for download</a> \br ${description}`;
 	    new mapboxgl.Popup()
 		.setLngLat(coordinates)
-		.setHTML(description)
+		.setHTML(fullHTML)
 		.addTo(map);
 	});
 
@@ -327,7 +334,7 @@ function initMap(appname) {
 			for(const prop in v) {
 			    const n = parseInt(prop.substring("geotag".length));
 			    gt = v[prop];
-			    showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message);
+			  showLngLatOnMap(gt.longitude,gt.latitude,gt.color,n,gt.message,gt.filePath);
 			}
 			},
 			error : function(e) {

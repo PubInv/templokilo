@@ -160,6 +160,9 @@ app.post('/upload',upload.single('file'),
            try {
              const data = fs.readFileSync(file.path)
              const tags = ExifReader.load(data);
+             // the file.path is important to place in the
+             // datastore so we can render the photo...
+             myobj.taginfo.filePath = file.path;
              writeTagIntoDB(myobj.taginfo,fake_req);
            } catch (err) {
              console.error(err)

@@ -50,15 +50,23 @@ app.use(cors());
 //app.use(bodyParser.json());
 
 var returnFirebaseSnapshot = (req, ref, res) => {
-    var appName = req.query.appName;
-    firebase.database().ref('/apps/'+appName+ref).once('value')
-        .then((snapshot) =>
-	    {res.send(JSON.stringify(snapshot));}
-	);
+  var appName = req.query.appName;
+  firebase.database().ref('/apps/'+appName+ref).once('value')
+    .then((snapshot) =>
+      {
+        res.send(JSON.stringify(snapshot));
+      }
+    );
 }
 
 app.get('/returnTags', function (req, res) {
     returnFirebaseSnapshot(req,'/tags/', res);
+});
+
+// I could get a specific tag with a query param
+// but REST should not make that necessary
+app.get('/tags/*', function (req, res) {
+  returnFirebaseSnapshot(req,req.path, res);
 });
 
 app.get('/reconfigureFromApp', function (req, res) {
@@ -74,8 +82,6 @@ app.get('/checkForAppInDatabase', function (req, res) {
 });
 
 function writeTagIntoDB(obj,req) {
-  console.log("writing");
-  console.log(obj);
     firebase.database().ref('/apps/' + req.query.appname + "/tags/" + req.query.tagId).set(obj,
                                                  function(error) {
                                                      if (error) {
@@ -117,10 +123,26 @@ const os = require('os');
 const ExifReader = require('exifreader');
 const fs = require('fs')
 
-const upload = multer({ dest: "./uploads" });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads')
+  },
+  filename: function (req, file, cb) {
+    console.log("compting file name");
+    console.log(file);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, file.originalname)
+  }
+});
+
+const upload = multer({ storage: storage });
 
 app.post('/upload',upload.single('file'),
          function(req, res) {
+           // by the time we get here, multer
+           // has already generated a hash name.
+           // This has lost the mimetype information.
            console.log("req.body");
            console.log(req.body);
            var myobj = JSON.parse(req.body.obj);
@@ -137,24 +159,8 @@ app.post('/upload',upload.single('file'),
            var fake_req = {};
            fake_req.query = {};
 
-           console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
-           console.log("appname");
-           console.log(myobj.appname);
-           console.log("tagid");
-           console.log(myobj.tagId);
-
            fake_req.query.appname = myobj.appname;
            fake_req.query.tagId = myobj.tagId;
-
-
-
-           // Now I attempt to create a tag corresponding
-           // to this upload.
-           // We have to create a correct object with
-           // latitude and longitude, and we also add
-           // the a "path" which will be the path
-           // to the file that was just written by multer.
-           // This will allows use to render it later.
 
            var obj = {};
            try {

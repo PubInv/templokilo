@@ -82,10 +82,6 @@ function getLastTagNumInDB() {
 	      var v = result;
 	      for(const prop in v) {
 	        const n = parseInt(prop.substring("geotag".length));
-                console.log("prop:");
-                console.log(prop);
-                console.log("n :");
-                console.log(n);
 	        highestnum = Math.max(highestnum,n);
 	        if (highestnum == NaN) {highestnum = 0;}
 	      }
@@ -171,7 +167,8 @@ async function createPhotoUploadTag(file,tags,username,color) {
     console.dir("form",form);
     getLastTagNumInDB().then(
       function (highest_num) {
-        var tagId = "geotag"+(highest_num+1);
+        var tagnum = highest_num+1;
+        var tagId = "geotag"+tagnum;
         console.log("tagId:");
         console.log(tagId);
         // This tshould actually from the tags!
@@ -202,7 +199,18 @@ async function createPhotoUploadTag(file,tags,username,color) {
                                { latitude: lat,
                                  longitude: lon }
                              };
-              showPositionOnPage(position,color,message,tagnum);
+              // I might actually have to read the tag to get
+              // the correct filepath here...
+              console.log("GLOBAL_APPNAME");
+              console.log(GLOBAL_APPNAME);
+              axios.get('./tags/'+tagId,
+	                {params: {appName: GLOBAL_APPNAME}}
+                       ).then(tresp => {
+                console.log("tresp");
+                console.log(tresp);
+                var filepath = tresp.data.filePath;
+                showPositionOnPage(position,color,message,tagnum,filepath);
+              });
             }
           }).catch((error) => console.log(error));
       });
@@ -293,7 +301,9 @@ function showLngLatOnMap(lonDec,latDec,color,n,message,filepath) {
 
           // We will now add a direct link to the photo to the HTML in the popup,
           // and then try to add a nice thumbnail.
-          var fullHTML = `<a href='./${filepath}'>click for window</a> \br <a href='${filepath}'>click for download</a> \br ${description}`;
+          var fullHTML = `<a href='./${filepath}'>click for window</a> \br <a href='${filepath}'>click for download</a> \br
+<img src="./${filepath}" alt="${filepath}" width="500" height="600">
+${description}`;
 	    new mapboxgl.Popup()
 		.setLngLat(coordinates)
 		.setHTML(fullHTML)

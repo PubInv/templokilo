@@ -285,10 +285,34 @@ function showPositionOnPage(position, color, message, number, filepath) {
   showLngLatOnMap(lonDec, latDec, color, number, message, filepath);
 }
 
+
+// MapBox styles can have a lot of layers beyond what we explicitly add.
+// It is therefore useful to keep our own array of layers for controlling
+// visibility. This requires some management, particularly when
+// it should be emptied on reconfi
+
+var GLOBAL_ADDED_LAYERS = [];
+function hideBasedOnTimes(start_ms,end_ms) {
+  var layers = GLOBAL_ADDED_LAYERS;
+  // now interate over sources, checking time!!
+  console.dir("Begin List of Sources")
+  for (const l in layers) {
+    const layer = layers[l];
+    const layer_ms = moment(layer.timestamp,'YYYY:MM:DD hh:mm:ss').valueOf();
+    const v = (layer_ms >= start_ms && layer_ms <= end_ms)
+          ? 'visible'
+          : 'none';
+    const official_layer = map.getLayer(layer.id);
+    console.dir(official_layer);
+    map.setLayoutProperty(official_layer.id,
+                          'visibility',
+                          v);
+  }
+}
 // if we embedded the file link, we could make this pop up render it,
 // and then we could have it open the photo in a different page.
 // I need to add a fileid for this to work.
-function showLngLatOnMap(lonDec, latDec, color, n, message, filepath) {
+function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp) {
   var ll = new mapboxgl.LngLat(lonDec, latDec);
 
   if (color == "black" && map.getStyle().sources["point-current"]) {
@@ -331,7 +355,7 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath) {
       },
     });
 
-    map.addLayer({
+    const newLayer = {
       id: "point" + n,
       source: "point" + n,
       type: "circle",
@@ -339,7 +363,10 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath) {
         "circle-radius": 10,
         "circle-color": ["get", "color"],
       },
-    });
+      timestamp: timestamp
+    };
+    map.addLayer(newLayer);
+    GLOBAL_ADDED_LAYERS.push(newLayer);
 
     map.on("click", "point" + n, function (e) {
       var coordinates = e.features[0].geometry.coordinates.slice();
@@ -351,7 +378,7 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath) {
 
       // We will now add a direct link to the photo to the HTML in the popup,
       // and then try to add a nice thumbnail.
-      var fullHTML = `<a href='./${filepath}'>click for window</a> \br <a href='${filepath}'>click for download</a> \br
+      var fullHTML = `time: ${timestamp} <a href='${filepath}'>click for window</a> \br <a href='${filepath}'>click for download</a> \br
 <img src="./${filepath}" alt="${filepath}" width="500" height="600">
 ${description}`;
       new mapboxgl.Popup().setLngLat(coordinates).setHTML(fullHTML).addTo(map);
@@ -397,7 +424,8 @@ function initMap(appname) {
               gt.color,
               n,
               gt.message,
-              gt.filePath
+              gt.filePath,
+              gt.date
             );
             // now we manipulate the global time parameters
             adjust_global_times(gt.date);

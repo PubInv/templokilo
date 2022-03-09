@@ -237,10 +237,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       if (GLOBAL_END === null) {
         GLOBAL_END = e_ms;
       }
-      if (GLOBAL_START < e_ms) {
+      if (GLOBAL_START > e_ms) {
         GLOBAL_START = e_ms;
       }
-      if (GLOBAL_END > e_ms) {
+      if (GLOBAL_END < e_ms) {
         GLOBAL_END = e_ms;
       }
       // now make sure the values of the sliders are correct
@@ -283,7 +283,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	$('#plocation-switch').toggle(currentLocation);
     }
 
+    function clearWorkingSet() {
+      GLOBAL_ADDED_LAYERS = [];
+      GLOBAL_START = null;
+      GLOBAL_END = null;
+      GLOBAL_DISPLAYED_START = null;
+      GLOBAL_DISPLAYED_END = null;
+    }
     function reconfigureFromApp(appName) {
+      clearWorkingSet();
 	$.ajax({type : "GET",
 		url: "reconfigureFromApp",
 		dataType: 'json',
@@ -374,6 +382,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           GLOBAL_DISPLAYED_END = GLOBAL_START + end_fraction * duration_ms;
           $("#display-start-time").text(moment.unix(GLOBAL_DISPLAYED_START/1000).utc().toString());
           $("#display-end-time").text(moment.unix(GLOBAL_DISPLAYED_END/1000).utc().toString());
+          hideBasedOnTimes(GLOBAL_DISPLAYED_START,GLOBAL_DISPLAYED_END);
         }
       });
     });

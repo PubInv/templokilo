@@ -46,6 +46,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     <script src="js/jquery.js"></script>
     <script src="js/jquery-ui.js"></script>
 
+    <!-- Note: Moment.js is deprecated. I know of no good way to do the parsing we require without it. -->
     <script src="js/moment.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
@@ -229,7 +230,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     var GLOBAL_DISPLAYD_END = null;
 
     function adjust_global_times(dstring) {
-      var mom = moment(dstring,'YYYY:MM:DD hh:mm:ss');
+
+      // now switch to UTC
+      // var mom = moment(dstring,'YYYY:MM:DD hh:mm:ss');
+      var mom = moment(dstring);
+
       var e_ms = mom.valueOf();
       if (GLOBAL_START === null) {
         GLOBAL_START = e_ms;

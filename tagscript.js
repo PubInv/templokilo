@@ -208,8 +208,11 @@ async function createPhotoUploadTag(file, tags, username, color) {
     var DateTimeDigitized = tags.DateTimeDigitized.value[0];
     var DateTime = tags.DateTime.value[0];
     var mainTime = DateTimeDigitized || DateTimeOriginal || DateTime;
-    // TODO: mainTime seems to be in a special EXIF format.
-    // It will be better to convert to UTC time here.
+    // NOTE: This appears to be the EXIF format
+    var mom = moment(mainTime,'YYYY:MM:DD hh:mm:ss');
+    var e_ms = mom.valueOf();
+    var mainTimeUTC = moment.unix(e_ms/1000).utc().toString();
+
     var obj = {
       appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
       tagId: tagId,
@@ -219,12 +222,11 @@ async function createPhotoUploadTag(file, tags, username, color) {
         longitude: lon,
         color: color,
         message: message,
-        date: mainTime,
-      },
+        date: mainTimeUTC
+     },
     };
     form.append("obj", JSON.stringify(obj));
-    console.log("form");
-    console.log(form);
+
     $.ajax({
       method: "POST",
       url: "http://localhost:3000/upload",
@@ -237,8 +239,6 @@ async function createPhotoUploadTag(file, tags, username, color) {
         var position = { coords: { latitude: lat, longitude: lon } };
         // I might actually have to read the tag to get
         // the correct filepath here...
-        console.log("GLOBAL_APPNAME");
-        console.log(GLOBAL_APPNAME);
         $.ajax({
           method: "GET",
           url: "./tags/" + tagId,
@@ -295,15 +295,13 @@ var GLOBAL_ADDED_LAYERS = [];
 function hideBasedOnTimes(start_ms,end_ms) {
   var layers = GLOBAL_ADDED_LAYERS;
   // now interate over sources, checking time!!
-  console.dir("Begin List of Sources")
   for (const l in layers) {
     const layer = layers[l];
-    const layer_ms = moment(layer.timestamp,'YYYY:MM:DD hh:mm:ss').valueOf();
+    const layer_ms = moment(layer.timestamp).valueOf();
     const v = (layer_ms >= start_ms && layer_ms <= end_ms)
           ? 'visible'
           : 'none';
     const official_layer = map.getLayer(layer.id);
-    console.dir(official_layer);
     map.setLayoutProperty(official_layer.id,
                           'visibility',
                           v);

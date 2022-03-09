@@ -200,6 +200,16 @@ async function createPhotoUploadTag(file, tags, username, color) {
     // Check
     var lon = parseFloat(tags.GPSLongitude.description);
     lon = tags.GPSLongitudeRef.value[0] == "W" ? -lon : lon;
+    console.dir("tags",tags);
+
+
+    // note: here I attempt to read time the photo was taken
+    var DateTimeOriginal = tags.DateTimeOriginal.value[0];
+    var DateTimeDigitized = tags.DateTimeDigitized.value[0];
+    var DateTime = tags.DateTime.value[0];
+    var mainTime = DateTimeDigitized || DateTimeOriginal || DateTime;
+    // TODO: mainTime seems to be in a special EXIF format.
+    // It will be better to convert to UTC time here.
     var obj = {
       appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
       tagId: tagId,
@@ -209,7 +219,7 @@ async function createPhotoUploadTag(file, tags, username, color) {
         longitude: lon,
         color: color,
         message: message,
-        date: tags.DateTime.description,
+        date: mainTime,
       },
     };
     form.append("obj", JSON.stringify(obj));
@@ -239,6 +249,7 @@ async function createPhotoUploadTag(file, tags, username, color) {
             // Possibly the first parameter in Ajax is just the data
             var filepath = data.filePath;
             showPositionOnPage(position, color, message, tagnum, filepath);
+            adjust_global_times(mainTime)
           }).fail((error) => {
             console.log("error in Get:");
             console.log(error);
@@ -388,6 +399,8 @@ function initMap(appname) {
               gt.message,
               gt.filePath
             );
+            // now we manipulate the global time parameters
+            adjust_global_times(gt.date);
           }
         },
         error: function (e) {

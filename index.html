@@ -37,10 +37,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" />
+    <link href="css/bootstrap-slider.css" rel="stylesheet">
     <script
   src="https://code.jquery.com/jquery-3.6.0.min.js"
   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-  crossorigin="anonymous"></script>
+      crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.js"></script>
+
+    <script src="js/moment.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
   </head>
@@ -166,6 +173,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       </div>
       <!-- editor -->
 
+
+
+     <label>Start: </label> <span id="start-time"> </span> <div id="ex2"></div>  <label>End: </label> <span id="end-time"> </span>
+
       <div class="map-container">
         <div id="map"></div>
       </div>
@@ -186,6 +197,29 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     const params = (new URL(document.location)).searchParams;
     var GLOBAL_APPNAME = params.get('app');
     if (GLOBAL_APPNAME) {searchforapp('query');}
+
+    var GLOBAL_START = null;
+    var GLOBAL_END = null;
+
+    function adjust_global_times(dstring) {
+      var mom = moment(dstring,'YYYY:MM:DD hh:mm:ss');
+      var e_ms = mom.valueOf();
+      if (GLOBAL_START === null) {
+        GLOBAL_START = e_ms;
+      }
+      if (GLOBAL_END === null) {
+        GLOBAL_END = e_ms;
+      }
+      if (GLOBAL_START < e_ms) {
+        GLOBAL_START = e_ms;
+      }
+      if (GLOBAL_END > e_ms) {
+        GLOBAL_END = e_ms;
+      }
+      // now make sure the values of the sliders are correct
+      $("#start-time").text(moment.unix(GLOBAL_START/1000).utc().toString());
+      $("#end-time").text(moment.unix(GLOBAL_END/1000).utc().toString());
+    }
 
     var GLOBAL_UPDATE_POSITION_TIMER;
 
@@ -298,6 +332,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
     $(document).ready(function(){
       reconfigureFromConfig(GLOBAL_CONFIG);
+      $( "#ex2" ).slider({
+      range: true,
+      min: 0,
+      max: 1000,
+      values: [ 0, 1000 ],
+      slide: function( event, ui ) {
+        $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+      }
+    });
+    $( "#amount" ).val( "$" + $( "#ex2" ).slider( "values", 0 ) +
+      " - $" + $( "#ex2" ).slider( "values", 1 ) );
     });
     $(initMap(null));
 

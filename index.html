@@ -26,7 +26,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     <meta
       name="viewport"
       content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <link href="styles.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
     <!--- MapBox -->
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.0/mapbox-gl.js"></script>
     <link
@@ -173,9 +173,29 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       </div>
       <!-- editor -->
 
+      <!-- TODO: Put these in flex boxes -->
+      <div class="timerange">
+        <span>
+          <label for="start-time">Start: </label>
+          <span id="start-time"></span>
+        </span>
+        <span>
+          <span id="end-time"> </span>
+          <label for="end-time">: End</label>
 
-
-     <label>Start: </label> <span id="start-time"> </span> <div id="ex2"></div>  <label>End: </label> <span id="end-time"> </span>
+      </span>
+      </div>
+      <div id="ex2"></div>
+      <div class="timerange">
+        <span>
+          <label for="display-start-time">Displayed Start: </label>
+          <span id="display-start-time"></span>
+        </span>
+        <span>
+          <span id="display-end-time"> </span>
+          <label for="display-end-time">: Displayed End </label>
+        </span>
+      </div>
 
       <div class="map-container">
         <div id="map"></div>
@@ -198,8 +218,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     var GLOBAL_APPNAME = params.get('app');
     if (GLOBAL_APPNAME) {searchforapp('query');}
 
+    // These hold the start and end time (in ms since the UNIX epoch time)
+    // for the "working set" of events. This corresponds to everthing to
+    // display if the time slider is fully rendered.
     var GLOBAL_START = null;
     var GLOBAL_END = null;
+    // These represent the interpolations of time against the GLOBAL_START
+    // and GLOBAL_END based on the two values of the slider
+    var GLOBAL_DISPLAYED_START = null;
+    var GLOBAL_DISPLAYD_END = null;
 
     function adjust_global_times(dstring) {
       var mom = moment(dstring,'YYYY:MM:DD hh:mm:ss');
@@ -337,16 +364,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       min: 0,
       max: 1000,
       values: [ 0, 1000 ],
-      slide: function( event, ui ) {
-        $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-      }
-    });
-    $( "#amount" ).val( "$" + $( "#ex2" ).slider( "values", 0 ) +
-      " - $" + $( "#ex2" ).slider( "values", 1 ) );
+        slide: function( event, ui ) {
+          // How we adjust the times to reflect the percentages of GLOBAL_START and GLOBAL_END
+          // as GLOBAL_DISPLAYED_START and GLOBAL_DISPLAYED_END
+          const start_fraction = ui.values[ 0 ] / 1000.0;
+          const end_fraction   = ui.values[ 1 ] / 1000.0;
+          const duration_ms = GLOBAL_END - GLOBAL_START;
+          GLOBAL_DISPLAYED_START = GLOBAL_START + start_fraction * duration_ms;
+          GLOBAL_DISPLAYED_END = GLOBAL_START + end_fraction * duration_ms;
+          $("#display-start-time").text(moment.unix(GLOBAL_DISPLAYED_START/1000).utc().toString());
+          $("#display-end-time").text(moment.unix(GLOBAL_DISPLAYED_END/1000).utc().toString());
+        }
+      });
     });
     $(initMap(null));
-
-
   </script>
 
 </html>

@@ -181,6 +181,20 @@ function getLocation(color) {
   }
 }
 
+function ExifDecodeTime(timeString,offset) {
+  var mom = moment.utc(timeString,'YYYY:MM:DD hh:mm:ss');
+  mom.utcOffset(offset);
+  console.log("time parse:");
+  console.log(timeString);
+  console.dir(mom);
+  console.log(mom.toString());
+  var e_ms = mom.valueOf();
+  if (mom.isValid())
+    return e_ms;
+  else
+    return null;
+}
+
 async function createPhotoUploadTag(file, tags, username, color) {
   // This should really come from the GUI somehow
   const message = "uploaded image";
@@ -208,9 +222,12 @@ async function createPhotoUploadTag(file, tags, username, color) {
     var DateTimeDigitized = tags.DateTimeDigitized.value[0];
     var DateTime = tags.DateTime.value[0];
     var mainTime = DateTimeDigitized || DateTimeOriginal || DateTime;
-    // NOTE: This appears to be the EXIF format
-    var mom = moment(mainTime,'YYYY:MM:DD hh:mm:ss');
-    var e_ms = mom.valueOf();
+    // NOTE: This appears to be the EXIF format, although even
+    // my phone appaears use different formats, so we have to wrap this
+    // in a function and use some heurstics...
+
+    var offsetTime = tags.OffsetTime.value[0];
+    var e_ms = ExifDecodeTime(mainTime,offsetTime);
     var mainTimeUTC = moment.unix(e_ms/1000).utc().toString();
 
     var obj = {

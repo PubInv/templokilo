@@ -1,13 +1,23 @@
-# pjournal
+# pjournal (but we need a better name)
 
 This is a system for easily using a phone or computer to upload a geolocated photo to create a spatial and temporal database. The database can then be viewed on a map.
 
 The general purpose is to create a journalistic record that allows study or open source intelligence (OSINT).
 
-## History
+## Status
 
 This is a fork of geotagtext, a geotagging tutorial app written by Robert L. Read, Diego Aspinwall, and Neil Martis.
-Currently the only expected author of this fork is Robert L. Read
+Currently the only expected author of this fork is Robert L. Read, although he is seeking volunteers!
+
+As of March 10th, the project allows you to upload multiple photos and automatically extracts geolocation and time information to place markers on a map.
+A color scale is used to represent time over the range of all photos uploaded. 
+Clicking on a marker brings up a photo. The image below was made by walking near Barton Springs in Austin and using an iPhone to take 16 pictures.
+
+![Screen Shot 2022-03-10 at 2 49 43 PM](https://user-images.githubusercontent.com/5296671/157765351-7674ffb8-0fbb-4c3a-9b60-4ad4dd989090.png)
+
+As of right now, the persistence of photos in in the local file system, but the metadata is in firebase. We are going to change this operate on a local install 
+of MongoDB.
+
 
 ## Basic Idea
 
@@ -58,7 +68,7 @@ And then run the express server:
 
 The web application with then be running on port :3000.
 
-## History
+## Ancient History
 
 Begun by Neil Martis and Rob Read. Improved by Neil Martis.
 Written as a [tutorial](https://medium.com/nerd-for-tech/geotagtext-a-tutorial-a-free-geotagging-web-application-composed-of-free-tools-b42bcbcca202), then forked on Feb. 26th, 2022, the 3rd day of the invasion of Ukraine, by Robert L. Read.

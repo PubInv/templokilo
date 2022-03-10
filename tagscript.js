@@ -17,6 +17,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 // It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.
+
+
+// This will actually work with units other than ms,
+// so long as it is consistent.
+// I don't know how to handler outside-of-range problems.
+function computeTimeInterpolatedColor(start_ms,end_ms,time_ms) {
+  const duration_ms = end_ms - start_ms;
+  const fraction = (time_ms - start_ms) / (duration_ms);
+  const interpolated_color = d3.interpolateRdYlBu(fraction);
+  return interpolated_color;
+}
+
+
 const MAPBOXGL_ACCESSTOKEN =
   "pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ";
 
@@ -195,6 +208,8 @@ function ExifDecodeTime(timeString,offset) {
     return null;
 }
 
+// Note: Color her is should be "assigned color",
+// we may use interplated color when we render this.
 async function createPhotoUploadTag(file, tags, username, color) {
   // This should really come from the GUI somehow
   const message = "uploaded image";
@@ -216,7 +231,6 @@ async function createPhotoUploadTag(file, tags, username, color) {
     lon = tags.GPSLongitudeRef.value[0] == "W" ? -lon : lon;
     console.dir("tags",tags);
 
-
     // note: here I attempt to read time the photo was taken
     var DateTimeOriginal = tags.DateTimeOriginal.value[0];
     var DateTimeDigitized = tags.DateTimeDigitized.value[0];
@@ -230,6 +244,8 @@ async function createPhotoUploadTag(file, tags, username, color) {
     var e_ms = ExifDecodeTime(mainTime,offsetTime);
     var mainTimeUTC = moment.unix(e_ms/1000).utc().toString();
 
+    // here we compute "color" from the time on our time scale
+    // as an interploation
     var obj = {
       appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
       tagId: tagId,
@@ -265,7 +281,10 @@ async function createPhotoUploadTag(file, tags, username, color) {
           (data) => {
             // Possibly the first parameter in Ajax is just the data
             var filepath = data.filePath;
-            showPositionOnPage(position, color, message, tagnum, filepath);
+            const interpolated_color =
+                  computeTimeInterpolatedColor(GLOBAL_START,GLOBAL_END,e_ms);
+
+            showPositionOnPage(position, interpolated_color, message, tagnum, filepath);
             adjust_global_times(mainTime)
           }).fail((error) => {
             console.log("error in Get:");
@@ -330,6 +349,9 @@ function hideBasedOnTimes(start_ms,end_ms) {
 function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp) {
   var ll = new mapboxgl.LngLat(lonDec, latDec);
 
+  // here we will interpolate color based on time.
+  // This is NOT an intrinsic property of the point,
+  // but a property of all the data.
   if (color == "black" && map.getStyle().sources["point-current"]) {
     map.getSource("point-current").setData({
       type: "FeatureCollection",
@@ -430,20 +452,28 @@ function initMap(appname) {
         data: { appName: appname },
         success: function (result) {
           var v = result;
+          // now we manipulate the global time parameters, so
+          // we can correctly compute time-color
           for (const prop in v) {
             const n = parseInt(prop.substring("geotag".length));
             gt = v[prop];
+            adjust_global_times(gt.date);
+          }
+          for (const prop in v) {
+            const n = parseInt(prop.substring("geotag".length));
+            gt = v[prop];
+            const time_ms = moment.utc(gt.date).valueOf();
+            const color = computeTimeInterpolatedColor(GLOBAL_START,GLOBAL_END,time_ms);
+            // Note: gt.color may remain of interest, but I am not currently rendering it.
             showLngLatOnMap(
               gt.longitude,
               gt.latitude,
-              gt.color,
+              color,
               n,
               gt.message,
               gt.filePath,
               gt.date
             );
-            // now we manipulate the global time parameters
-            adjust_global_times(gt.date);
           }
         },
         error: function (e) {

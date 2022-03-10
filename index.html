@@ -186,6 +186,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
       </span>
       </div>
+      <img src="https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/RdYlBu.png" width="100%" height="16" alt="RdYlBu" style="max-width: 100%;">
       <div id="ex2"></div>
       <div class="timerange">
         <span>
@@ -213,7 +214,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   <script type="text/javascript" src="tagscript.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/d3-color@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-interpolate@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-scale-chromatic@3"></script>
+
   <script>
+  // TODO: Remove these when we have code inplace
+  const chrome00 = d3.interpolateRdYlBu(0);
+  const chrome05 = d3.interpolateRdYlBu(0.5);
+  const chrome100 = d3.interpolateRdYlBu(1);
 
     const params = (new URL(document.location)).searchParams;
     var GLOBAL_APPNAME = params.get('app');
@@ -361,6 +370,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           var username = "spud";
           // This should be used for tagging the photo, perhaps
           // from a selector, but I don't have that now.
+          // Note: I'm using black as an "assigned color",
+          // but we may render in a different color. We
+          // may eventually implement color in a more
+          // sophisticated way, for mmultiple purposes.
           createPhotoUploadTag(file,tags,username,"black");
         }
       } catch (error) {
@@ -368,10 +381,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         console.log(error);
       }
     }
-
-
     /* eslint-disable no-var */
-
     $(document).ready(function(){
       reconfigureFromConfig(GLOBAL_CONFIG);
       $( "#ex2" ).slider({

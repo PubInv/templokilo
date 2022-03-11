@@ -34,6 +34,13 @@ record of an event.
 In particular, this response was made in response to the invasion of the Ukraine by Russia and
 the potential need for making a journalistic record of that event.
 
+## Other Features Needed
+
+1. The ability to enter brief descriptions
+2. The ability to tag entries
+3. We may need to make an app for a smartphone that can take a picture and send it directly to the database.
+4. We need a security model. Although the idea is to provide free and open software as well as functionality, we may need to implement some sort of anti-vandalism features. At a minimum, a user must be free to install a private secure instance.
+
 ## Basic Technology
 
 The web page use the geolocation feature now built in to most browsers and accessible via JavaScript.

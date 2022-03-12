@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - 27017:27017
+    # environment:
+      # - MONGO_INITDB_DATABASE=pjournal
+      # - MONGO_INITDB_ROOT_USERNAME=mongo
+      # - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongodb_data_container:/data/db
+
+volumes:
+  mongodb_data_container:

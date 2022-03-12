@@ -4,10 +4,9 @@
   "description": "organize images in space and time",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
-    "format": "npx prettier --write .",
-    "husky": "husky install"
+    "test": "jasmine",
+    "serve": "nodemon server.js",
+    "prettier": "npx prettier --write ."
   },
   "dependencies": {
     "body-parser": "^1.19.0",
@@ -16,8 +15,7 @@
     "exif-js": "^2.3.0",
     "exifreader": "^4.2.0",
     "express": "^4.17.3",
-    "firebase": "^8.6.1",
-    "firebase-admin": "^9.8.0",
+    "mongoose": "^6.2.4",
     "multer": "^1.4.4"
   },
   "engines": {
@@ -39,12 +37,9 @@
   ],
   "license": "GPL 3.0",
   "devDependencies": {
-    "husky": "^7.0.4",
-    "lint-staged": "^12.3.4",
+    "axios": "^0.26.0",
+    "jasmine": "^4.0.2",
     "nodemon": "^2.0.15",
     "prettier": "2.5.1"
-  },
-  "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
   }
 }

@@ -20,22 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 const MAPBOXGL_ACCESSTOKEN =
   "pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ";
 
-const checkForAppInDatabase = (appName) => {
-  return new Promise((resolve) => {
-    $.ajax({
-      type: "GET",
-      url: "checkForAppInDatabase",
-      dataType: "json",
-      data: { appName: appName },
-      success: function (result) {
-        return resolve(result.appExists);
-      },
-      error: function (e) {
-        console.log("ERROR: ", e);
-      },
-    });
-  });
-};
 
 function writeTag(
   tagId,
@@ -44,11 +28,8 @@ function writeTag(
   color,
   message,
   username,
-  appname,
   filepath
 ) {
-  var d = new Date();
-
   var obj = {
     appname: appname,
     tagId: tagId,
@@ -58,7 +39,6 @@ function writeTag(
       longitude: lon,
       color: color,
       message: message,
-      date: d.toUTCString(),
       filepath: filepath,
     },
   };
@@ -81,79 +61,6 @@ function writeTag(
   document.getElementById("message").value = "";
 }
 
-function getLastTagNumInDB() {
-  return new Promise(function (resolve, reject) {
-    $.ajax({
-      type: "GET",
-      url: "returnTags",
-      dataType: "json",
-      data: { appName: GLOBAL_APPNAME },
-      success: function (result) {
-        var highestnum = 0;
-        var v = result;
-        for (const prop in v) {
-          const n = parseInt(prop.substring("geotag".length));
-          highestnum = Math.max(highestnum, n);
-          if (highestnum == NaN) {
-            highestnum = 0;
-          }
-        }
-        resolve(highestnum);
-      },
-      error: function (e) {
-        console.log("ERROR: ", e);
-      },
-    });
-  });
-}
-
-function getLastTagNumInDBSynchronously() {
-  var highestnum = 0;
-  getLastTagNumInDB().then(function (data) {
-    highestnum = data;
-    console.log("data in promise");
-    console.log(data);
-  });
-  return highestnum;
-}
-
-async function getLastTagNumInDBandWrite(color) {
-  var highestnum = 0;
-
-  $.ajax({
-    type: "GET",
-    url: "returnTags",
-    dataType: "json",
-    data: { appName: GLOBAL_APPNAME },
-    success: function (result) {
-      var v = result;
-      for (const prop in v) {
-        const n = parseInt(prop.substring("geotag".length));
-        highestnum = Math.max(highestnum, n);
-        if (highestnum == NaN) {
-          highestnum = 0;
-        }
-      }
-      var options = { enableHighAccuracy: false, timeout: 10000 };
-      navigator.geolocation.getCurrentPosition(
-        (position) =>
-          createTag(
-            position,
-            color,
-            highestnum + 1,
-            GLOBAL_APPNAME,
-            "createdbyclick"
-          ),
-        error,
-        options
-      );
-    },
-    error: function (e) {
-      console.log("ERROR: ", e);
-    },
-  });
-}
-
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
   if (err.code == 3) {
@@ -163,25 +70,25 @@ function error(err) {
   }
 }
 
-function getLocation(color) {
-  if (navigator.geolocation) {
-    if (color == "black") {
-      var options = { enableHighAccuracy: false, timeout: 10000 };
-      navigator.geolocation.getCurrentPosition(
-        (position) =>
-          showPositionOnPage(position, color, "current location", "-current"),
-        error,
-        options
-      );
-    } else {
-      getLastTagNumInDBandWrite(color);
-    }
-  } else {
-    alert("Geolocation is not supported by this browser.");
-  }
-}
+// function getLocation(color) {
+//   if (navigator.geolocation) {
+//     if (color == "black") {
+//       var options = { enableHighAccuracy: false, timeout: 10000 };
+//       navigator.geolocation.getCurrentPosition(
+//         (position) =>
+//           showPositionOnPage(position, color, "current location", "-current"),
+//         error,
+//         options
+//       );
+//     } else {
+//       getLastTagNumInDBandWrite(color);
+//     }
+//   } else {
+//     alert("Geolocation is not supported by this browser.");
+//   }
+// }
 
-async function createPhotoUploadTag(file, tags, username, color) {
+async function uploadImage(file, tags, color) {
   // This should really come from the GUI somehow
   const message = "uploaded image";
   const title = "My file";
@@ -189,78 +96,36 @@ async function createPhotoUploadTag(file, tags, username, color) {
   form.append("title", title);
   form.append("file", file);
   form.append("filename", file.originalname);
-  getLastTagNumInDB().then(function (highest_num) {
-    var tagnum = highest_num + 1;
-    var tagId = "geotag" + tagnum;
-    // This tshould actually from the tags!
-    // Hopefully this is a UTC
-    var lat = parseFloat(tags.GPSLatitude.description);
-
-    // note: By convention, East longitude is positive
-    // Check
-    var lon = parseFloat(tags.GPSLongitude.description);
-    lon = tags.GPSLongitudeRef.value[0] == "W" ? -lon : lon;
-    var obj = {
-      appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
-      tagId: tagId,
-      taginfo: {
-        username: username,
-        latitude: lat,
-        longitude: lon,
-        color: color,
-        message: message,
-        date: tags.DateTime.description,
-      },
-    };
-    form.append("obj", JSON.stringify(obj));
-    console.log("form");
-    console.log(form);
-    $.ajax({
-      method: "POST",
-      url: "http://localhost:3000/upload",
-      contentType: false,
-      processData: false,
-      data: form
+  const tagId = "geotag" + Date.now();
+  const lat = parseFloat(tags.GPSLatitude.description);
+  // note: By convention, East longitude is positive
+  let lon = parseFloat(tags.GPSLongitude.description);
+  lon = tags.GPSLongitudeRef.value[0] == "W" ? -lon : lon;
+  const obj = {
+    // appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
+    tagId: tagId,
+    latitude: lat,
+    longitude: lon,
+    color: color,
+    message: message,
+    date: tags.DateTime.description,
+  };
+  form.append("obj", JSON.stringify(obj));
+  console.log("form: ", form);
+  $.ajax({
+    method: "POST",
+    url: "http://localhost:3000/upload",
+    contentType: false,
+    processData: false,
+    data: form,
+  })
+    .done((resp) => {
+      console.log(resp);
     })
-      .done((resp) => {
-        console.log(resp);
-        var position = { coords: { latitude: lat, longitude: lon } };
-        // I might actually have to read the tag to get
-        // the correct filepath here...
-        console.log("GLOBAL_APPNAME");
-        console.log(GLOBAL_APPNAME);
-        $.ajax({
-          method: "GET",
-          url: "./tags/" + tagId,
-          dataType: "json",
-          data: { appName: GLOBAL_APPNAME }
-        }).done(
-          (data) => {
-            // Possibly the first parameter in Ajax is just the data
-            var filepath = data.filePath;
-            showPositionOnPage(position, color, message, tagnum, filepath);
-          }).fail((error) => {
-            console.log("error in Get:");
-            console.log(error);
-          });
-      })
-      .fail((error) => console.log(error));
-  });
+    .fail((error) => console.log(error));
 }
 
-function createTag(position, color, tagnum, appname, filepath) {
-  var message = $("#message").val();
-  showPositionOnPage(position, color, message, tagnum, filepath);
-  writeTag(
-    "geotag" + tagnum,
-    position.coords.latitude,
-    position.coords.longitude,
-    color,
-    message,
-    $("#user-name").val(),
-    appname
-  );
-}
+
 function showPositionOnPage(position, color, message, number, filepath) {
   if (color != "black") {
     var x = (document.getElementById("demo").innerHTML =
@@ -358,7 +223,7 @@ ${description}`;
 
 var map;
 
-function initMap(appname) {
+function initMap() {
   mapboxgl.accessToken = MAPBOXGL_ACCESSTOKEN;
 
   map = new mapboxgl.Map({
@@ -368,34 +233,31 @@ function initMap(appname) {
     zoom: 3,
   });
 
-  if (appname) {
-    map.on("load", function () {
-      $.ajax({
-        type: "GET",
-        url: "returnTags",
-        dataType: "json",
-        data: { appName: appname },
-        success: function (result) {
-          var v = result;
-          for (const prop in v) {
-            const n = parseInt(prop.substring("geotag".length));
-            gt = v[prop];
-            showLngLatOnMap(
-              gt.longitude,
-              gt.latitude,
-              gt.color,
-              n,
-              gt.message,
-              gt.filePath
-            );
-          }
-        },
-        error: function (e) {
-          console.log("ERROR: ", e);
-        },
-      });
+  map.on("load", function () {
+    $.ajax({
+      type: "GET",
+      url: "tags",
+      dataType: "json",
+      success: function (result) {
+        //var v = result;
+        for (const prop in result) {
+          //const n = parseInt(prop.substring("geotag".length));
+          gt = result[prop];
+          showLngLatOnMap(
+            gt.longitude,
+            gt.latitude,
+            gt.color,
+            //n,
+            gt.message,
+            gt.filePath
+          );
+        }
+      },
+      error: function (e) {
+        console.log("ERROR: ", e);
+      },
     });
-  }
+  });
 }
 
 function removeCurrentLoc() {

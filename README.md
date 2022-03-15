@@ -77,5 +77,5 @@ The web application with then be running on port :3000.
 
 ## Ancient History
 
-Begun by Neil Martis and Rob Read. Improved by Neil Martis.
+Begun by Neil Martis and Rob Read. Improved by Diego Aspinwall.
 Written as a [tutorial](https://medium.com/nerd-for-tech/geotagtext-a-tutorial-a-free-geotagging-web-application-composed-of-free-tools-b42bcbcca202), then forked on Feb. 26th, 2022, the 3rd day of the invasion of Ukraine, by Robert L. Read.

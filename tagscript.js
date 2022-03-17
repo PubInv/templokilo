@@ -212,7 +212,6 @@ function ExifDecodeTime(timeString,offset) {
 // we may use interplated color when we render this.
 async function createPhotoUploadTag(file, tags, username, color) {
   // This should really come from the GUI somehow
-  const message = "uploaded image";
   const title = "My file";
   const form = new FormData();
   form.append("title", title);
@@ -244,6 +243,7 @@ async function createPhotoUploadTag(file, tags, username, color) {
     var e_ms = ExifDecodeTime(mainTime,offsetTime);
     var mainTimeUTC = moment.unix(e_ms/1000).utc().toString();
 
+    const message = file.originalname;
     // here we compute "color" from the time on our time scale
     // as an interploation
     var obj = {
@@ -328,6 +328,8 @@ function showPositionOnPage(position, color, message, number, filepath) {
 // it should be emptied on reconfi
 
 var GLOBAL_ADDED_LAYERS = [];
+// we will only one popup at a time.
+var GLOBAL_POPUP = null;
 function hideBasedOnTimes(start_ms,end_ms) {
   var layers = GLOBAL_ADDED_LAYERS;
   // now interate over sources, checking time!!
@@ -405,7 +407,7 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp)
     map.addLayer(newLayer);
     GLOBAL_ADDED_LAYERS.push(newLayer);
 
-    map.on("click", "point" + n, function (e) {
+    map.on("mouseenter", "point" + n, function (e) {
       var coordinates = e.features[0].geometry.coordinates.slice();
       var description = e.features[0].properties.description;
 
@@ -415,19 +417,22 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp)
 
       // We will now add a direct link to the photo to the HTML in the popup,
       // and then try to add a nice thumbnail.
-      var fullHTML = `time: ${timestamp} <a href='${filepath}'>click for window</a> \br <a href='${filepath}'>click for download</a> \br
-<img src="./${filepath}" alt="${filepath}" width="500" height="600">
+      var fullHTML = `time: ${timestamp} <a href='${filepath}' target='_blank'> window</a> <div> <a href='${filepath}' download>download</a> </div>
+<img src="./${filepath}" alt="${filepath}" height="300">
 ${description}`;
-      new mapboxgl.Popup().setLngLat(coordinates).setHTML(fullHTML).addTo(map);
+      if (GLOBAL_POPUP) GLOBAL_POPUP.remove();
+      GLOBAL_POPUP = new mapboxgl.Popup().setLngLat(coordinates).setHTML(fullHTML).addTo(map);
     });
 
-    map.on("mouseenter", "point" + n, function () {
-      map.getCanvas().style.cursor = "pointer";
-    });
+    // map.on("mouseenter", "point" + n, function () {
+    //   map.getCanvas().style.cursor = "pointer";
+    // });
 
-    map.on("mouseleave", "point" + n, function () {
-      map.getCanvas().style.cursor = "";
-    });
+    // It would be nice to pull the pop up down on hover, but that makes it impossible to reach links in it!
+//    map.on("mouseleave", "point" + n, function () {
+//      map.getCanvas().style.cursor = "";
+//      if (GLOBAL_POPUP) GLOBAL_POPUP.remove();
+//    });
   }
 }
 

@@ -80,28 +80,46 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           </ul>
         </div>
       </nav>
-
-      <div class="upload-section">
-        <!-- <div class="center" id="appnametitle"></div> -->
-        <form>
+<!-- begin slide-and-upload section -->
+      <div class="horizontalflex">
+        <form id="uploadregion">
           <label for="file">Upload a Geotagged image:</label><br />
           <input type="file" id="file" name="file" multiple/>
         </form>
-        <img
-          id="thumbnail"
-          src=""
-          alt="Thumbnail of image."
-          class="thumbnail hidden" />
-
-        <div class="tags">
-          <div id="exif-table-body"></div>
+        <div id="timeregion" class="verticalflex">
+          <div class="verticalflex">
+            <div id="colorbar" class="verticalflex">
+              <div class="horizontalflex">
+                <span>
+                  <label for="start-time">Start: </label>
+                  <span id="start-time"></span>
+                </span>
+                <span>
+                  <span id="end-time"> </span>
+                  <label for="end-time">: End</label>
+                </span>
+              </div>
+              <img src="https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/RdYlBu.png" width="100%" height="16" alt="RdYlBu"/>
+            </div> <!-- ends static image and dates -->
+            <div id="sliderregion" class="verticalflex">
+              <div class="horizontalflex">
+                <span>
+                  <label for="display-start-time">Displayed Start: </label>
+                  <span id="display-start-time"></span>
+                </span>
+                <span>
+                  <span id="display-end-time"> </span>
+                  <label for="display-end-time">: Displayed End </label>
+                </span>
+              </div>
+              <div id="ex2"></div>
+            </div>
+          </div>
         </div>
-
         <div class="error hidden"></div>
       </div>
-      <!-- upload-section -->
-
-      <div class="editor">
+<!-- end slider-and-upload section -->
+    <div class="editor">
         <div id="searchsection">
           <div class="mb-3">
             <input
@@ -145,9 +163,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           onclick="locationSwitch()">
           Change to YES
         </button>
-
-        <p class="center">Select a color for your geotag</p>
         <!--
+        <p class="center">Select a color for your geotag</p>
         <div class="btn-group-vertical center">
           <button
             type="button"
@@ -174,34 +191,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       </div>
       <!-- editor -->
 
-      <!-- TODO: Put these in flex boxes -->
-      <div class="timerange">
-        <span>
-          <label for="start-time">Start: </label>
-          <span id="start-time"></span>
-        </span>
-        <span>
-          <span id="end-time"> </span>
-          <label for="end-time">: End</label>
-
-      </span>
-      </div>
-      <img src="https://raw.githubusercontent.com/d3/d3-scale-chromatic/master/img/RdYlBu.png" width="100%" height="16" alt="RdYlBu" style="max-width: 100%;">
-      <div id="ex2"></div>
-      <div class="timerange">
-        <span>
-          <label for="display-start-time">Displayed Start: </label>
-          <span id="display-start-time"></span>
-        </span>
-        <span>
-          <span id="display-end-time"> </span>
-          <label for="display-end-time">: Displayed End </label>
-        </span>
-      </div>
 
       <div class="map-container">
         <div id="map"></div>
       </div>
+
+        <div class="tags">
+          <div id="exif-table-body"></div>
+        </div>
+
       <!-- <div id="map-holder">
         <div class="container fill">
           <div id="map"></div>

@@ -35,7 +35,9 @@ body {
 
 .upload-section {
   /* background-color: lightgreen; */
-  padding: 1em;
+    padding: 1em;
+    display: flex;
+    justify-content: space-between;
 }
 
 .editor {
@@ -74,4 +76,21 @@ body {
 .timerange {
     display: flex;
     justify-content: space-between;
+}
+.verticalflex {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.horizontalflex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#timeregion {
+    width: 80%;
+}
+#uploadregion {
+    width: 25%;
 }

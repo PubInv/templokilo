@@ -167,6 +167,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       <!-- editor -->
 
       <div class="map-container">
+      <div class="horizontalflex">
+        <button
+          id="delete-all"
+          class="center"
+          type="button"
+          onclick="deleteAllMarkers()">
+          Delete All Markers
+        </button>
+      </div>
         <div id="map"></div>
       </div>
       <div class="tags">
@@ -238,6 +247,26 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 		        };
 
 
+    function deleteAllMarkers() {
+      removeAllLayers();
+      clearWorkingSet();
+      $.ajax({type : "GET",
+	      url: "deleteAllMarkers",
+	      dataType: 'json',
+	      data: {appName: GLOBAL_APPNAME},
+	      success: function(result){
+		reconfigureFromApp(GLOBAL_APPNAME);
+                refreshAllData(GLOBAL_APP_NAME);
+	      },
+	      error : function(e) {
+                // I don't know why this is being called with status of 200!
+                if (e.status != 200) {
+		  console.log("ERROR: ", e);
+                }
+	      }
+	     });
+    }
+
     function locationSwitch() {
 	if (($('#location-switch').text() == "Change to YES") &&
 	    (GLOBAL_CONFIG.currentlocation == true)) {
@@ -263,7 +292,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     }
 
     function clearWorkingSet() {
-      GLOBAL_ADDED_LAYERS = [];
       GLOBAL_START = null;
       GLOBAL_END = null;
       GLOBAL_DISPLAYED_START = null;
@@ -311,13 +339,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
     async function handleFile(event) {
       try {
-
         // Does this imply that files may allow multiple uploads and this should be in a loop?
-        for(key in event.target.files) {
-          const file = event.target.files[key];
+        // NOTE: This is not a good way to iterate here
+        for (let i = 0; i < event.target.files.length; i++) {
+          const file = event.target.files[i];
+          console.log("file");
+          console.log(file);
           const tags = await ExifReader.load(file);
-          console.dir(file);
-          //        upload(file).then(resp => console.log(resp));
 
           // The MakerNote tag can be really large. Remove it to lower
           // memory usage if you're parsing a lot of files and saving the
@@ -326,12 +354,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
           // If you want to extract the thumbnail you can use it like
           // this:
-          if (tags['Thumbnail'] && tags['Thumbnail'].image) {
-            const image = document.getElementById('thumbnail');
-            image.classList.remove('hidden');
-            image.src = 'data:image/jpg;base64,' + tags['Thumbnail'].base64;
-          }
-          console.dir(tags);
+          // if (tags['Thumbnail'] && tags['Thumbnail'].image) {
+          //   const image = document.getElementById('thumbnail');
+          //   image.classList.remove('hidden');
+          //   image.src = 'data:image/jpg;base64,' + tags['Thumbnail'].base64;
+          // }
+          // console.dir(tags);
           var username = "spud";
           // This should be used for tagging the photo, perhaps
           // from a selector, but I don't have that now.
@@ -339,10 +367,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           // but we may render in a different color. We
           // may eventually implement color in a more
           // sophisticated way, for mmultiple purposes.
-          createPhotoUploadTag(file,tags,username,"black");
+          await createPhotoUploadTag(file,tags,username,"black");
         }
+        refreshAllData(GLOBAL_APP_NAME);
       } catch (error) {
         // Handle error.
+        // Note: this is ALWAYS throwing a DataView Error, and I have no idea why!
         console.log(error);
       }
     }

@@ -1,19 +1,19 @@
 /*
-Geotagtext allows you to create map applications and record geomarkers in the app of your choosing.
-Copyright (C) 2021 Robert Read, Diego Aspinwall and Neil Martis
+  Geotagtext allows you to create map applications and record geomarkers in the app of your choosing.
+  Copyright (C) 2021 Robert Read, Diego Aspinwall and Neil Martis
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 // It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.
@@ -31,7 +31,7 @@ function computeTimeInterpolatedColor(start_ms,end_ms,time_ms) {
 
 
 const MAPBOXGL_ACCESSTOKEN =
-  "pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ";
+      "pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ";
 
 const checkForAppInDatabase = (appName) => {
   return new Promise((resolve) => {
@@ -150,13 +150,13 @@ async function getLastTagNumInDBandWrite(color) {
       var options = { enableHighAccuracy: false, timeout: 10000 };
       navigator.geolocation.getCurrentPosition(
         (position) =>
-          createTag(
-            position,
-            color,
-            highestnum + 1,
-            GLOBAL_APPNAME,
-            "createdbyclick"
-          ),
+        createTag(
+          position,
+          color,
+          highestnum + 1,
+          GLOBAL_APPNAME,
+          "createdbyclick"
+        ),
         error,
         options
       );
@@ -182,7 +182,7 @@ function getLocation(color) {
       var options = { enableHighAccuracy: false, timeout: 10000 };
       navigator.geolocation.getCurrentPosition(
         (position) =>
-          showPositionOnPage(position, color, "current location", "-current"),
+        showPositionOnPage(position, color, "current location", "-current"),
         error,
         options
       );
@@ -214,9 +214,11 @@ async function createPhotoUploadTag(file, tags, username, color) {
   // This should really come from the GUI somehow
   const title = "My file";
   const form = new FormData();
+  const filename = file.name;
   form.append("title", title);
   form.append("file", file);
-  form.append("filename", file.originalname);
+  form.append("filename", filename);
+
   getLastTagNumInDB().then(function (highest_num) {
     var tagnum = highest_num + 1;
     var tagId = "geotag" + tagnum;
@@ -228,7 +230,8 @@ async function createPhotoUploadTag(file, tags, username, color) {
     // Check
     var lon = parseFloat(tags.GPSLongitude.description);
     lon = tags.GPSLongitudeRef.value[0] == "W" ? -lon : lon;
-    console.dir("tags",tags);
+    console.dir("tags");
+    console.dir(tags);
 
     // note: here I attempt to read time the photo was taken
     var DateTimeOriginal = tags.DateTimeOriginal.value[0];
@@ -243,7 +246,6 @@ async function createPhotoUploadTag(file, tags, username, color) {
     var e_ms = ExifDecodeTime(mainTime,offsetTime);
     var mainTimeUTC = moment.unix(e_ms/1000).utc().toString();
 
-    const message = file.originalname;
     // here we compute "color" from the time on our time scale
     // as an interploation
     var obj = {
@@ -254,9 +256,9 @@ async function createPhotoUploadTag(file, tags, username, color) {
         latitude: lat,
         longitude: lon,
         color: color,
-        message: message,
+        message: filename,
         date: mainTimeUTC
-     },
+      },
     };
     form.append("obj", JSON.stringify(obj));
 
@@ -279,13 +281,12 @@ async function createPhotoUploadTag(file, tags, username, color) {
           data: { appName: GLOBAL_APPNAME }
         }).done(
           (data) => {
-            // Possibly the first parameter in Ajax is just the data
+            adjust_global_times(mainTime);
             var filepath = data.filePath;
             const interpolated_color =
                   computeTimeInterpolatedColor(GLOBAL_START,GLOBAL_END,e_ms);
 
-            showPositionOnPage(position, interpolated_color, message, tagnum, filepath);
-            adjust_global_times(mainTime)
+            showPositionOnPage(position, interpolated_color, message, tagnum, message);
           }).fail((error) => {
             console.log("error in Get:");
             console.log(error);
@@ -311,10 +312,10 @@ function createTag(position, color, tagnum, appname, filepath) {
 function showPositionOnPage(position, color, message, number, filepath) {
   if (color != "black") {
     var x = (document.getElementById("demo").innerHTML =
-      "Latitude: " +
-      position.coords.latitude +
-      "<br>Longitude: " +
-      position.coords.longitude);
+             "Latitude: " +
+             position.coords.latitude +
+             "<br>Longitude: " +
+             position.coords.longitude);
   }
   var lonDec = position.coords.longitude;
   var latDec = position.coords.latitude;
@@ -345,6 +346,22 @@ function hideBasedOnTimes(start_ms,end_ms) {
                           v);
   }
 }
+function removeAllLayers() {
+  var layers = GLOBAL_ADDED_LAYERS;
+  // now interate over sources, checking time!!
+  for (const l in layers) {
+    const layer = layers[l];
+    // We use the same source and layer id
+    var id = layer.id;
+    if (map.getLayer(id)) {
+      map.removeLayer(id);
+    }
+    if (map.getSource(id)) {
+      map.removeSource(id);
+    }
+  }
+  GLOBAL_ADDED_LAYERS = [];
+}
 // if we embedded the file link, we could make this pop up render it,
 // and then we could have it open the photo in a different page.
 // I need to add a fileid for this to work.
@@ -366,7 +383,7 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp)
           },
           properties: {
             description:
-              "<strong>geotag" + n + "</strong><p>" + message + "</p>",
+            "<strong>geotag" + n + "</strong><p>" + message + "</p>",
             color: color,
           },
         },
@@ -386,7 +403,7 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp)
             },
             properties: {
               description:
-                "<strong>geotag" + n + "</strong><p>" + message + "</p>",
+              "<strong>geotag" + n + "</strong><p>" + message + "</p>",
               color: color,
             },
           },
@@ -429,10 +446,10 @@ ${description}`;
     // });
 
     // It would be nice to pull the pop up down on hover, but that makes it impossible to reach links in it!
-//    map.on("mouseleave", "point" + n, function () {
-//      map.getCanvas().style.cursor = "";
-//      if (GLOBAL_POPUP) GLOBAL_POPUP.remove();
-//    });
+    //    map.on("mouseleave", "point" + n, function () {
+    //      map.getCanvas().style.cursor = "";
+    //      if (GLOBAL_POPUP) GLOBAL_POPUP.remove();
+    //    });
   }
 }
 
@@ -448,7 +465,24 @@ function initMap(appname) {
     zoom: 3,
   });
 
-  if (appname) {
+  refreshAllData(appname);
+}
+
+function removeCurrentLoc() {
+  var mapLayer = map.getLayer("point-current");
+
+  if (typeof mapLayer !== "undefined") {
+    map.removeLayer("point-current").removeSource("point-current");
+  }
+}
+
+
+function refreshAllData(appname) {
+
+  // first, remove all layers and markers and times
+  clearWorkingSet();
+  removeAllLayers();
+ if (appname) {
     map.on("load", function () {
       $.ajax({
         type: "GET",
@@ -486,13 +520,5 @@ function initMap(appname) {
         },
       });
     });
-  }
-}
-
-function removeCurrentLoc() {
-  var mapLayer = map.getLayer("point-current");
-
-  if (typeof mapLayer !== "undefined") {
-    map.removeLayer("point-current").removeSource("point-current");
   }
 }

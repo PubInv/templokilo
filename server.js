@@ -79,6 +79,22 @@ app.get("/tags/*", function (req, res) {
 app.get("/reconfigureFromApp", function (req, res) {
   returnFirebaseSnapshot(req, "", res);
 });
+app.get("/deleteAllMarkers", function (req, res) {
+  var appName = req.query.appName;
+  console.log("in delete");
+  firebase
+    .database()
+    .ref("/apps/" + appName + "/tags")
+    .set(null,function (error) {
+      if (error) {
+        console.log("ERROR:", error);
+      }
+    })
+    .then((snapshot) => {
+      console.log("successful Delete");
+      res.send(JSON.stringify("Successfully removed "+appName+ " tags"));
+    });
+});
 
 app.get("/checkForAppInDatabase", function (req, res) {
   var appName = req.query.appName;

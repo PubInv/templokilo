@@ -1,6 +1,7 @@
 /*
   Geotagtext allows you to create map applications and record geomarkers in the app of your choosing.
   Copyright (C) 2021 Robert Read, Diego Aspinwall and Neil Martis
+  Copyright (C) 2022 Robert L. Read
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -14,12 +15,6 @@
 
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-
-/*
-
-
-
 */
 
 // It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.

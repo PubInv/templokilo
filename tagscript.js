@@ -465,7 +465,7 @@ function initMap(appname) {
     zoom: 3,
   });
 
-  refreshAllData(appname);
+  map.on("load",() => refreshAllData(appname));
 }
 
 function removeCurrentLoc() {
@@ -483,7 +483,6 @@ function refreshAllData(appname) {
   clearWorkingSet();
   removeAllLayers();
  if (appname) {
-    map.on("load", function () {
       $.ajax({
         type: "GET",
         url: "returnTags",
@@ -519,6 +518,5 @@ function refreshAllData(appname) {
           console.log("ERROR: ", e);
         },
       });
-    });
-  }
+ }
 }

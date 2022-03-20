@@ -66,7 +66,6 @@ const checkForAppInDatabase = (appName) => {
 };
 
 function writeTag(
-  tagId,
   lat,
   lon,
   color,
@@ -257,19 +256,21 @@ async function createPhotoUploadTag(file, tags, username, color) {
   var e_ms = ExifDecodeTime(mainTime,offsetTime);
   var mainTimeUTC = moment.unix(e_ms/1000).utc().toString();
 
-  // here we compute "color" from the time on our time scale
-  // as an interploation
-  var tagId = filename;
+
+  // The "filename" here is raw from an upload in this
+  // code. We will turn it into a url (relative in this case)
+  // by prepending "/uploads"
+  var url = "uploads/"+filename;
   var obj = {
     appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
-    tagId: tagId,
+    tagId: url,
     taginfo: {
       username: username,
       latitude: lat,
       longitude: lon,
       color: color,
       // TOOD: This should be renamed.
-      message: filename,
+      message: url,
       date: mainTimeUTC
     },
   };
@@ -292,28 +293,26 @@ async function createPhotoUploadTag(file, tags, username, color) {
       // Apparently I am doing this call ONLY to get the filepath...
       // I think we can eliminate that...
       adjust_global_times(mainTime);
-      var filepath = filename;
+      var filepath = url;
       const interpolated_color =
             computeTimeInterpolatedColor(GLOBAL_START,GLOBAL_END,e_ms);
-
       showPositionOnPage(position, interpolated_color, filepath,  filepath);
     })
     .fail((error) => console.log(error));
 }
 
-function createTag(position, color, appname, filepath) {
-  var message = $("#message").val();
-  showPositionOnPage(position, color, message, filepath);
-  writeTag(
-    "geotag" + tagnum,
-    position.coords.latitude,
-    position.coords.longitude,
-    color,
-    message,
-    $("#user-name").val(),
-    appname
-  );
-}
+// function createTag(position, color, appname, filepath) {
+//   var message = $("#message").val();
+//   showPositionOnPage(position, color, message, filepath);
+//   writeTag(
+//     position.coords.latitude,
+//     position.coords.longitude,
+//     color,
+//     message,
+//     $("#user-name").val(),
+//     appname
+//   );
+// }
 function showPositionOnPage(position, color, message, filepath) {
   if (color != "black") {
     var x = (document.getElementById("demo").innerHTML =

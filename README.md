@@ -12,12 +12,12 @@ This is a fork of geotagtext, a geotagging tutorial app written by Robert L. Rea
 Currently the only expected author of this fork is Robert L. Read, although he is seeking volunteers!
 
 As of March 10th, the project allows you to upload multiple photos and automatically extracts geolocation and time information to place markers on a map.
-A color scale is used to represent time over the range of all photos uploaded. 
+A color scale is used to represent time over the range of all photos uploaded.
 Clicking on a marker brings up a photo. The image below was made by walking near Barton Springs in Austin and using an iPhone to take 16 pictures.
 
 ![Screen Shot 2022-03-10 at 2 49 43 PM](https://user-images.githubusercontent.com/5296671/157765351-7674ffb8-0fbb-4c3a-9b60-4ad4dd989090.png)
 
-As of right now, the persistence of photos in in the local file system, but the metadata is in firebase. We are going to change this operate on a local install 
+As of right now, the persistence of photos in in the local file system, but the metadata is in firebase. We are going to change this operate on a local install
 of MongoDB.
 
 
@@ -35,6 +35,84 @@ record of an event.
 
 In particular, this response was made in response to the invasion of the Ukraine by Russia and
 the potential need for making a journalistic record of that event.
+
+## New Ideas Based on the March 19th Mini-con
+
+On March 18th, 2022, Public Invention held a  Mini-Con attended by a number of advisors:
+1) Christina Cole
+1) Prof. Michelle Mellenthin
+1) Prof. Warren MacEvoy
+1) Harry Pierson
+1) Adam Riggs
+1) Patrick Coyle
+1) Darcy Goff
+1) Edwin Chiu
+
+A conversation led by Harry Pierson and Prof. MacEvoy led to the following ideas.
+
+I'm now going to change the way this works. I'm creating a new set
+of abstract data types:
+*Event*
+*EventStore*
+
+These will be represented as JSON, and stored as plane JavaScript
+objects in Node.js and the browser. By using local browser storage,
+it might even be possible to create a serverless implementation.
+
+An EventStore consists of:
+1) a name,
+2) a url context guidance field, and
+3) a collection Events and EventStores.
+
+An Event constists of:
+1) a URL (which may be relative to a context),
+2) An upload time
+3) An uploader identification record
+4) A content hash
+5) An overall event hash.
+
+I am not a crypto expert, but the idea is that the overal event hash
+gives cryptographic proof of the uploader and the upload time and the
+content hash.  When presented with content, one should be able to say
+definitively that that content was uploaded at a certain time.
+
+This is valuable because in the case of an alledged event, such as a
+war crime, you want to know that content was uploaded soon after the
+alledged event. This does not in itself mean that the content is
+authentic or even relevant. But if you a set of photos which are
+self-corroborating uploaded soon after an event, it is strong
+evidence that they are authentic.
+
+The idea is that an EventStore then becuase a transportable
+evidentiary object of value when combined with the content.
+However, the content, which may be large and expensive, is
+separate from the EventStore and can be reunited at a later time.
+
+In particular, an EventStore with thousands of photos can be kept
+within browser local storage of 5MB. So for example, a reporter
+could collect a 100 geotagged photos with a smartphone, upload
+these photos, and export an EventStore. If the EventStore were
+then mailed along with the photos to a third party, even if that
+transmission occured days or weeks later, it would be proof
+positive that the photos were authentically taken at that time.
+
+A complementary function is that an EventStore can be imported
+and then a pointer to content provided, and then this code
+can provide a data anaylsis tool. That tool can explicitly
+check that the content matches the content hash; that is,
+that upload time is authentic.
+
+If the uploader identification record contains a cryptographically
+strong digital signature, it is proof of the identity of the uploader.
+(Note: This signature might have to sign a hash of the content.)
+
+The net effect of all of this is to create a new level of ease
+for creating a trustworthy and easy-to-understand record of
+content. If that content contians geolocation and temporal data,
+then it may be strong evidence of an actual event located
+in space and time, such a as a war crime.
+
+
 
 ## Other Features Needed
 

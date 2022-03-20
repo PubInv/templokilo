@@ -17,7 +17,21 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.
+
+/*
+
+I'm now undertaking the improvement to start using
+local storage and allow exports from that.
+
+At present I  will continue to use Firebase, but eventually
+that will be obsolete.
+
+Perhaps then it is best to create a firebase-snapshot to EventStore,
+and switch to storing the EventStore object.
+
+*/
+
+
 
 
 // This will actually work with units other than ms,
@@ -30,7 +44,7 @@ function computeTimeInterpolatedColor(start_ms,end_ms,time_ms) {
   return interpolated_color;
 }
 
-
+// It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.
 const MAPBOXGL_ACCESSTOKEN =
       "pk.eyJ1Ijoicm9iZXJ0bHJlYWQiLCJhIjoiY2prcHdhbHFnMGpnbDNwbG12ZTFxNnRnOSJ9.1ilsD8zwoacBHbbeP0JLpQ";
 
@@ -79,6 +93,8 @@ function writeTag(
 
   //SERVER WRITE - POST, CAN ONLY GET 'GET' TO WORK
 
+  // now I also place this tag in localStorage
+  writeTagLS(appname,obj);
   $.ajax({
     type: "GET",
     url: "writeTag",
@@ -95,78 +111,78 @@ function writeTag(
   document.getElementById("message").value = "";
 }
 
-function getLastTagNumInDB() {
-  return new Promise(function (resolve, reject) {
-    $.ajax({
-      type: "GET",
-      url: "returnTags",
-      dataType: "json",
-      data: { appName: GLOBAL_APPNAME },
-      success: function (result) {
-        var highestnum = 0;
-        var v = result;
-        for (const prop in v) {
-          const n = parseInt(prop.substring("geotag".length));
-          highestnum = Math.max(highestnum, n);
-          if (highestnum == NaN) {
-            highestnum = 0;
-          }
-        }
-        resolve(highestnum);
-      },
-      error: function (e) {
-        console.log("ERROR: ", e);
-      },
-    });
-  });
-}
+// function getLastTagNumInDB() {
+//   return new Promise(function (resolve, reject) {
+//     $.ajax({
+//       type: "GET",
+//       url: "returnTags",
+//       dataType: "json",
+//       data: { appName: GLOBAL_APPNAME },
+//       success: function (result) {
+//         var highestnum = 0;
+//         var v = result;
+//         for (const prop in v) {
+//           const n = parseInt(prop.substring("geotag".length));
+//           highestnum = Math.max(highestnum, n);
+//           if (highestnum == NaN) {
+//             highestnum = 0;
+//           }
+//         }
+//         resolve(highestnum);
+//       },
+//       error: function (e) {
+//         console.log("ERROR: ", e);
+//       },
+//     });
+//   });
+// }
 
-function getLastTagNumInDBSynchronously() {
-  var highestnum = 0;
-  getLastTagNumInDB().then(function (data) {
-    highestnum = data;
-    console.log("data in promise");
-    console.log(data);
-  });
-  return highestnum;
-}
+// function getLastTagNumInDBSynchronously() {
+//   var highestnum = 0;
+//   getLastTagNumInDB().then(function (data) {
+//     highestnum = data;
+//     console.log("data in promise");
+//     console.log(data);
+//   });
+//   return highestnum;
+// }
 
-async function getLastTagNumInDBandWrite(color) {
-  var highestnum = 0;
+// async function getLastTagNumInDBandWrite(color) {
+//   var highestnum = 0;
 
-  $.ajax({
-    type: "GET",
-    url: "returnTags",
-    dataType: "json",
-    data: { appName: GLOBAL_APPNAME },
-    success: function (result) {
-      var v = result;
-      for (const prop in v) {
-        const n = parseInt(prop.substring("geotag".length));
-        highestnum = Math.max(highestnum, n);
-        if (highestnum == NaN) {
-          highestnum = 0;
-        }
-      }
-      var options = { enableHighAccuracy: false, timeout: 10000 };
-      navigator.geolocation.getCurrentPosition(
-        (position) =>
-        createTag(
-          position,
-          color,
-          highestnum + 1,
-          GLOBAL_APPNAME,
-          "createdbyclick"
-        ),
-        error,
-        options
-      );
-    },
-    error: function (e) {
-      console.log("ERROR: ", e);
-    },
-  });
-}
+//   $.ajax({
+//     type: "GET",
+//     url: "returnTags",
+//     dataType: "json",
+//     data: { appName: GLOBAL_APPNAME },
+//     success: function (result) {
+//       var v = result;
+//       for (const prop in v) {
+//         const n = parseInt(prop.substring("geotag".length));
+//         highestnum = Math.max(highestnum, n);
+//         if (highestnum == NaN) {
+//           highestnum = 0;
+//         }
+//       }
+//       var options = { enableHighAccuracy: false, timeout: 10000 };
+//       navigator.geolocation.getCurrentPosition(
+//         (position) =>
+//         createTag(
+//           position,
+//           color,
+//           highestnum + 1,
+//           GLOBAL_APPNAME,
+//           "createdbyclick"
+//         ),
+//         error,
+//         options
+//       );
+//     },
+//     error: function (e) {
+//       console.log("ERROR: ", e);
+//     },
+//   });
+// }
 
 function error(err) {
   console.warn(`ERROR(${err.code}): ${err.message}`);
@@ -198,10 +214,6 @@ function getLocation(color) {
 function ExifDecodeTime(timeString,offset) {
   var mom = moment.utc(timeString,'YYYY:MM:DD hh:mm:ss');
   mom.utcOffset(offset);
-  console.log("time parse:");
-  console.log(timeString);
-  console.dir(mom);
-  console.log(mom.toString());
   var e_ms = mom.valueOf();
   if (mom.isValid())
     return e_ms;
@@ -219,87 +231,79 @@ async function createPhotoUploadTag(file, tags, username, color) {
   form.append("title", title);
   form.append("file", file);
   form.append("filename", filename);
+//  var tagnum = highest_num + 1;
+  //  var tagId = "geotag" + tagnum;
+  // This tshould actually from the tags!
+  // Hopefully this is a UTC
+  var lat = parseFloat(tags.GPSLatitude.description);
 
-  getLastTagNumInDB().then(function (highest_num) {
-    var tagnum = highest_num + 1;
-    var tagId = "geotag" + tagnum;
-    // This tshould actually from the tags!
-    // Hopefully this is a UTC
-    var lat = parseFloat(tags.GPSLatitude.description);
+  // note: By convention, East longitude is positive
+  // Check
+  var lon = parseFloat(tags.GPSLongitude.description);
+  lon = tags.GPSLongitudeRef.value[0] == "W" ? -lon : lon;
+  console.dir("tags");
+  console.dir(tags);
 
-    // note: By convention, East longitude is positive
-    // Check
-    var lon = parseFloat(tags.GPSLongitude.description);
-    lon = tags.GPSLongitudeRef.value[0] == "W" ? -lon : lon;
-    console.dir("tags");
-    console.dir(tags);
+  // note: here I attempt to read time the photo was taken
+  var DateTimeOriginal = tags.DateTimeOriginal.value[0];
+  var DateTimeDigitized = tags.DateTimeDigitized.value[0];
+  var DateTime = tags.DateTime.value[0];
+  var mainTime = DateTimeDigitized || DateTimeOriginal || DateTime;
+  // NOTE: This appears to be the EXIF format, although even
+  // my phone appaears use different formats, so we have to wrap this
+  // in a function and use some heurstics...
 
-    // note: here I attempt to read time the photo was taken
-    var DateTimeOriginal = tags.DateTimeOriginal.value[0];
-    var DateTimeDigitized = tags.DateTimeDigitized.value[0];
-    var DateTime = tags.DateTime.value[0];
-    var mainTime = DateTimeDigitized || DateTimeOriginal || DateTime;
-    // NOTE: This appears to be the EXIF format, although even
-    // my phone appaears use different formats, so we have to wrap this
-    // in a function and use some heurstics...
+  var offsetTime = tags.OffsetTime.value[0];
+  var e_ms = ExifDecodeTime(mainTime,offsetTime);
+  var mainTimeUTC = moment.unix(e_ms/1000).utc().toString();
 
-    var offsetTime = tags.OffsetTime.value[0];
-    var e_ms = ExifDecodeTime(mainTime,offsetTime);
-    var mainTimeUTC = moment.unix(e_ms/1000).utc().toString();
+  // here we compute "color" from the time on our time scale
+  // as an interploation
+  var tagId = filename;
+  var obj = {
+    appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
+    tagId: tagId,
+    taginfo: {
+      username: username,
+      latitude: lat,
+      longitude: lon,
+      color: color,
+      // TOOD: This should be renamed.
+      message: filename,
+      date: mainTimeUTC
+    },
+  };
+  form.append("obj", JSON.stringify(obj));
 
-    // here we compute "color" from the time on our time scale
-    // as an interploation
-    var obj = {
-      appname: GLOBAL_APPNAME ? GLOBAL_APPNAME : "abc",
-      tagId: tagId,
-      taginfo: {
-        username: username,
-        latitude: lat,
-        longitude: lon,
-        color: color,
-        message: filename,
-        date: mainTimeUTC
-      },
-    };
-    form.append("obj", JSON.stringify(obj));
+  writeTagLS(GLOBAL_APPNAME,obj);
 
-    $.ajax({
-      method: "POST",
-      url: "http://localhost:3000/upload",
-      contentType: false,
-      processData: false,
-      data: form
+  $.ajax({
+    method: "POST",
+    url: "http://localhost:3000/upload",
+    contentType: false,
+    processData: false,
+    data: form
+  })
+    .done((resp) => {
+      console.log(resp);
+      var position = { coords: { latitude: lat, longitude: lon } };
+      // I might actually have to read the tag to get
+      // the correct filepath here...
+      // Apparently I am doing this call ONLY to get the filepath...
+      // I think we can eliminate that...
+      adjust_global_times(mainTime);
+      var filepath = filename;
+      const interpolated_color =
+            computeTimeInterpolatedColor(GLOBAL_START,GLOBAL_END,e_ms);
+
+      showPositionOnPage(position, interpolated_color, filepath,  filepath);
     })
-      .done((resp) => {
-        console.log(resp);
-        var position = { coords: { latitude: lat, longitude: lon } };
-        // I might actually have to read the tag to get
-        // the correct filepath here...
-        $.ajax({
-          method: "GET",
-          url: "./tags/" + tagId,
-          dataType: "json",
-          data: { appName: GLOBAL_APPNAME }
-        }).done(
-          (data) => {
-            adjust_global_times(mainTime);
-            var filepath = data.filePath;
-            const interpolated_color =
-                  computeTimeInterpolatedColor(GLOBAL_START,GLOBAL_END,e_ms);
-
-            showPositionOnPage(position, interpolated_color, message, tagnum, message);
-          }).fail((error) => {
-            console.log("error in Get:");
-            console.log(error);
-          });
-      })
-      .fail((error) => console.log(error));
-  });
+    .fail((error) => console.log(error));
 }
 
-function createTag(position, color, tagnum, appname, filepath) {
+function createTag(position, color, appname, filepath) {
   var message = $("#message").val();
-  showPositionOnPage(position, color, message, tagnum, filepath);
+  showPositionOnPage(position, color, message, filepath);
   writeTag(
     "geotag" + tagnum,
     position.coords.latitude,
@@ -310,7 +314,7 @@ function createTag(position, color, tagnum, appname, filepath) {
     appname
   );
 }
-function showPositionOnPage(position, color, message, number, filepath) {
+function showPositionOnPage(position, color, message, filepath) {
   if (color != "black") {
     var x = (document.getElementById("demo").innerHTML =
              "Latitude: " +
@@ -320,7 +324,7 @@ function showPositionOnPage(position, color, message, number, filepath) {
   }
   var lonDec = position.coords.longitude;
   var latDec = position.coords.latitude;
-  showLngLatOnMap(lonDec, latDec, color, number, message, filepath);
+  showLngLatOnMap(lonDec, latDec, color, message, filepath);
 }
 
 
@@ -366,7 +370,15 @@ function removeAllLayers() {
 // if we embedded the file link, we could make this pop up render it,
 // and then we could have it open the photo in a different page.
 // I need to add a fileid for this to work.
-function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp) {
+
+// Note: We need unique tags. Originally I was generating these
+// as a counter before I had file names. In general we may
+// always need someway to have unique keys; however, one solution
+// to this problem is just to punt---we really on the uniqueness
+// of the message. This means that we have to have good error
+// handling BEFORE we get here, but it is at least a self-consistent
+// way of handling the problem.
+function showLngLatOnMap(lonDec, latDec, color, message, filepath, timestamp) {
   var ll = new mapboxgl.LngLat(lonDec, latDec);
 
   // here we will interpolate color based on time.
@@ -384,14 +396,14 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp)
           },
           properties: {
             description:
-            "<strong>geotag" + n + "</strong><p>" + message + "</p>",
+            "<p>" + message + "</p>",
             color: color,
           },
         },
       ],
     });
   } else {
-    map.addSource("point" + n, {
+    map.addSource(filepath, {
       type: "geojson",
       data: {
         type: "FeatureCollection",
@@ -404,7 +416,7 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp)
             },
             properties: {
               description:
-              "<strong>geotag" + n + "</strong><p>" + message + "</p>",
+              "<p>" + message + "</p>",
               color: color,
             },
           },
@@ -413,8 +425,8 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp)
     });
 
     const newLayer = {
-      id: "point" + n,
-      source: "point" + n,
+      id: filepath,
+      source: filepath,
       type: "circle",
       paint: {
         "circle-radius": 10,
@@ -425,7 +437,7 @@ function showLngLatOnMap(lonDec, latDec, color, n, message, filepath, timestamp)
     map.addLayer(newLayer);
     GLOBAL_ADDED_LAYERS.push(newLayer);
 
-    map.on("mouseenter", "point" + n, function (e) {
+    map.on("mouseenter", filepath, function (e) {
       var coordinates = e.features[0].geometry.coordinates.slice();
       var description = e.features[0].properties.description;
 
@@ -466,7 +478,7 @@ function initMap(appname) {
     zoom: 3,
   });
 
-  map.on("load",() => refreshAllData(appname));
+  map.on("load",() => refreshAllDataLS(appname));
 }
 
 function removeCurrentLoc() {
@@ -477,47 +489,151 @@ function removeCurrentLoc() {
   }
 }
 
+function putAllDataIntoLocalStorage(appname,result) {
+  window.localStorage.setItem(appname,
+                              JSON.stringify(result));
+}
 
-function refreshAllData(appname) {
+function getAllDataFromLocalStorage(appname) {
+  return JSON.parse(window.localStorage.getItem(appname));
+}
 
+function reportLS(appname) {
+  var obj = getAllDataFromLocalStorage(appname);
+  console.log("local Storage:");
+  console.log(obj);
+}
+
+function writeTagLS(appname,obj) {
+  var superSubject = getAllDataFromLocalStorage(appname);
+  superSubject[obj.tagId] = obj;
+  putAllDataIntoLocalStorage(appname,superSubject);
+  console.log("superSubject");
+  console.log(superSubject);
+  reportLS(appname);
+}
+
+
+function renderMarkers(v) {
+
+  for (const prop in v) {
+    gt = v[prop];
+    gti = gt.taginfo;
+    adjust_global_times(gti.date);
+  }
+  for (const prop in v) {
+    gt = v[prop];
+    gti = gt.taginfo;
+    const time_ms = moment.utc(gti.date).valueOf();
+    const color = computeTimeInterpolatedColor(GLOBAL_START,GLOBAL_END,time_ms);
+    // Note: gt.color may remain of interest, but I am not currently rendering it.
+    showLngLatOnMap(
+      gti.longitude,
+      gti.latitude,
+      color,
+      gti.message,
+      gti.message,
+      gti.date
+    );
+  }
+}
+
+function refreshAllDataLS(appname) {
   // first, remove all layers and markers and times
   clearWorkingSet();
   removeAllLayers();
- if (appname) {
-      $.ajax({
-        type: "GET",
-        url: "returnTags",
-        dataType: "json",
-        data: { appName: appname },
-        success: function (result) {
-          var v = result;
-          // now we manipulate the global time parameters, so
-          // we can correctly compute time-color
-          for (const prop in v) {
-            const n = parseInt(prop.substring("geotag".length));
-            gt = v[prop];
-            adjust_global_times(gt.date);
-          }
-          for (const prop in v) {
-            const n = parseInt(prop.substring("geotag".length));
-            gt = v[prop];
-            const time_ms = moment.utc(gt.date).valueOf();
-            const color = computeTimeInterpolatedColor(GLOBAL_START,GLOBAL_END,time_ms);
-            // Note: gt.color may remain of interest, but I am not currently rendering it.
-            showLngLatOnMap(
-              gt.longitude,
-              gt.latitude,
-              color,
-              n,
-              gt.message,
-              gt.filePath,
-              gt.date
-            );
-          }
-        },
-        error: function (e) {
-          console.log("ERROR: ", e);
-        },
-      });
- }
+  var data = getAllDataFromLocalStorage(appname);
+  renderMarkers(data);
+}
+
+// function refreshAllData(appname) {
+
+//   return refreshAllDataLS(appname);
+
+//   // first, remove all layers and markers and times
+//   clearWorkingSet();
+//   removeAllLayers();
+//   if (appname) {
+//     $.ajax({
+//       type: "GET",
+//       url: "returnTags",
+//       dataType: "json",
+//       data: { appName: appname },
+//       success: function (result) {
+//         renderMarkers(results);
+//         var v = result;
+//         for (const prop in v) {
+//           const n = parseInt(prop.substring("geotag".length));
+//           gt = v[prop];
+//           adjust_global_times(gt.date);
+//         }
+//         for (const prop in v) {
+//           const n = parseInt(prop.substring("geotag".length));
+//           gt = v[prop];
+//           const time_ms = moment.utc(gt.date).valueOf();
+//           const color = computeTimeInterpolatedColor(GLOBAL_START,GLOBAL_END,time_ms);
+//           // Note: gt.color may remain of interest, but I am not currently rendering it.
+//           showLngLatOnMap(
+//             gt.longitude,
+//             gt.latitude,
+//             color,
+//             gt.message,
+//             gt.filePath,
+//             gt.date
+//           );
+//         }
+//       },
+//       error: function (e) {
+//         console.log("ERROR: ", e);
+//       },
+//     });
+//   }
+// }
+
+// Rob has no idea where or how to get this...
+function cryptoHash(str) {
+}
+class Event {
+  hashContent(content) {
+    return cryptoHash(str);
+  }
+  hashUploadTime() {
+    // My understanding is that Solana offers some way of providing
+    // a proof of time. We need to use that here, so that when this is recovered
+    // we know that it is correct. How to get this, I don't know.
+
+    // Note: this is "fakable" until we implement the Solana time function.
+    const now = Date.now().toUTCString();
+    return now;
+  }
+  // In a way that I don't understand yet, this needs to
+  // hash together the contentHash, the timeHash, and uploader.
+  hashEvent() {
+    const concatenation = this.contentHash + "|" + this.uploader + "|" + this.timeHash;
+    return cryptoHash(concatenation);
+  }
+  constructor(url, content, uploader,latitude, longitude, eventDate) {
+    this.url = url;
+    // In actuality, we need to use the content to compute a hash...
+    this.contentHash = this.hashContent(content);
+    this.longitude;
+    this.latitude;
+    this.uploader = uploader;
+    this.timeHash = this.hashUploadTime();
+    this.eventHash = this.hashEvent();
+  }
+}
+class EventStore {
+  constructor(name, context) {
+    this.name = name;
+    this.context = context;
+    this.data = [];
+  }
+}
+function produceEventStoreFromSnapshot(snapshot) {
+  var v = result;
+  for (const prop in v) {
+    gt = v[prop];
+
+  }
 }

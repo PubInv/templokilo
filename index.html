@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!---
-Geotagtext allows you to create map applications and record geomarkers in the app of your choosing.
+Templokilo allows you to create map applications and record geomarkers in the app of your choosing. "Templokilo" means "time and space tool"
+in the language Esperanto.
 Copyright (C) 2021 Robert Read, Diego Aspinwall and Neil Martis
 
 This program is free software: you can redistribute it and/or modify
@@ -179,7 +180,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
           id="refresh-all"
           class="center"
           type="button"
-          onclick="refreshAllData(GLOBAL_APPNAME)">
+          onclick="refreshAllDataLS(GLOBAL_APPNAME)">
           Refresh
         </button>
       </div>
@@ -251,19 +252,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 		          blue: false,
 		          green: false,
 			  currentlocation: true
+
 		        };
 
-
-    function deleteAllMarkers() {
-      removeAllLayers();
-      clearWorkingSet();
+    function deleteAllTags() {
       $.ajax({type : "GET",
 	      url: "deleteAllMarkers",
 	      dataType: 'json',
 	      data: {appName: GLOBAL_APPNAME},
 	      success: function(result){
 		reconfigureFromApp(GLOBAL_APPNAME);
-                refreshAllData(GLOBAL_APP_NAME);
+                refreshAllDataLS(GLOBAL_APP_NAME);
 	      },
 	      error : function(e) {
                 // I don't know why this is being called with status of 200!
@@ -272,6 +271,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                 }
 	      }
 	     });
+    }
+    function deleteAllTagsLS() {
+      window.localStorage.setItem(GLOBAL_APPNAME,
+                                  JSON.stringify({}));
+    }
+
+
+    function deleteAllMarkers() {
+      removeAllLayers();
+      clearWorkingSet();
+      deleteAllTags();
+      deleteAllTagsLS();
     }
 
     function locationSwitch() {
@@ -350,8 +361,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         // NOTE: This is not a good way to iterate here
         for (let i = 0; i < event.target.files.length; i++) {
           const file = event.target.files[i];
-          console.log("file");
-          console.log(file);
           const tags = await ExifReader.load(file);
 
           // The MakerNote tag can be really large. Remove it to lower
@@ -382,7 +391,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         console.log(error);
       }
       console.log("Calling Refresh!");
-      refreshAllData(GLOBAL_APPNAME);
+      refreshAllDataLS(GLOBAL_APPNAME);
     }
     /* eslint-disable no-var */
     $(document).ready(function(){

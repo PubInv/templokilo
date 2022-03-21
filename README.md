@@ -17,20 +17,20 @@ Clicking on a marker brings up a photo. The image below was made by walking near
 
 ![Screen Shot 2022-03-10 at 2 49 43 PM](https://user-images.githubusercontent.com/5296671/157765351-7674ffb8-0fbb-4c3a-9b60-4ad4dd989090.png)
 
-As of right now, the persistence of photos in in the local file system, but the metadata is in firebase. We are going to change this operate on a local install 
+As of right now, the persistence of photos in the local file system, but the metadata is in firebase. We are going to change this operate on a local install 
 of MongoDB.
 
 
 ## Basic Idea
 
-The goal of this project is to allow a group of people, perhaps in an emegency situation, to geotag locations
+The goal of this project is to allow a group of people, perhaps in an emergency situation, to geotag locations
 to be on a map. Like all Public Invention projects, it is free-libre open source.
 
 Imagine using your phone to place a red tag on a flooded area, or where a person needs help, and
 green tag on a road which is passable.
 
 More generally, the ability to quickly upload a photo and have it reliably placed in time and space
-with the "EXIF" data typically embedded by modern phones will allow a GUI that is a valuable journalastic
+with the "EXIF" data typically embedded by modern phones will allow a GUI that is a valuable journalistic
 record of an event.
 
 In particular, this response was made in response to the invasion of the Ukraine by Russia and
@@ -60,7 +60,7 @@ Like most node apps, you will want to run:
 
 To pull in all needed libraries.
 
-The fundamenal way to run it without
+The fundamental way to run it without
 using heroku and Procifle is to set certain environment variables that contain "secrets":
 
 > export apiKey=
@@ -75,7 +75,7 @@ And then run the express server:
 
 > node server.js
 
-The web application with then be running on port :3000.
+The web application with then be running on port:3000.
 
 ## Ancient History
 

@@ -46,8 +46,12 @@ function computeTimeInterpolatedColor(start_ms,end_ms,time_ms) {
 
 // It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.
 
+<<<<<<< HEAD
 const MAPBOXGL_ACCESSTOKEN =
       "";
+=======
+const MAPBOXGL_ACCESSTOKEN = "";
+>>>>>>> f299eed (updates)
 
 const checkForAppInDatabase = (appName) => {
   return new Promise((resolve) => {
@@ -505,11 +509,18 @@ function reportLS(appname) {
 }
 
 function writeTagLS(appname,obj) {
-  var superSubject = getAllDataFromLocalStorage(appname);
-  superSubject[obj.tagId] = obj;
-  putAllDataIntoLocalStorage(appname,superSubject);
+    var superSubject = getAllDataFromLocalStorage(appname);
   console.log("superSubject");
-  console.log(superSubject);
+    console.log(superSubject);
+    console.log("obj",obj);
+    // WARNING! This is a bug...
+    if (!superSubject) {
+        superSubject = {};
+        superSubject[obj.tagId] = obj;
+    } else {
+        superSubject[obj.tagId] = obj;
+    }
+  putAllDataIntoLocalStorage(appname,superSubject);
   reportLS(appname);
 }
 

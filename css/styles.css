@@ -93,6 +93,10 @@ body {
 #timeregion {
     width: 80%;
 }
+#loadregion {
+    background: lightyellow;
+
+}
 #uploadregion {
     width: 25%;
 }

@@ -1,6 +1,7 @@
 /*
-Geotagtext allows you to create map applications and record geomarkers in the app of your choosing.
+Templokilo allows you to create map applications and record geomarkers in the app of your choosing.
 Copyright (C) 2021 Robert Read, Diego Aspinwall and Neil Martis
+Copyright (C) 2022 Robert L. Read
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
@@ -158,7 +159,7 @@ const fs = require("fs");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./uploads");
+    cb(null, "./");
   },
   filename: function (req, file, cb) {
     console.log("compting file name");

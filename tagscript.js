@@ -45,6 +45,7 @@ function computeTimeInterpolatedColor(start_ms,end_ms,time_ms) {
 }
 
 // It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.
+
 const MAPBOXGL_ACCESSTOKEN =
       "";
 

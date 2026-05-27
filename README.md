@@ -4,7 +4,6 @@ This is a system for easily using a phone or computer to upload a geolocated pho
 
 The general purpose is to create a journalistic record that allows study or open source intelligence (OSINT).
 
-There is a [project](https://github.com/orgs/PubInv/projects/1) tracking this repo.
 
 ## Status
 

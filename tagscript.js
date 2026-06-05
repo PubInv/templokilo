@@ -47,8 +47,6 @@ function computeTimeInterpolatedColor(start_ms,end_ms,time_ms) {
 // It is possible this accessToken will someday reach a limit. We recommend you change it if that occurs.
 const MAPBOXGL_ACCESSTOKEN = "";
 
-//const MAPBOXGL_ACCESSTOKEN = "";
-
 const checkForAppInDatabase = (appName) => {
   return new Promise((resolve) => {
     $.ajax({
@@ -235,6 +233,15 @@ async function createPhotoUploadTag(file, tags, username, color) {
   //  var tagId = "geotag" + tagnum;
   // This tshould actually from the tags!
   // Hopefully this is a UTC
+  if (
+  !tags.GPSLatitude ||
+  !tags.GPSLongitude ||
+  !tags.GPSLongitudeRef
+) {
+  console.warn("Image has no GPS metadata");
+  alert("This image does not contain geolocation information.");
+  return;
+}
   var lat = parseFloat(tags.GPSLatitude.description);
 
   // note: By convention, East longitude is positive
